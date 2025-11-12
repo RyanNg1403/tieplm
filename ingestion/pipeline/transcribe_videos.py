@@ -6,6 +6,7 @@ Works with videos in ../videos/ directory.
 import argparse
 import json
 import logging
+import unicodedata
 from pathlib import Path
 from tqdm import tqdm
 from typing import Dict, List
@@ -18,6 +19,24 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
+def normalize_path(path: Path) -> Path:
+    """
+    Normalize Unicode in file path to NFC form.
+    
+    This fixes issues on Windows where glob() may return paths with different
+    Unicode normalization (NFD) than what actually exists on disk (NFC).
+    
+    Args:
+        path: Path object to normalize
+        
+    Returns:
+        Path with NFC-normalized Unicode characters
+    """
+    # Convert to string, normalize to NFC (composed form), then back to Path
+    normalized_str = unicodedata.normalize('NFC', str(path))
+    return Path(normalized_str)
 
 
 class Transcriber:
@@ -55,7 +74,8 @@ class Transcriber:
             Dict with transcript text and segments with timestamps
         """
         try:
-            video_path = Path(video_path)
+            # Normalize Unicode in path (fixes Windows issues with Vietnamese filenames)
+            video_path = normalize_path(Path(video_path))
             if not video_path.exists():
                 raise FileNotFoundError(f"Video file not found: {video_path}")
             
@@ -96,12 +116,19 @@ class Transcriber:
 
 
 def find_video_files(videos_dir: Path) -> list:
-    """Find all video files in directory."""
+    """
+    Find all video files in directory.
+    
+    Normalizes Unicode in filenames to avoid issues on Windows where glob()
+    may return paths with different normalization than what exists on disk.
+    """
     video_extensions = ['.mp4', '.mkv', '.avi', '.mov', '.webm']
     videos = []
     
     for ext in video_extensions:
-        videos.extend(videos_dir.glob(f'*{ext}'))
+        # Normalize each path returned by glob
+        for video_path in videos_dir.glob(f'*{ext}'):
+            videos.append(normalize_path(video_path))
     
     return sorted(videos)
 
@@ -146,8 +173,8 @@ def transcribe_all_videos(
     with tqdm(total=len(video_files), desc="Transcribing videos") as pbar:
         for video_path in video_files:
             try:
-                # Check if already transcribed
-                output_file = output_dir / f"{video_path.stem}.json"
+                # Check if already transcribed (normalize output filename too)
+                output_file = normalize_path(output_dir / f"{video_path.stem}.json")
                 
                 if output_file.exists():
                     logger.info(f"⏭️  Skipping (already transcribed): {video_path.name}")
@@ -223,7 +250,8 @@ def transcribe_single_video(
 ):
     """Transcribe a single video."""
     
-    video_path = Path(video_path)
+    # Normalize Unicode in paths
+    video_path = normalize_path(Path(video_path))
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -243,8 +271,8 @@ def transcribe_single_video(
     transcript['video_file'] = video_path.name
     transcript['video_path'] = str(video_path)
     
-    # Save
-    output_file = output_dir / f"{video_path.stem}.json"
+    # Save (normalize output filename)
+    output_file = normalize_path(output_dir / f"{video_path.stem}.json")
     save_transcript(transcript, output_file)
     
     print(f"\n✓ Transcript saved to: {output_file}")
