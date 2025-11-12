@@ -69,3 +69,4 @@ htmlcov/
 .coverage
 .pytest_cache/
 ingestion/videos/
+CLAUDE.md
