@@ -1,5 +1,5 @@
 {
-  "text": "Chào các bạn, hôm nay chúng ta sẽ đến với bài về xử lý ngôn ngữ tự nhiên Trong các bài trước thì chúng ta đã làm việc trên loại dữ liệu đó là dữ liệu ảnh Còn từ nay cho về sau thì chúng ta sẽ đến với loại dữ liệu đặc biệt Đó chính là loại dữ liệu văn bản Và làm sao để có thể biểu diễn được các từ trong văn bản Thì chúng ta có thể sử dụng một công cụ rất hiệu quả Đó chính là Word2Back Word2Back là một phương pháp để giúp cho chúng ta biểu diễn một từ dưới dạng một vector Và nội dung chính của chúng ta sẽ bao gồm các thành phần như sau Đầu tiên là chúng ta sẽ cùng tìm hiểu về một số định nghĩa, khái niệm Cũng như là một số tìm năng ứng dụng của lĩnh vực xử lý ngôn ngữ tự nhiên Thứ hai đó là chúng ta sẽ tìm hiểu về hướng tiếp cận học sâu trong xử lý ngôn ngữ tự nhiên Và thứ ba đó là chúng ta tìm hiểu về tầm quan trọng của việc biểu diễn một từ dưới dạng một vector Cuối cùng đó là chúng ta sẽ tìm hiểu về mô hình Word2Back Đây là một trong những mô hình rất phổ biến để biểu diễn một từ dưới dạng một vector hiện nay Đầu tiên đó là chúng ta sẽ tìm hiểu về mô hình Word2Back Và chúng ta sẽ tìm hiểu về một số khái niệm Thì xử lý ngôn ngữ tự nhiên thì tên tiếng Anh đó là Natural Language Processing Rồi, thì đây là một lĩnh vực nghiên cứu mà thuộc lĩnh vực về khoa học bái tính, trí tuệ nhân tạo và ngôn ngữ học Như vậy thì chúng ta có thể thấy là nó có một phần giao thoa Với lại một cái lĩnh vực thuộc về khoa học xã hội Đó chính là ngôn ngữ học Bên cạnh những cái lĩnh vực nghiên cứu về trí tuệ nhân tạo và khoa học máy tính Thì mục tiêu của cái lĩnh vực này đó là làm sao cho máy tính có khả năng ngôn ngữ giống như con người Thế thì khả năng ngôn ngữ như con người nó sẽ bao gồm khả năng gì? Đầu tiên đó chính là khả năng hiểu Con người chúng ta thì sẽ nhận cái thông tin đầu vào là một cái ngôn ngữ Và ngôn ngữ sẽ thông qua hai cái phương tiện chính Phương tiện đầu tiên đó chính là văn bản Cái công cụ thứ hai, cái phương tiện thứ hai đó chính là qua âm thanh Khi chúng ta nghe một người nào đó đứng trước mặt nói chuyện Thì cái ngôn ngữ nó được thể hiện qua âm thanh Thì máy tính cũng tương tự như vậy Máy tính cũng sẽ nhận cái thông tin đầu vào là một cái ngôn ngữ Tuy nhiên trong phạm vi của cái bài học này Chúng ta sẽ tiếp cận ngôn ngữ ở dưới dạng là văn mẹ Và sau khi máy tính có khả năng hiểu được cái ngôn ngữ đầu vào Thì nó sẽ đưa ra cái phản hồi Và cái phản hồi này thì nó sẽ nằm trong cái giai đoạn gọi là generation Và phản hồi này nó sẽ tạo ra cái gì? Nó cũng sẽ tạo ra chính ngôn ngữ Ngôn ngữ này thì nó có thể ở dạng là âm thanh Ví dụ như máy nó có thể phát ra một cái đoạn âm thanh Để thể hiện cái sự phản hồi của mình Hoặc máy cũng có thể tạo ra dưới dạng là một cái đoạn văn mẹ Thì trong phạm vi của ngôn ngữ này Chúng ta cũng sẽ tiếp cận sự hiểu ngôn ngữ tự nhiên dưới dạng là văn mẹ Rồi, và tương ứng với hai cái giai đoạn Hiểu ngôn ngữ và tạo sinh ngôn ngữ Thì chúng ta sẽ có các cái từ khóa đó là Natural Language Understanding Và Natural Language Generation Thì cái gì này là bắt đầu? Thì bắt đầu từ chữ Generation và chữ U này Thì bắt đầu từ chữ Understanding Thế thì lĩnh vực xử lý ngôn ngữ tự nhiên Là một trong những cái lĩnh vực khó Nó khó vì rất nhiều những cái lý do sau Đầu tiên đó chính là Cái tính nhập nhằn của ngôn ngữ Nếu như chúng ta không có đầy đủ thông tin về mặt ngữ cảnh Mà chúng ta đọc cái câu này Thì chúng ta có thể hiểu bằng bao nhiêu cách Cái câu đó là Ông già đi nhanh quá Thì cái câu ông già đi nhanh quá Nó có thể được hiểu bằng không dưới là 3 cách Đầu tiên đó là Nếu như chúng ta quan sát cái từ ông già Như là một cái cụm từ Thì cái từ ông già này có thể ám chỉ là một người lớn tuổi nào đó Có thể ám chỉ một người lớn tuổi nào đó Và cái từ đi này á Thì cũng có thể hiểu hai cái nghĩa Nghĩa đầu tiên đó chính là di chuyển Và nghĩa thứ hai đó là có thể người này đã mất Còn nhanh quá thì chắc chắn là không được hiểu được Thì tương ứng đó là thể hiện cái tốc độ đúng không Như vậy là ông già di chuyển nhanh quá Hoặc là ông già mất đột ngột quá Thì đây là hai cái cách hiểu đầu tiên Nhưng nếu như cũng cái con này Chúng ta nhìn nó ở một cái cách chia khác Thì cái từ ông là mình đang muốn nói đến cái Người mà mình đang muốn nói chuyện ở trước mặt Cái người bạn của mình Mình hay xin gọi ông Gia Thì ở đây sẽ hàm ý đó là tiêu tụy Hoặc là người dạo này là pha phai quá Thì ý của cái câu này đó là Cái người bạn của mình là dạo này nhìn sau tiêu tụy đi nhanh quá Trước đây thì rất là trẻ trung Và bây giờ thì lại gọi là tiêu tụy đi Và còn rất nhiều những cái cách nghĩa hiểu khác Ví dụ như cũng là cái từ ông già này Nhưng mà ở một số nơi một số vùng miền Thì hàm ý đó là để nói về phụ thân của mình Tức là ba của mình Như vậy thì với một cái cách hiểu ông già là ba của mình Thì nó lại có rất nhiều những cái cách hiểu khác nữa Thì như vậy đó chính là cái sự nhập nhằn của ngôn ngữ Nếu như không có đầy đủ thông tin về mặt tự cảnh Mà chúng ta chỉ có một cái đoạn văn Một cái câu văn như vậy Thì rõ ràng là sẽ tạo ra cái cách hiểu Rất nhiều cái cách hiểu khác nhau Và một trong những cái vấn đề để gây ra cái sự nhập nhằn đó Chính là cái vấn đề về tách từ Ví dụ như chúng ta có cái từ là tốc độ truyền thông tin Nếu như chúng ta nhìn cái câu này Cái cụm từ này dưới dạng là những cái từ rời rạc Được ngăn cách bởi cái dấu khoảng trắng Thì cái từ tốc Rồi cái từ độ Rồi từ truyền Rồi từ thông Và từ tin Đó là những cái từ Mà không có mang nghĩa đúng Của cái nội hàm Mà cái câu này muốn truyền đạt Cái nghĩa đúng của nó Nó phải đi theo một cái cụm Nó sẽ phải đi theo một cái cụm Ví dụ ở đây là thông tin Phải là một cái cụm Và một cái đơn vị ngữ nghĩa Tốc độ Sẽ là một cái đơn vị ngữ nghĩa Như vậy là tốc độ truyền thông tin Thì nó sẽ phải là Chi ra thành các cái đơn vị ngữ nghĩa như vậy Thì lúc đó chúng ta mới hiểu đúng được cái ý của cái câu này Còn nếu chúng ta tách ra từ tốc riêng Từ độ riêng Từ truyền riêng Từ thông riêng Ví dụ từ thông chúng ta có thể nghĩa là Hiểu rất nhiều nghĩa khác nhau Rồi từ tốc Hoặc là từ độ Nếu mà đứng riêng mình nói Thì chúng ta cũng có thể hiểu rất nhiều cái cách hiểu khác nhau Cái thứ ba Đó chính là cái ngôn ngữ tin Ngôn ngữ Mình hay nói đùa đó là trẻ trâu bây giờ đó Thì các bạn trẻ thì có thể nhấn các cái đoạn văn bản Với rất nhiều những cái cách thức sáng tạo khác nhau Ví dụ như ở đây chúng ta thấy là More the ui Hôm nay con không về Thì ở đây đã phối hợp Rất nhiều những cái kỹ thuật Ví dụ nó đã có lòng ghép cái tiếng Anh Ở trong đó Là more the Rồi cái thứ hai đó là Với cái từ more the này thì cái số không Người ta không gõ là Người ta không gõ là chữ o Mà người ta lại gõ là số không Tức là lợi dụng cái việc là cái tượng hình của nó Cái số không và chữ o nó giống nhau Rồi thậm chí là Nói giọng Ví dụ như là hông Yeah Hoặc là nay Thì đây chính là cái sự khó khăn Khi chúng ta phải làm việc với những cái ngôn ngữ mà không có Chủng Và xuất phát từ Cái mạng xã hội Tiếp theo Đó là vấn đề về Cái ngữ nghĩa của câu nó sẽ không liên quan trực tiếp Đến cái mặt chữ của nó Ví dụ như Ở đây chúng ta có một cái thành ngữ là ra ngô ra khoai Hở Ví dụ như là làm ra ngô ra khoai Thì Không có nghĩa là Chúng ta sẽ tạo ra Các Cái Trái ngô trái khoai Mà ở đây Ý của nó đó chính là Làm việc đến nơi đến chỗ đó Làm việc triệt để Làm việc cho ra thành quả Thì đó là cái ý nghĩa của cái câu ra ngô ra khoai Chứ không hề nhắc gì đến cái Hai cái Cái cái cái loại trái cây ở đây đó là Trái ngô và trái khoai Và Ngoài ra thì Tất cả những cái Yếu tố trên nó sẽ còn Đi chung với lại một cái khó khăn thách thức nữa đó là Mình phải đi kèm với cái ngữ cảnh thực tế Cái ngữ cảnh thực tế Thì Ví dụ như là mình đang bàn về Cái Một cái chủ đề nào đó Thì Các cái câu của mình nó sẽ xoay xung quanh cái chủ đề mà mình đang bàn Thì nếu mình biết được cái ngữ cảnh đó Thì cái câu của mình có thể nó sẽ hiểu dễ dàng hơn Ngoài ra Đó là cái Kiến thức thực tế Dạ Ví dụ như trong một số tình huống Chúng ta Nói chuyện với nhau nhưng mà Từng từ chúng ta đều hiểu Nhưng mà ráp lại chúng ta không hiểu tại vì Chúng ta không có cái kiến thức chuyên môn Chúng ta không có kiến thức chuyên môn ví dụ như Chúng ta nói chuyện với một cái người về Công nghệ thông tin Chúng ta nói chuyện công nghệ thông tin về một cái người Và làm trong một cái lĩnh vực về Tài chính chẳng hạn Thì có khi là họ sẽ không hiểu cái câu chuyện mình đang nói là gì Vậy là Cũng là cái mặt trực đó nhưng mà Nó sẽ còn hiểu hay không phụ thuộc vô cái kiến thức trong thực tế nữa Rồi Và Lĩnh vực xử lý ngôn ngữ tự nhiên thì có rất nhiều Những cái ứng dụng khác nhau Ví dụ như những cái ứng dụng kinh điển Như là kiểm tra Nỗ chính tả Thì đây là một trong những cái ứng dụng mà đã có từ rất là lâu đời nè Cái thiết kế này Thứ hai Đó chính là phát hiện Thư giác Thì bất cứ một cái email nào Một cái hệ thống email nào Đều có trang bị cái hệ thống là Spam Detection Ví dụ như đây là một cái Lạng tên nhóm là Spam Rồi gán nhãn từ loại Với mỗi từ trong một cái câu Chúng ta sẽ biết là từ nào là động từ Danh từ, tính từ Rồi Từ nào là Bổ nghĩa Cho từ nào Vân vân Thì đó là Nhận dạng Sự gắn nhãn từ Gắn nhãn từ loại Còn nhận dạng tên riêng Thì ở đây là bài toán NER Là Name Entity Recognition Thì chúng ta cho trước một câu Và chúng ta cần phải xác định xem là Ứng với từng từ Thì nó sẽ là cái tên riêng cho Người Hay là tên riêng cho một cái tổ chức Hoặc là tên riêng cho một cái địa điểm Tên riêng cho một cái địa điểm Và đây là một cái bài toán cũng có rất nhiều những cái ứng dụng Có rất nhiều những cái ứng dụng Rồi tìm kiếm từ khóa Chắc là chúng ta thấy rằng là các cái hệ thống Search Engine hiện nay Là minh họa cho cái ứng dụng về tìm kiếm theo từ khóa Rồi tìm từ đồng nghĩa Vân vân Rồi gần đây hơn thì chúng ta sẽ có các cái ứng dụng ví dụ như là phân tích cảm xúc Thì cái này là ứng dụng trong cái mạng xã hội ví dụ như là Social Listening Social Listening Tức là gì? Chúng ta sẽ có các cái con bot có thể draw các cái dữ liệu trên mạng xã hội Và nó sẽ biết rằng là các cái nội dung mà mình đang trao đổi Rồi các cái đoạn tin nhắn, các cái comment Vân vân Thì nó có cái trạng thái là tích cực, tiêu cực hay là trung tính Đó là một cái ngữ cảnh ứng dụng của bài toán Sentiment Analysis Vậy thì Sentiment Analysis hoặc là một cái từ khác là Opinion Mining Tức là chúng ta đang... Phân loại xem một cái đoạn văn hoặc là một cái cụm từ Là nó mang tính chất là tích cực, tiêu cực hay là trung tính Xác định độc thanh chiếu Thì cái bài toán này đó là chúng ta sẽ xem coi Các cái từ trong một cái câu nó sẽ được thanh chiếu đến cái từ nào Ví dụ như là Cater, Thôn, Mubarak He shouldn't run again Thì cái từ he này... Nó có thể là thanh chiếu đến cái từ Cater Hoặc cũng có thể là thanh chiếu đến từ Mubarak Nhưng mà trong cái ngữ cảnh của cái câu này Thì nó sẽ không có thanh chiếu đến Cater mà nó sẽ thanh chiếu đến Mubarak Rồi, ngoài ra thì chúng ta có các cái ứng dụng khác Ví dụ như là phân tích cú pháp, Bạc sinh hoặc là dịch máy Rồi rút trích thông tin Thì trong những năm gần đây thì các cái hệ thống dịch thuật là... Rồi rút trích thông tin thì trong những năm gần đây thì các cái hệ thống dịch thuật là... Coi cho những cái kết quả rất là ấn tượng Và đã được thương hoại hóa bởi rất nhiều những cái công ty Rồi rút trích thông tin thì chúng ta thấy là trong các cái email bây giờ là... Nó đã có thể tự động rút trích được là nội dung của một cái email Có thể rút trích được thông tin về mặt thời gian, nơi trốn Và từ đó để có thể giúp cho chúng ta đạt lịch một cách dễ dàng Rồi các cái ứng dụng khác mà... Rồi các cái ứng dụng khác mà... Và gần đây, có những cái ứng dụng rất là nổi tiếng Chính là ChatGPT Cái ứng dụngmat chatgpt này là... Điển hình cho những cái ứng dụng sau Tức là chatGPT là một cái hệ thống mà nó tích hợp rất nhiều những cái khả năng về mặt ngôn ngữ Ví dụ, nó có khả năng question answering tức là trả lời câu hỏi Mình có thể hỏi chatGPT các cái câu hỏi Và nó sẽ đi lột tìm những cái kiến thức ở trong quá khứ Để từ đó là nó có thể trả lời cho mình Cái thứ hai đó là paraphrase, tức là viết lại một cái văn bản, mình đưa cho chat GPT một cái đoạn văn, và mình yêu cầu nó viết lại theo một cái cách viết khác, và đồng thời là nó cũng có thể thực hiện luôn các cái thao tác sửa lỗi chính tả cho mình luôn. Thì paraphrase cộng với lại cái sửa lỗi chính tả. Như vậy chúng ta thấy là chat GPT nó rất là mạnh và hiệu quả trong việc ứng dụng các cái thành tựu mới của sự liên ngục về tự nhiên. Tóm tắt nội dung, tức là chúng ta sẽ cung cấp một cái đoạn văn rất là dài hoặc là cung cấp rất nhiều thông tin, nó sẽ tự tóm tắt lại thành cái nội dung chính. Rồi hội thoại chat bot, tức là chúng ta có thể tám dẫu, tám gẫu và hỏi thăm, tức là chúng ta sẽ hỏi con bot về bất cứ thứ gì mà nó có thể trả lời trong cái phạm vi mà nó cho phép. Như vậy thì trong cái phần vừa rồi thì chúng ta đã tìm hiểu qua cái ứng dụng, cái tiềm năng ứng dụng của sự liên ngục. Vì tự nhiên, và chúng ta thấy là sự liên ngục của tự nhiên đang ngày càng trở nên phổ biến và trong cuộc sống của chúng ta, và nó đang có những cái đóng góp to lớn cho cái sự phát triển của xã hội hiện nay.",
+  "text": "Chào các bạn, hôm nay chúng ta sẽ đến với bài về xử lý ngôn ngữ tự nhiên Trong các bài trước thì chúng ta đã làm việc trên loại dữ liệu đó là dữ liệu ảnh Còn từ nay cho về sau thì chúng ta sẽ đến với loại dữ liệu đặc biệt Đó chính là loại dữ liệu văn bản Và làm sao để có thể biểu diễn được các từ trong văn bản Thì chúng ta có thể sử dụng một công cụ rất hiệu quả Đó chính là Word2Back Word2Back là một phương pháp để giúp cho chúng ta biểu diễn một từ dưới dạng một vector Và nội dung chính của chúng ta sẽ bao gồm các thành phần như sau Đầu tiên là chúng ta sẽ cùng tìm hiểu về một số định nghĩa, khái niệm Cũng như là một số tìm năng ứng dụng của lĩnh vực xử lý ngôn ngữ tự nhiên Thứ hai đó là chúng ta sẽ tìm hiểu về hướng tiếp cận học sâu trong xử lý ngôn ngữ tự nhiên Và thứ ba đó là chúng ta tìm hiểu về tầm quan trọng của việc biểu diễn một từ dưới dạng một vector Cuối cùng đó là chúng ta sẽ tìm hiểu về mô hình Word2Back Đây là một trong những mô hình rất phổ biến để biểu diễn một từ dưới dạng một vector hiện nay Đầu tiên đó là chúng ta sẽ tìm hiểu về mô hình Word2Back Và chúng ta sẽ tìm hiểu về một số khái niệm Thì xử lý ngôn ngữ tự nhiên thì tên tiếng Anh đó là Natural Language Processing Rồi, thì đây là một lĩnh vực nghiên cứu mà thuộc lĩnh vực về khoa học bái tính, trí tuệ nhân tạo và ngôn ngữ học Như vậy thì chúng ta có thể thấy là nó có một phần giao thoa Với lại một cái lĩnh vực thuộc về khoa học xã hội Đó chính là ngôn ngữ học Bên cạnh những cái lĩnh vực nghiên cứu về trí tuệ nhân tạo và khoa học máy tính Thì mục tiêu của cái lĩnh vực này đó là làm sao cho máy tính có khả năng ngôn ngữ giống như con người Thế thì khả năng ngôn ngữ như con người nó sẽ bao gồm khả năng gì? Đầu tiên đó chính là khả năng hiểu Con người chúng ta thì sẽ nhận cái thông tin đầu vào là một cái ngôn ngữ Và ngôn ngữ sẽ thông qua hai cái phương tiện chính Phương tiện đầu tiên đó chính là văn bản Cái công cụ thứ hai, cái phương tiện thứ hai đó chính là qua âm thanh Khi chúng ta nghe một người nào đó đứng trước mặt nói chuyện Thì cái ngôn ngữ nó được thể hiện qua âm thanh Thì máy tính cũng tương tự như vậy Máy tính cũng sẽ nhận cái thông tin đầu vào là một cái ngôn ngữ Tuy nhiên trong phạm vi của cái bài học này Chúng ta sẽ tiếp cận ngôn ngữ ở dưới dạng là văn mẹ Và sau khi máy tính có khả năng hiểu được cái ngôn ngữ đầu vào Thì nó sẽ đưa ra cái phản hồi Và cái phản hồi này thì nó sẽ nằm trong cái giai đoạn gọi là generation Và phản hồi này nó sẽ tạo ra cái gì? Nó cũng sẽ tạo ra chính ngôn ngữ Ngôn ngữ này thì nó có thể ở dạng là âm thanh Ví dụ như máy nó có thể phát ra một cái đoạn âm thanh Để thể hiện cái sự phản hồi của mình Hoặc máy cũng có thể tạo ra dưới dạng là một cái đoạn văn mẹ Thì trong phạm vi của ngôn ngữ này Chúng ta cũng sẽ tiếp cận sự hiểu ngôn ngữ tự nhiên dưới dạng là văn mẹ Rồi, và tương ứng với hai cái giai đoạn Hiểu ngôn ngữ và tạo sinh ngôn ngữ Thì chúng ta sẽ có các cái từ khóa đó là Natural Language Understanding Và Natural Language Generation Thì cái gì này là bắt đầu? Thì bắt đầu từ chữ Generation và chữ U này Thì bắt đầu từ chữ Understanding Thế thì lĩnh vực xử lý ngôn ngữ tự nhiên Là một trong những cái lĩnh vực khó Nó khó vì rất nhiều những cái lý do sau Đầu tiên đó chính là Cái tính nhập nhằn của ngôn ngữ Nếu như chúng ta không có đầy đủ thông tin về mặt ngữ cảnh Mà chúng ta đọc cái câu này Thì chúng ta có thể hiểu bằng bao nhiêu cách Cái câu đó là Ông già đi nhanh quá Thì cái câu ông già đi nhanh quá Nó có thể được hiểu bằng không dưới là 3 cách Đầu tiên đó là Nếu như chúng ta quan sát cái từ ông già Như là một cái cụm từ Thì cái từ ông già này có thể ám chỉ là một người lớn tuổi nào đó Có thể ám chỉ một người lớn tuổi nào đó Và cái từ đi này á Thì cũng có thể hiểu hai cái nghĩa Nghĩa đầu tiên đó chính là di chuyển Và nghĩa thứ hai đó là có thể người này đã mất Còn nhanh quá thì chắc chắn là không được hiểu được Thì tương ứng đó là thể hiện cái tốc độ đúng không Như vậy là ông già di chuyển nhanh quá Hoặc là ông già mất đột ngột quá Thì đây là hai cái cách hiểu đầu tiên Nhưng nếu như cũng cái con này Chúng ta nhìn nó ở một cái cách chia khác Thì cái từ ông là mình đang muốn nói đến cái Người mà mình đang muốn nói chuyện ở trước mặt Cái người bạn của mình Mình hay xin gọi ông Gia Thì ở đây sẽ hàm ý đó là tiêu tụy Hoặc là người dạo này là pha phai quá Thì ý của cái câu này đó là Cái người bạn của mình là dạo này nhìn sau tiêu tụy đi nhanh quá Trước đây thì rất là trẻ trung Và bây giờ thì lại gọi là tiêu tụy đi Và còn rất nhiều những cái cách nghĩa hiểu khác Ví dụ như cũng là cái từ ông già này Nhưng mà ở một số nơi một số vùng miền Thì hàm ý đó là để nói về phụ thân của mình Tức là ba của mình Như vậy thì với một cái cách hiểu ông già là ba của mình Thì nó lại có rất nhiều những cái cách hiểu khác nữa Thì như vậy đó chính là cái sự nhập nhằn của ngôn ngữ Nếu như không có đầy đủ thông tin về mặt tự cảnh Mà chúng ta chỉ có một cái đoạn văn Một cái câu văn như vậy Thì rõ ràng là sẽ tạo ra cái cách hiểu Rất nhiều cái cách hiểu khác nhau Và một trong những cái vấn đề để gây ra cái sự nhập nhằn đó Chính là cái vấn đề về tách từ Ví dụ như chúng ta có cái từ là tốc độ truyền thông tin Nếu như chúng ta nhìn cái câu này Cái cụm từ này dưới dạng là những cái từ rời rạc Được ngăn cách bởi cái dấu khoảng trắng Thì cái từ tốc Rồi cái từ độ Rồi từ truyền Rồi từ thông Và từ tin Đó là những cái từ Mà không có mang nghĩa đúng Của cái nội hàm Mà cái câu này muốn truyền đạt Cái nghĩa đúng của nó Nó phải đi theo một cái cụm Nó sẽ phải đi theo một cái cụm Ví dụ ở đây là thông tin Phải là một cái cụm Và một cái đơn vị ngữ nghĩa Tốc độ Sẽ là một cái đơn vị ngữ nghĩa Như vậy là tốc độ truyền thông tin Thì nó sẽ phải là Chi ra thành các cái đơn vị ngữ nghĩa như vậy Thì lúc đó chúng ta mới hiểu đúng được cái ý của cái câu này Còn nếu chúng ta tách ra từ tốc riêng Từ độ riêng Từ truyền riêng Từ thông riêng Ví dụ từ thông chúng ta có thể nghĩa là Hiểu rất nhiều nghĩa khác nhau Rồi từ tốc Hoặc là từ độ Nếu mà đứng riêng mình nói Thì chúng ta cũng có thể hiểu rất nhiều cái cách hiểu khác nhau Cái thứ ba Đó chính là cái ngôn ngữ tin Ngôn ngữ Mình hay nói đùa đó là trẻ trâu bây giờ đó Thì các bạn trẻ thì có thể nhấn các cái đoạn văn bản Với rất nhiều những cái cách thức sáng tạo khác nhau Ví dụ như ở đây chúng ta thấy là More the ui Hôm nay con không về Thì ở đây đã phối hợp Rất nhiều những cái kỹ thuật Ví dụ nó đã có lòng ghép cái tiếng Anh Ở trong đó Là more the Rồi cái thứ hai đó là Với cái từ more the này thì cái số không Người ta không gõ là Người ta không gõ là chữ o Mà người ta lại gõ là số không Tức là lợi dụng cái việc là cái tượng hình của nó Cái số không và chữ o nó giống nhau Rồi thậm chí là Nói giọng Ví dụ như là hông Yeah Hoặc là nay Thì đây chính là cái sự khó khăn Khi chúng ta phải làm việc với những cái ngôn ngữ mà không có Chủng Và xuất phát từ Cái mạng xã hội Tiếp theo Đó là vấn đề về Cái ngữ nghĩa của câu nó sẽ không liên quan trực tiếp Đến cái mặt chữ của nó Ví dụ như Ở đây chúng ta có một cái thành ngữ là ra ngô ra khoai Hở Ví dụ như là làm ra ngô ra khoai Thì Không có nghĩa là Chúng ta sẽ tạo ra Các Cái Trái ngô trái khoai Mà ở đây Ý của nó đó chính là Làm việc đến nơi đến chỗ đó Làm việc triệt để Làm việc cho ra thành quả Thì đó là cái ý nghĩa của cái câu ra ngô ra khoai Chứ không hề nhắc gì đến cái Hai cái Cái cái cái loại trái cây ở đây đó là Trái ngô và trái khoai Và Ngoài ra thì Tất cả những cái Yếu tố trên nó sẽ còn Đi chung với lại một cái khó khăn thách thức nữa đó là Mình phải đi kèm với cái ngữ cảnh thực tế Cái ngữ cảnh thực tế Thì Ví dụ như là mình đang bàn về Cái Một cái chủ đề nào đó Thì Các cái câu của mình nó sẽ xoay xung quanh cái chủ đề mà mình đang bàn Thì nếu mình biết được cái ngữ cảnh đó Thì cái câu của mình có thể nó sẽ hiểu dễ dàng hơn Ngoài ra Đó là cái Kiến thức thực tế Dạ Ví dụ như trong một số tình huống Chúng ta Nói chuyện với nhau nhưng mà Từng từ chúng ta đều hiểu Nhưng mà ráp lại chúng ta không hiểu tại vì Chúng ta không có cái kiến thức chuyên môn Chúng ta không có kiến thức chuyên môn ví dụ như Chúng ta nói chuyện với một cái người về Công nghệ thông tin Chúng ta nói chuyện công nghệ thông tin về một cái người Và làm trong một cái lĩnh vực về Tài chính chẳng hạn Thì có khi là họ sẽ không hiểu cái câu chuyện mình đang nói là gì Vậy là Cũng là cái mặt trực đó nhưng mà Nó sẽ còn hiểu hay không phụ thuộc vô cái kiến thức trong thực tế nữa Rồi Và Lĩnh vực xử lý ngôn ngữ tự nhiên thì có rất nhiều Những cái ứng dụng khác nhau Ví dụ như những cái ứng dụng kinh điển Như là kiểm tra Nỗ chính tả Thì đây là một trong những cái ứng dụng mà đã có từ rất là lâu đời nè Cái thiết kế này Thứ hai Đó chính là phát hiện Thư giác Thì bất cứ một cái email nào Một cái hệ thống email nào Đều có trang bị cái hệ thống là Spam Detection Ví dụ như đây là một cái Lạng tên nhóm là Spam Rồi gán nhãn từ loại Với mỗi từ trong một cái câu Chúng ta sẽ biết là từ nào là động từ Danh từ, tính từ Rồi Từ nào là Bổ nghĩa Cho từ nào Vân vân Thì đó là Nhận dạng Sự gắn nhãn từ Gắn nhãn từ loại Còn nhận dạng tên riêng Thì ở đây là bài toán NER Là Name Entity Recognition Thì chúng ta cho trước một câu Và chúng ta cần phải xác định xem là Ứng với từng từ Thì nó sẽ là cái tên riêng cho Người Hay là tên riêng cho một cái tổ chức Hoặc là tên riêng cho một cái địa điểm Tên riêng cho một cái địa điểm Và đây là một cái bài toán cũng có rất nhiều những cái ứng dụng Có rất nhiều những cái ứng dụng Rồi tìm kiếm từ khóa Chắc là chúng ta thấy rằng là các cái hệ thống Search Engine hiện nay Là minh họa cho cái ứng dụng về tìm kiếm theo từ khóa Rồi tìm từ đồng nghĩa Vân vân Rồi gần đây hơn thì chúng ta sẽ có các cái ứng dụng ví dụ như là phân tích cảm xúc Thì cái này là ứng dụng trong cái mạng xã hội ví dụ như là Social Listening Social Listening Tức là gì? Chúng ta sẽ có các cái con bot có thể draw các cái dữ liệu trên mạng xã hội Và nó sẽ biết rằng là các cái nội dung mà mình đang trao đổi Rồi các cái đoạn tin nhắn, các cái comment Vân vân Thì nó có cái trạng thái là tích cực, tiêu cực hay là trung tính Đó là một cái ngữ cảnh ứng dụng của bài toán Sentiment Analysis Vậy thì Sentiment Analysis hoặc là một cái từ khác là Opinion Mining Tức là chúng ta đang Phân loại xem một cái đoạn văn hoặc là một cái cụm từ Là nó mang tính chất là tích cực, tiêu cực hay là trung tính Xác định độc thanh chiếu Thì cái bài toán này đó là chúng ta sẽ xem coi Các cái từ trong một cái câu nó sẽ được thanh chiếu đến cái từ nào Ví dụ như là Cater, Thôn, Mubarak He shouldn't run again Thì cái từ he này Nó có thể là thanh chiếu đến cái từ Cater Hoặc cũng có thể là thanh chiếu đến từ Mubarak Nhưng mà trong cái ngữ cảnh của cái câu này Thì nó sẽ không có thanh chiếu đến Cater mà nó sẽ thanh chiếu đến Mubarak Rồi, ngoài ra thì chúng ta có các cái ứng dụng khác Ví dụ như là phân tích cú pháp, Bạc sinh hoặc là dịch máy Rồi rút trích thông tin Thì trong những năm gần đây thì các cái hệ thống dịch thuật là Rồi rút trích thông tin thì trong những năm gần đây thì các cái hệ thống dịch thuật là Coi cho những cái kết quả rất là ấn tượng Và đã được thương hoại hóa bởi rất nhiều những cái công ty Rồi rút trích thông tin thì chúng ta thấy là trong các cái email bây giờ là Nó đã có thể tự động rút trích được là nội dung của một cái email Có thể rút trích được thông tin về mặt thời gian, nơi trốn Và từ đó để có thể giúp cho chúng ta đạt lịch một cách dễ dàng Rồi các cái ứng dụng khác mà Rồi các cái ứng dụng khác mà Và gần đây, có những cái ứng dụng rất là nổi tiếng Chính là ChatGPT Cái ứng dụngmat chatgpt này là Điển hình cho những cái ứng dụng sau Tức là chatGPT là một cái hệ thống mà nó tích hợp rất nhiều những cái khả năng về mặt ngôn ngữ Ví dụ, nó có khả năng question answering tức là trả lời câu hỏi Mình có thể hỏi chatGPT các cái câu hỏi Và nó sẽ đi lột tìm những cái kiến thức ở trong quá khứ Để từ đó là nó có thể trả lời cho mình Cái thứ hai đó là paraphrase, tức là viết lại một cái văn bản, mình đưa cho chat GPT một cái đoạn văn, và mình yêu cầu nó viết lại theo một cái cách viết khác, và đồng thời là nó cũng có thể thực hiện luôn các cái thao tác sửa lỗi chính tả cho mình luôn. Thì paraphrase cộng với lại cái sửa lỗi chính tả. Như vậy chúng ta thấy là chat GPT nó rất là mạnh và hiệu quả trong việc ứng dụng các cái thành tựu mới của sự liên ngục về tự nhiên. Tóm tắt nội dung, tức là chúng ta sẽ cung cấp một cái đoạn văn rất là dài hoặc là cung cấp rất nhiều thông tin, nó sẽ tự tóm tắt lại thành cái nội dung chính. Rồi hội thoại chat bot, tức là chúng ta có thể tám dẫu, tám gẫu và hỏi thăm, tức là chúng ta sẽ hỏi con bot về bất cứ thứ gì mà nó có thể trả lời trong cái phạm vi mà nó cho phép. Như vậy thì trong cái phần vừa rồi thì chúng ta đã tìm hiểu qua cái ứng dụng, cái tiềm năng ứng dụng của sự liên ngục. Vì tự nhiên, và chúng ta thấy là sự liên ngục của tự nhiên đang ngày càng trở nên phổ biến và trong cuộc sống của chúng ta, và nó đang có những cái đóng góp to lớn cho cái sự phát triển của xã hội hiện nay.",
   "language": "vi",
   "segments": [
     {
@@ -16567,7 +16567,7 @@
     {
       "start": 737.18,
       "end": 738.72,
-      "text": "Tức là chúng ta đang...",
+      "text": "Tức là chúng ta đang",
       "words": [
         {
           "word": " Tức",
@@ -16594,7 +16594,7 @@
           "probability": 0.9999555349349976
         },
         {
-          "word": " đang...",
+          "word": " đang",
           "start": 738.3,
           "end": 738.72,
           "probability": 0.6721165031194687
@@ -17079,7 +17079,7 @@
     {
       "start": 766.42,
       "end": 767.72,
-      "text": "Thì cái từ he này...",
+      "text": "Thì cái từ he này",
       "words": [
         {
           "word": " Thì",
@@ -17106,7 +17106,7 @@
           "probability": 0.9233372211456299
         },
         {
-          "word": " này...",
+          "word": " này",
           "start": 767.66,
           "end": 767.9,
           "probability": 0.5020836289040744
@@ -17627,7 +17627,7 @@
     {
       "start": 794.48,
       "end": 798.58,
-      "text": "Thì trong những năm gần đây thì các cái hệ thống dịch thuật là...",
+      "text": "Thì trong những năm gần đây thì các cái hệ thống dịch thuật là",
       "words": [
         {
           "word": " Thì",
@@ -17708,7 +17708,7 @@
           "probability": 0.9982861876487732
         },
         {
-          "word": " là...",
+          "word": " là",
           "start": 797.78,
           "end": 798.58,
           "probability": 0.7681148052215576
@@ -17718,7 +17718,7 @@
     {
       "start": 798.58,
       "end": 798.7,
-      "text": "Rồi rút trích thông tin thì trong những năm gần đây thì các cái hệ thống dịch thuật là...",
+      "text": "Rồi rút trích thông tin thì trong những năm gần đây thì các cái hệ thống dịch thuật là",
       "words": [
         {
           "word": " Rồi",
@@ -17829,7 +17829,7 @@
           "probability": 0.9996486008167267
         },
         {
-          "word": " là...",
+          "word": " là",
           "start": 798.7,
           "end": 798.7,
           "probability": 0.9979296624660492
@@ -17991,7 +17991,7 @@
     {
       "start": 806.7,
       "end": 810.68,
-      "text": "Rồi rút trích thông tin thì chúng ta thấy là trong các cái email bây giờ là...",
+      "text": "Rồi rút trích thông tin thì chúng ta thấy là trong các cái email bây giờ là",
       "words": [
         {
           "word": " Rồi",
@@ -18090,7 +18090,7 @@
           "probability": 0.9999949932098389
         },
         {
-          "word": " là...",
+          "word": " là",
           "start": 809.92,
           "end": 810.68,
           "probability": 0.10811869579083577
@@ -18391,7 +18391,7 @@
     {
       "start": 824.5600000000001,
       "end": 826.84,
-      "text": "Rồi các cái ứng dụng khác mà...",
+      "text": "Rồi các cái ứng dụng khác mà",
       "words": [
         {
           "word": " Rồi",
@@ -18430,7 +18430,7 @@
           "probability": 0.9999244213104248
         },
         {
-          "word": " mà...",
+          "word": " mà",
           "start": 826.26,
           "end": 826.84,
           "probability": 0.5045086443424225
@@ -18440,7 +18440,7 @@
     {
       "start": 827.74,
       "end": 828.68,
-      "text": "Rồi các cái ứng dụng khác mà...",
+      "text": "Rồi các cái ứng dụng khác mà",
       "words": [
         {
           "word": " Rồi",
@@ -18479,7 +18479,7 @@
           "probability": 0.9821865558624268
         },
         {
-          "word": " mà...",
+          "word": " mà",
           "start": 828.68,
           "end": 828.68,
           "probability": 0.9353055655956268
@@ -18593,7 +18593,7 @@
     {
       "start": 834.22,
       "end": 835.82,
-      "text": "Cái ứng dụngmat chatgpt này là...",
+      "text": "Cái ứng dụngmat chatgpt này là",
       "words": [
         {
           "word": " Cái",
@@ -18626,7 +18626,7 @@
           "probability": 0.9478325247764587
         },
         {
-          "word": " là...",
+          "word": " là",
           "start": 835.6,
           "end": 835.82,
           "probability": 0.19343177566770464
