@@ -1,0 +1,256 @@
+{
+  "total": 62,
+  "successful": 0,
+  "failed": 62,
+  "transcripts": [],
+  "failed_urls": [
+    {
+      "url": "https://youtu.be/GdKIVY6CsTw",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/m8uqtMEg8-E",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/MtJDVr5xHB",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/T2xJmTiRM5o",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/G4lcEPrfETo",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/aXB_C9IAyMg",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/sPoJ8VS7nLc",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/sPqwytzfxqM",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/CqnM7BT7oSU",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/jl9v7IDMTsk",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/istYhrhklqs",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/G71D3dacAds",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/DGNdZGdwihs",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/XBS1JuTrxVI",
+      "chapter": "Chương 2"
+    },
+    {
+      "url": "https://youtu.be/q3oZyk3l8EU",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/SKcHedTJIL",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/A3iFEk5jllM",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/7YLMIKqygPU",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/gmQTGRTHH2o",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/KeNRQw9j_ps",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/TNrJYPuDADM",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/rVpEwMijtvQ",
+      "chapter": "Chương 3"
+    },
+    {
+      "url": "https://youtu.be/PyC3pl_r8jw",
+      "chapter": "Chương 4"
+    },
+    {
+      "url": "https://youtu.be/KoBIBuqGb9A",
+      "chapter": "Chương 4"
+    },
+    {
+      "url": "https://youtu.be/tMKUb4k5nZw",
+      "chapter": "Chương 4"
+    },
+    {
+      "url": "https://youtu.be/MNHY9TA4fZs",
+      "chapter": "Chương 4"
+    },
+    {
+      "url": "https://youtu.be/0I8uw0ELYj",
+      "chapter": "Chương 4"
+    },
+    {
+      "url": "https://youtu.be/RVFApjx4KKI",
+      "chapter": "Chương 5"
+    },
+    {
+      "url": "https://youtu.be/Til9AdPO7JE",
+      "chapter": "Chương 5"
+    },
+    {
+      "url": "https://youtu.be/4p0L74qD7Lg",
+      "chapter": "Chương 5"
+    },
+    {
+      "url": "https://youtu.be/30kCjQ0BdUc",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/utOha-d0prc",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/O57P9YHZOE",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/UJNyIptbcNM",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/AkHEcgasvkw",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/WAiLM7OFU9A",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/UfLLBOPvgOU",
+      "chapter": "Chương 6"
+    },
+    {
+      "url": "https://youtu.be/_KvZN8-SyvQ",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/TqKBlC-zyKY",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/ptwSPTt2XnM",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/8-3xv_NElG",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/IKD0O35NOUI",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/qJj_LY1r91U",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/_Km_A2iRUds",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/_Cu7kGoRaE",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/KjPEqyGCtUs",
+      "chapter": "Chương 7"
+    },
+    {
+      "url": "https://youtu.be/0DGe4fjr1aw",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/wKMBVF_bJdw",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/4EdX3Ga9YoM",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/--JpgsDEL40",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/ROIgZ5tyDFo",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/S8__bXkLSbM",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/my3qRjVJ7VM",
+      "chapter": "Chương 8"
+    },
+    {
+      "url": "https://youtu.be/1tCmeHf1Xk0",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/5DE5HXG8FWk",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/NsWX_5oV8bY",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/UXxELgk5Vws",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/JGxo_olUl2U",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/7AZr_li6ZtA",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/jKnjyvvXzXI",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/fEGw6eEre2I",
+      "chapter": "Chương 9"
+    },
+    {
+      "url": "https://youtu.be/iMfkIHkU6NM",
+      "chapter": "Chương 9"
+    }
+  ]
+}

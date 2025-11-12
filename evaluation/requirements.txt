@@ -1,0 +1,11 @@
+# HTTP client for calling APIs
+httpx
+
+# Evaluation metrics
+rouge-score
+nltk
+
+# Utilities
+python-dotenv
+pandas
+

@@ -1,0 +1,2 @@
+"""Quiz generation core module."""
+

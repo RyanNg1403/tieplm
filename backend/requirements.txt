@@ -1,0 +1,24 @@
+# FastAPI and server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database
+sqlalchemy
+psycopg2-binary
+alembic
+
+# Vector DB
+qdrant-client
+
+# OpenAI and embeddings
+openai
+
+# Environment and config
+python-dotenv
+pydantic
+pydantic-settings
+
+# Utilities
+httpx
+

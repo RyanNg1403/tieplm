@@ -1,0 +1,46 @@
+# =============================================================================
+# Tieplm AI Assistant - Consolidated Requirements
+# =============================================================================
+
+# YouTube download
+yt-dlp
+
+# Audio/Video processing
+ffmpeg-python
+
+# Transcription (Open Source Whisper)
+openai-whisper
+torch
+torchaudio
+
+# FastAPI and server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database
+sqlalchemy
+psycopg2-binary
+alembic
+
+# Vector DB
+qdrant-client
+
+# OpenAI (for embeddings and LLM)
+openai
+
+# Evaluation metrics
+rouge-score
+nltk
+
+# Environment and config
+python-dotenv
+pydantic
+pydantic-settings
+pyyaml
+
+# Utilities
+httpx
+tqdm
+pandas
+

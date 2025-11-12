@@ -1,0 +1,2 @@
+"""Video summarization core module."""
+
