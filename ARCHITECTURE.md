@@ -9,8 +9,7 @@ A video course AI assistant that helps students interact with course content thr
 4. **Quiz Generation**: Generate Yes/No and MCQ quizzes from video content
 
 **Source Material**: YouTube course videos  
-**Architecture**: Modular Monolith (Python backend, React frontend)  
-**Team Size**: 4 developers working in parallel
+**Architecture**: Modular Monolith (Python backend, React frontend)
 
 ---
 
@@ -76,175 +75,67 @@ A video course AI assistant that helps students interact with course content thr
 
 ---
 
-## Detailed Folder Structure
+## Project Structure (Module & Task Level)
 
 ```
 tieplm/
+│
 ├── frontend/                    # React/TypeScript Web UI
 │   ├── src/
 │   │   ├── components/         # UI components
-│   │   │   ├── Chat/          # Chat interface (ChatGPT-like)
-│   │   │   ├── TaskSwitcher/  # Toggle between 4 tasks
+│   │   │   ├── Chat/          # ChatGPT-like interface
+│   │   │   ├── TaskSwitcher/  # Task switching UI
 │   │   │   ├── VideoPlayer/   # Video with timestamp navigation
 │   │   │   └── shared/        # Reusable components
-│   │   ├── pages/             # Main pages
-│   │   ├── services/          # API client services
-│   │   ├── hooks/             # React hooks
-│   │   ├── types/             # TypeScript types
-│   │   └── App.tsx
-│   ├── package.json
-│   └── tsconfig.json
+│   │   ├── stores/            # Zustand state management
+│   │   ├── services/          # API client (axios + SSE)
+│   │   ├── hooks/             # Custom React hooks
+│   │   └── types/             # TypeScript types
+│   └── ...
 │
 ├── backend/                     # Python Modular Monolith
 │   ├── app/
-│   │   ├── api/                # API Routes (one file per task)
-│   │   │   ├── __init__.py
-│   │   │   ├── qa.py          # Q&A endpoints
-│   │   │   ├── text_summary.py # Text summarization endpoints
-│   │   │   ├── video_summary.py # Video summarization endpoints
-│   │   │   ├── quiz.py        # Quiz generation endpoints
+│   │   ├── api/                # API endpoints
+│   │   │   ├── sessions.py    # Universal session management
+│   │   │   ├── text_summary.py # Text summarization
+│   │   │   ├── qa.py          # Q&A
+│   │   │   ├── video_summary.py # Video summarization
+│   │   │   ├── quiz.py        # Quiz generation
 │   │   │   └── health.py      # Health check
 │   │   │
-│   │   ├── core/               # Business Logic (module per task)
-│   │   │   ├── qa/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── service.py     # Q&A orchestration
-│   │   │   │   └── prompts.py    # Task-specific prompts
-│   │   │   ├── text_summary/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── service.py
-│   │   │   │   └── prompts.py
-│   │   │   ├── video_summary/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── service.py
-│   │   │   │   └── prompts.py
-│   │   │   └── quiz/
-│   │   │       ├── __init__.py
-│   │   │       ├── service.py
-│   │   │       └── prompts.py
+│   │   ├── core/               # Business logic (one module per task)
+│   │   │   ├── text_summary/  # Text summarization
+│   │   │   ├── qa/            # Q&A
+│   │   │   ├── video_summary/ # Video summarization
+│   │   │   └── quiz/          # Quiz generation
 │   │   │
-│   │   ├── shared/             # Shared Components ⭐
-│   │   │   ├── rag/           # Shared RAG Library
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── retriever.py   # Vector search logic
-│   │   │   │   ├── reranker.py    # Optional reranking
-│   │   │   │   └── pipeline.py    # RAG orchestration
-│   │   │   ├── llm/           # LLM Clients
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── client.py      # LLM API wrapper
-│   │   │   │   └── vlm.py         # Vision LLM for video frames
-│   │   │   ├── embeddings/    # Embedding utilities
-│   │   │   │   ├── __init__.py
-│   │   │   │   └── embedder.py
-│   │   │   ├── database/      # DB Access Layer
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── postgres.py    # PostgreSQL client
-│   │   │   │   ├── vector_db.py   # Vector DB client
-│   │   │   │   └── models.py      # SQLAlchemy models
-│   │   │   └── config/        # Configuration Management
-│   │   │       ├── __init__.py
-│   │   │       ├── settings.py    # Static configs (Pydantic)
-│   │   │       └── dynamic.py     # DB-backed dynamic configs
-│   │   │
-│   │   ├── models/             # Pydantic schemas
-│   │   │   ├── __init__.py
-│   │   │   ├── requests.py    # API request models
-│   │   │   ├── responses.py   # API response models
-│   │   │   └── entities.py    # Domain entities
-│   │   │
-│   │   ├── utils/              # Utilities
-│   │   │   ├── __init__.py
-│   │   │   ├── youtube.py     # YouTube video helpers
-│   │   │   └── timestamps.py  # Timestamp formatting
-│   │   │
-│   │   └── main.py             # FastAPI app entry point
-│   │
-│   ├── requirements.txt
-│   └── README.md
+│   │   └── shared/             # Shared infrastructure ⭐
+│   │       ├── rag/           # RAG library (retriever, reranker)
+│   │       ├── llm/           # LLM clients (OpenAI, VLM)
+│   │       ├── embeddings/    # Embedding & contextual chunking
+│   │       ├── database/      # DB clients (PostgreSQL, Qdrant)
+│   │       └── config/        # Configuration management
+│   ├── alembic/                # Database migrations
+│   └── ...
 │
-├── ingestion/                   # Standalone Ingestion Pipeline
-│   ├── pipeline/
-│   │   ├── __init__.py
-│   │   ├── download.py        # Download YouTube videos/audio
-│   │   ├── transcribe.py      # Whisper/Deepgram transcription
-│   │   ├── keyframes.py       # Extract keyframes with FFmpeg
-│   │   ├── embeddings.py      # Generate embeddings
-│   │   └── storage.py         # Store in vector + Postgres DB
-│   ├── config/
-│   │   └── courses.yaml       # Course structure: chapters, URLs
-│   ├── main.py                # CLI entry point
-│   ├── requirements.txt
-│   └── README.md
+├── ingestion/                   # Standalone ingestion pipeline
+│   ├── pipeline/               # Download, transcribe, embed scripts
+│   ├── utils/                  # Video mapping utilities
+│   ├── videos/                 # Downloaded videos (not in git)
+│   ├── transcripts/            # Generated transcripts
+│   └── ...
 │
-├── evaluation/                  # Evaluation Module
-│   ├── datasets/               # Test datasets (not in git)
-│   │   ├── qa_eval.json
-│   │   ├── summary_eval.json
-│   │   ├── video_eval.json
-│   │   └── quiz_eval.json
-│   ├── scripts/
-│   │   ├── run_qa_eval.py
-│   │   ├── run_summary_eval.py
-│   │   ├── run_video_eval.py
-│   │   └── run_quiz_eval.py
-│   ├── metrics/                # Evaluation metrics
-│   │   ├── __init__.py
-│   │   └── evaluator.py
-│   ├── requirements.txt
-│   └── README.md
+├── evaluation/                  # Evaluation module
+│   ├── datasets/               # Ground truth data (not in git)
+│   ├── scripts/                # Evaluation runners
+│   ├── metrics/                # Metric computation
+│   └── ...
 │
-├── docker-compose.yml           # Postgres + Vector DB
+├── scripts/                     # Utility scripts (DB verification, etc.)
+├── docker-compose.yml           # PostgreSQL + Qdrant
 ├── .env.example                 # Environment variables template
-├── .gitignore
 └── README.md                    # Project overview
 ```
-
----
-
-## Module Ownership (4 Team Members)
-
-### 👤 **Person 1: Frontend + Integration**
-**Responsibility**: User interface and API integration
-- `frontend/` - Entire React application
-- Chat interface (ChatGPT-like)
-- Task switcher component (toggle between 4 tasks)
-- Video player with timestamp navigation
-- API integration layer
-
-**Dependencies**: Needs API contracts from backend team
-
----
-
-### 👤 **Person 2: Q&A + Text Summarization**
-**Responsibility**: First two AI tasks
-- `backend/app/api/qa.py` + `backend/app/api/text_summary.py`
-- `backend/app/core/qa/` + `backend/app/core/text_summary/`
-- Task-specific prompts and orchestration
-- Both modules use shared RAG library
-
-**Dependencies**: Shared RAG library from Person 4
-
----
-
-### 👤 **Person 3: Video Summarization + Quiz Generation**
-**Responsibility**: Second two AI tasks
-- `backend/app/api/video_summary.py` + `backend/app/api/quiz.py`
-- `backend/app/core/video_summary/` + `backend/app/core/quiz/`
-- VLM integration for keyframe analysis
-- Task-specific prompts and orchestration
-
-**Dependencies**: Shared RAG library and VLM client from Person 4
-
----
-
-### 👤 **Person 4: Ingestion Pipeline + Shared Infrastructure**
-**Responsibility**: Data pipeline and shared components
-- `ingestion/` - Entire ingestion pipeline
-- `backend/app/shared/` - RAG library, LLM clients, DB layer, config
-- Docker setup and database schemas
-- Core infrastructure that others depend on
-
-**Dependencies**: None (foundational work)
 
 ---
 
@@ -287,124 +178,19 @@ tieplm/
 
 ### 3. Database Layer (`backend/app/shared/database/`)
 
-**PostgreSQL Schema** (✅ Implemented with Alembic):
+**PostgreSQL Schema**:
 - `videos`: Video metadata (id, chapter, title, url, duration, transcript_path)
 - `chunks`: Transcript chunks (id, video_id, start_time, end_time, text, qdrant_id)
 - `chat_sessions`: Chat sessions (id, user_id, task_type, title, created_at, updated_at)
 - `chat_messages`: Chat messages with sources (id, session_id, role, content, sources, created_at)
-- `quiz_questions`: Generated quiz questions and answers (skeleton)
+- `quiz_questions`: Generated quiz questions and answers
 
-**Qdrant Collection** (✅ Implemented):
+**Qdrant Collection**:
 - Collection: `cs431_course_transcripts`
 - Vector dimension: 1536 (text-embedding-3-small)
 - Payload: chapter, video_title, video_url, full_title, start_time, end_time, text
 - Chunking strategy: 60s time windows with 10s overlap
 - Context enrichment: LLM-generated contextual prefix per chunk
-
----
-
-## Implementation Status
-
-### ✅ Fully Implemented Components
-
-**Ingestion Pipeline** (`ingestion/pipeline/`):
-- `download.py`: Download videos/audio from YouTube using yt-dlp (audio-only with fallback)
-- `transcribe_videos.py`: Transcribe with local Whisper large-v3 model
-- `embed_videos.py`: CLI script for embedding pipeline with:
-  - Time-window chunking (60s + 10s overlap)
-  - LLM-driven contextual enrichment (gpt-5-mini with minimal reasoning effort)
-  - Batch embedding with OpenAI text-embedding-3-small
-  - Storage in both Qdrant and PostgreSQL
-  - `--reset` flag for clearing existing data
-  - UUID-based Qdrant point IDs for compatibility
-- `tmp_embed_new_transcripts.py`: Temporary script for embedding newly added transcripts
-
-**Database Clients** (`backend/app/shared/database/`):
-- `models.py`: SQLAlchemy models (Video, Chunk, ChatSession, ChatMessage, QuizQuestion)
-- `postgres.py`: Full PostgreSQL client with session management
-- `vector_db.py`: Full Qdrant client with CRUD operations and chapter filtering
-
-**Embedding System** (`backend/app/shared/embeddings/`):
-- `embedder.py`: OpenAIEmbedder + ContextualChunker classes
-- Implements Anthropic's Contextual Retrieval approach with:
-  - Vietnamese-optimized LLM prompts with examples
-  - Retry logic for token limit overflow (300→400→500 tokens)
-  - Hardcoded `reasoning_effort="minimal"` for gpt-5-mini
-  - Unicode normalization (NFC) for cross-platform filename compatibility
-
-**RAG Pipeline** (`backend/app/shared/rag/`):
-- `retriever.py`: RAGRetriever with hybrid search (Vector + BM25 + RRF)
-  - Vector search via Qdrant
-  - BM25 lexical search via rank-bm25
-  - Reciprocal Rank Fusion for combining results
-  - Chapter filtering support
-- `reranker.py`: LocalReranker with cross-encoder model
-  - Uses `cross-encoder/ms-marco-MiniLM-L-6-v2`
-  - Reranks top-K results for better relevance
-
-**LLM Client** (`backend/app/shared/llm/`):
-- `client.py`: OpenAI LLM client with SSE streaming
-  - Support for `gpt-5-mini` with reasoning effort
-  - Synchronous and asynchronous generation
-  - Server-Sent Events (SSE) streaming for real-time responses
-  - Automatic parameter handling (temperature, max_completion_tokens)
-
-**Backend API Layer** (`backend/app/api/`):
-- `sessions.py`: Universal session management (all tasks)
-  - `GET /api/sessions` - List all sessions with optional task_type filter
-  - `GET /api/sessions/{id}/messages` - Get session messages
-  - `DELETE /api/sessions/{id}` - Delete session
-- `text_summary.py`: Text summarization endpoints (✅ Complete)
-  - `POST /api/text-summary/summarize` - SSE streaming summarization
-  - `POST /api/text-summary/sessions/{id}/followup` - Followup questions
-- `qa.py`, `video_summary.py`, `quiz.py`: Task endpoints (skeletons)
-- `health.py`: Health check endpoint
-
-**Text Summarization Module** (`backend/app/core/text_summary/`): ✅ Complete
-- `service.py`: Full RAG pipeline orchestration
-  - Hybrid retrieval (Vector + BM25 + RRF)
-  - Cross-encoder reranking
-  - Session management (create, retrieve, update)
-  - Streaming LLM responses with inline citations
-  - Chapter filtering support
-- `prompts.py`: Task-specific prompts for hierarchical summaries
-
-**Frontend** (`frontend/`): ✅ Text Summarization Complete
-- React 18 + TypeScript with Vite bundler
-- Zustand state management
-- TanStack React Query for API calls
-- Chakra UI v2 for styling
-- **Components**:
-  - `ChatContainer.tsx`: Main orchestration
-  - `Sidebar.tsx`: Session history (Today/Yesterday/Older grouping)
-  - `MessageList.tsx`: Message display with streaming
-  - `Message.tsx`: Individual messages with clickable citations
-  - `ChatInput.tsx`: Input with task switcher and chapter filter
-- **Features**:
-  - Real-time SSE streaming responses
-  - Session history management
-  - Inline citations [1], [2], etc. (open video at timestamp)
-  - Chapter filtering (8 chapters: Chương 2-9)
-  - Followup questions in same session
-
-**Infrastructure**:
-- Docker Compose setup (PostgreSQL + Qdrant)
-- Alembic migrations for PostgreSQL schema management
-- Single `.env` configuration file at project root
-- Video mapping utilities (`ingestion/utils/video_mapper.py`) with:
-  - Unicode NFC normalization for macOS filesystem compatibility
-  - Flexible separator matching (`:`, `：`, `-`) for filename variations
-- Database verification scripts (`scripts/verify_databases.py`, `scripts/check_postgres_data.py`)
-
-### 🚧 Skeleton Components (Not Yet Implemented)
-
-- Q&A module (`backend/app/core/qa/`)
-- Video Summarization module (`backend/app/core/video_summary/`)
-- Quiz Generation module (`backend/app/core/quiz/`)
-- Vision LLM client (`backend/app/shared/llm/vlm.py`)
-- Frontend: Q&A, Video Summary, Quiz interfaces
-- Evaluation module (entire `evaluation/` directory)
-- Keyframe extraction (`ingestion/pipeline/keyframes.py`)
 
 ---
 
@@ -478,47 +264,7 @@ User: Select video → "Generate MCQ Quiz"
 
 ---
 
-## Development Workflow
-
-### Phase 1: Setup (Week 1)
-1. **All**: Review architecture, assign modules
-2. **Person 4**: 
-   - Initialize project structure
-   - Set up Docker Compose (Postgres + Vector DB)
-   - Define database schemas
-3. **Person 1**: Initialize React app skeleton
-4. **All**: Define API contracts (request/response models)
-
----
-
-### Phase 2: Foundation (Week 2-3)
-1. **Person 4**: 
-   - Build ingestion pipeline
-   - Implement shared RAG library
-   - Set up LLM clients
-   - Populate databases with course data
-2. **Persons 2 & 3**: Can start working with mocked RAG responses
-3. **Person 1**: Build UI components with mocked API responses
-
----
-
-### Phase 3: Core Development (Week 4-6)
-1. **Person 2**: Implement Q&A and Text Summarization modules
-2. **Person 3**: Implement Video Summarization and Quiz Generation modules
-3. **Person 1**: Complete frontend implementation
-4. **Person 4**: Support others, optimize shared components
-
----
-
-### Phase 4: Integration & Testing (Week 7-8)
-1. **All**: Integration testing
-2. **All**: Bug fixes and refinements
-3. **All**: Set up evaluation module
-4. **All**: Run evaluations and optimize
-
----
-
-## Docker Compose Services (✅ Implemented)
+## Docker Compose Services
 
 ```yaml
 services:
@@ -561,29 +307,21 @@ services:
 
 ### End-to-End Task Evaluation
 
-Each task has separate evaluation dataset and script:
+Each task will have separate evaluation dataset and script in `evaluation/` module:
 
-1. **Q&A Evaluation** (`evaluation/scripts/run_qa_eval.py`)
-   - Metrics: Answer accuracy, source relevance, timestamp precision
-   - Dataset: Pre-defined questions with ground truth answers
+**Planned Metrics by Task:**
+1. **Q&A**: Answer accuracy, source relevance, timestamp precision
+2. **Text Summarization**: ROUGE scores, factual consistency, conciseness
+3. **Video Summarization**: Coverage, coherence, key point extraction
+4. **Quiz Generation**: Question quality, difficulty distribution, answer correctness
 
-2. **Text Summarization Evaluation** (`evaluation/scripts/run_summary_eval.py`)
-   - Metrics: ROUGE scores, factual consistency, conciseness
-   - Dataset: Topics with human-written reference summaries
+**Evaluation Workflow** (to be implemented):
+1. Prepare ground truth datasets in `evaluation/datasets/`
+2. Run evaluation scripts that call main system APIs
+3. Compute metrics using `evaluation/metrics/`
+4. Analyze results and iterate on prompts/RAG strategies
 
-3. **Video Summarization Evaluation** (`evaluation/scripts/run_video_eval.py`)
-   - Metrics: Coverage, coherence, key point extraction
-   - Dataset: Videos with human-written summaries
-
-4. **Quiz Evaluation** (`evaluation/scripts/run_quiz_eval.py`)
-   - Metrics: Question quality, difficulty distribution, answer correctness
-   - Dataset: Manual review of generated quizzes
-
-**Workflow**: 
-1. Manually create evaluation datasets
-2. Run evaluation scripts that call main system
-3. Collect metrics and analyze results
-4. Iterate on prompts and RAG strategies
+**Note**: Evaluation module structure and file names to be designed during implementation.
 
 ---
 
@@ -672,7 +410,7 @@ def get_prompt(task: str, prompt_type: str) -> str:
 ## Environment Variables
 
 ```bash
-# .env.example (✅ Implemented)
+# .env.example
 
 # OpenAI API Configuration
 OPENAI_API_KEY=your_openai_api_key_here
@@ -708,51 +446,3 @@ LLM_TEMPERATURE=1.0  # gpt-5-mini only supports default temperature=1.0
 LOG_DIR=logs
 LOG_LEVEL=INFO
 ```
-
----
-
-## Next Steps for Development
-
-### ✅ Completed Foundation
-1. ✅ Project structure created
-2. ✅ Docker environment set up (PostgreSQL + Qdrant with local persistence)
-3. ✅ Ingestion pipeline fully implemented and battle-tested
-4. ✅ Database clients and models implemented with Alembic migrations
-5. ✅ **62 course videos** downloaded, transcribed, and embedded (1059 chunks total)
-
-### 🔄 Next Immediate Tasks
-
-**Priority 1: Shared RAG Library** (`backend/app/shared/rag/`)
-- Implement `retriever.py`: Query embedding + vector search + metadata retrieval
-- Implement `pipeline.py`: End-to-end RAG orchestration
-- Test with existing Qdrant embeddings
-
-**Priority 2: LLM Client** (`backend/app/shared/llm/`)
-- Implement `client.py`: OpenAI API wrapper for text generation
-- Implement `vlm.py`: Vision LLM for keyframe analysis
-
-**Priority 3: Core Task Implementation**
-- Person 2: Q&A + Text Summarization services
-- Person 3: Video Summarization + Quiz Generation services
-
-**Priority 4: API Layer**
-- Connect core services to FastAPI endpoints
-- Define request/response schemas
-
-**Priority 5: Frontend**
-- Person 1: React UI with ChatGPT-like interface
-
-### Current Data Status
-- **62 videos** from CS431 course (Chapters 2-10)
-- All transcribed with Whisper large-v3 (local model)
-- All embedded in Qdrant with contextual chunking (**1059 total chunks**)
-- Metadata stored in PostgreSQL (videos, chunks with timestamps and Qdrant IDs)
-- Ready for RAG retrieval tasks
-
----
-
-**Document Version**: 2.1  
-**Last Updated**: November 13, 2025  
-**Team Size**: 4 developers  
-**Project Type**: University AI Assistant Project  
-**Phase**: Foundation Complete - 62 Videos Embedded - Ready for RAG & Task Implementation

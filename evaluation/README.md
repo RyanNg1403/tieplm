@@ -6,24 +6,20 @@ Evaluate performance of 4 AI tasks: Q&A, Text Summary, Video Summary, Quiz Gener
 
 ```
 evaluation/
-├── datasets/         # Test datasets (not in git)
-│   ├── qa_eval.json
-│   ├── summary_eval.json
-│   ├── video_eval.json
-│   └── quiz_eval.json
-├── scripts/          # Evaluation scripts
-│   ├── run_qa_eval.py
-│   ├── run_summary_eval.py
-│   ├── run_video_eval.py
-│   └── run_quiz_eval.py
-└── metrics/          # Evaluation metrics
-    └── evaluator.py
+├── datasets/         # Test datasets for each task (JSON/CSV format, not in git)
+├── scripts/          # Evaluation runner scripts (one per task)
+└── metrics/          # Metric computation and evaluation logic
 ```
+
+**Expected Folders:**
+- **`datasets/`**: Ground truth evaluation data for each AI task (Q&A, Text Summary, Video Summary, Quiz)
+- **`scripts/`**: Python scripts to run evaluations and generate reports
+- **`metrics/`**: Metric calculators (ROUGE, accuracy, relevance scoring, etc.)
 
 ## ✅ Implemented
 
-- ✅ Project structure
-- ✅ Script skeletons
+- ✅ Folder structure (`datasets/`, `scripts/`, `metrics/`)
+- ✅ Script skeletons (placeholders for each task)
 - ✅ Evaluator class skeleton
 
 ## ❌ TODO
@@ -37,14 +33,19 @@ evaluation/
 - ❌ Results aggregation
 - ❌ Visualization/reporting
 
-## 🚀 Run (After Implementation)
+## 🚀 Usage (After Implementation)
 
 ```bash
 cd evaluation
-python scripts/run_qa_eval.py
-python scripts/run_summary_eval.py
-python scripts/run_video_eval.py
-python scripts/run_quiz_eval.py
+
+# Run evaluation for specific task
+python scripts/<task_eval_script>.py
+
+# Example workflow:
+# 1. Prepare ground truth datasets in datasets/
+# 2. Run evaluation script (calls main system APIs)
+# 3. Compute metrics using metrics/
+# 4. Generate reports and visualizations
 ```
 
 ## 📊 Planned Metrics

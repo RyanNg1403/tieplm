@@ -22,8 +22,6 @@ Quick reference for all project modules and their status.
 
 **Current Data**: 62 videos, 1059 chunks embedded
 
-**Owner**: Person 4
-
 ---
 
 ### 2. **Backend** (`backend/`)
@@ -45,7 +43,6 @@ Quick reference for all project modules and their status.
 - ✅ Text summarization module (full implementation with session management)
 - ❌ Q&A, Video Summary, Quiz modules (skeletons only)
 
-**Owners**: Person 2 (Q&A, Text Summary), Person 3 (Video Summary, Quiz), Person 4 (Shared)
 
 ---
 
@@ -65,8 +62,6 @@ Quick reference for all project modules and their status.
 - ✅ Real-time streaming responses
 - ❌ Q&A, Video Summary, Quiz interfaces (skeletons only)
 - ❌ Video player component
-
-**Owner**: Person 1
 
 ---
 

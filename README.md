@@ -6,13 +6,11 @@ NotebookLM-like AI assistant for CS431 Deep Learning video course content.
 
 This project provides an intelligent assistant for CS431 video course content with four main features:
 - **Text Summarization**: Generate hierarchical summaries from video transcripts with inline citations
-- **Q&A**: Answer questions based on course content (planned)
-- **Video Summarization**: Timestamp-based video summaries (planned)
-- **Quiz Generation**: Auto-generate quizzes from course material (planned)
+- **Q&A**: Answer questions based on course content
+- **Video Summarization**: Timestamp-based video summaries
+- **Quiz Generation**: Auto-generate quizzes from course material
 
 The system uses **Retrieval-Augmented Generation (RAG)** with hybrid search (Vector + BM25), cross-encoder reranking, and contextual retrieval to provide accurate, source-cited responses.
-
-**Current Status**: ✅ Text Summarization fully implemented with ChatGPT-like web interface
 
 ## Architecture
 
@@ -146,60 +144,53 @@ npm start
 
 ## Configuration
 
-All settings are configured via single `.env` file in project root:
+All settings are configured via single `.env` file in project root. Copy `.env.example` to `.env` and configure:
+- `OPENAI_API_KEY` (required)
+- Database credentials (PostgreSQL, Qdrant)
+- Model settings, RAG parameters, chunking settings
 
-**Core Settings:**
-- `OPENAI_API_KEY` - Required for embeddings and LLM
-- `MODEL_NAME` - LLM for text generation (default: `gpt-5-mini`)
-- `LLM_MAX_COMPLETION_TOKENS` - Max tokens for response (default: `3000`)
-- `EMBEDDING_MODEL_NAME` - Embedding model (default: `text-embedding-3-small`)
-- `EMBEDDING_DIMENSION` - Vector dimension (default: `1536`)
+**See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for complete list of environment variables and configuration options.**
 
-**RAG & Retrieval:**
-- `RAG_TOP_K_VECTOR` - Initial vector search results (default: `150`)
-- `RAG_TOP_K_BM25` - Initial BM25 search results (default: `150`)
-- `ENABLE_RERANKING` - Use cross-encoder reranking (default: `true`)
-- `RERANKER_MODEL` - Cross-encoder model (default: `cross-encoder/ms-marco-MiniLM-L-6-v2`)
-- `FINAL_CONTEXT_CHUNKS` - Chunks in LLM prompt (default: `10`)
-
-**Chunking Settings (Ingestion):**
-- `TIME_WINDOW` - Chunk duration in seconds (default: `60`)
-- `CHUNK_OVERLAP` - Overlap between chunks (default: `10`)
-- `CONTEXT_TOKEN_LIMIT` - Max tokens for contextual prefix (default: `300`)
-
-**Database Settings:**
-- `POSTGRES_*` - PostgreSQL configuration
-- `QDRANT_*` - Qdrant vector database configuration
-
-See `.env.example` for full configuration options.
-
-## Module Overview
+## Modules
 
 ### Ingestion Pipeline
-Download, transcribe, and embed video content with contextual retrieval.
-- **Download**: YouTube videos via `yt-dlp`
-- **Transcription**: Open-source Whisper (large-v3)
-- **Embedding**: Contextual chunking + OpenAI embeddings
+Processes video content into searchable embeddings with contextual retrieval.
+- **Download**: YouTube videos via `yt-dlp` (audio-only with fallback)
+- **Transcription**: Local Whisper large-v3 model with word-level timestamps
+- **Embedding**: Time-window chunking (60s + 10s overlap) with LLM-driven contextual enrichment
+- **Storage**: Dual storage in PostgreSQL (metadata) and Qdrant (vectors)
 
 ### Backend (Modular Monolith)
-- **API Layer**: FastAPI endpoints with SSE streaming
-  - Universal APIs: `/api/sessions/*` (session management for all tasks)
-  - Task-specific APIs: `/api/text-summary/*`, `/api/qa/*`, `/api/video-summary/*`, `/api/quiz/*`
-- **Core Modules**: Text summary (complete), Q&A, video summary, quiz (skeletons)
-- **Shared Infrastructure**: RAG retriever (Vector + BM25 + RRF), local cross-encoder reranker, LLM client, database clients
-- **Status**: ✅ Text summarization fully implemented and tested
+FastAPI-based backend with modular architecture for four AI tasks.
+- **API Layer**: RESTful endpoints with Server-Sent Events (SSE) for streaming
+  - Universal session management: `/api/sessions/*`
+  - Task-specific endpoints: `/api/text-summary/*`, `/api/qa/*`, `/api/video-summary/*`, `/api/quiz/*`
+- **Core Modules**: Business logic for text summarization, Q&A, video summarization, and quiz generation
+- **Shared Infrastructure**: 
+  - RAG retriever with hybrid search (Vector + BM25 + Reciprocal Rank Fusion)
+  - Local cross-encoder reranker (`cross-encoder/ms-marco-MiniLM-L-6-v2`)
+  - LLM client with SSE streaming (`gpt-5-mini`)
+  - Database clients for PostgreSQL and Qdrant
+  - Embedding system with contextual chunking
 
 ### Frontend
-React TypeScript UI with ChatGPT-like interface:
-- **Text Summary**: ✅ Complete with streaming, citations, chapter filtering (8 chapters)
-- **Session History**: ✅ ChatGPT-style sidebar (Today/Yesterday/Older grouping)
-- **Chat Interface**: ✅ Real-time SSE streaming with followup questions
-- **State Management**: ✅ Zustand store
-- **Styling**: ✅ Chakra UI v2 + Vite (zero vulnerabilities)
-- **Other Tasks**: Skeleton components (Q&A, Video Summary, Quiz)
+React TypeScript web application with ChatGPT-like interface.
+- **UI Framework**: React 18 + TypeScript with Vite bundler
+- **Styling**: Chakra UI v2 for component library
+- **State Management**: Zustand for application state
+- **API Client**: TanStack React Query with SSE support
+- **Key Features**:
+  - Real-time streaming responses with inline citations
+  - Session history with chronological grouping
+  - Task switcher for different AI capabilities
+  - Chapter filtering for targeted queries
+  - Clickable citations linking to video timestamps
 
 ### Evaluation
-Metrics and test scripts for all four tasks (not yet implemented).
+Framework for measuring performance across all four AI tasks.
+- **Datasets**: Ground truth data for each task
+- **Metrics**: Task-specific evaluation metrics (ROUGE, accuracy, relevance)
+- **Scripts**: Automated evaluation runners
 
 ## Tech Stack
 
@@ -212,33 +203,6 @@ Metrics and test scripts for all four tasks (not yet implemented).
 - **Transcription**: OpenAI Whisper large-v3 (local)
 - **Video Processing**: yt-dlp, FFmpeg
 
-## Current Status
-
-### ✅ Phase 1: Ingestion Pipeline - COMPLETE
-- 62 videos downloaded and transcribed
-- 1059 chunks embedded with contextual enrichment
-- Qdrant + PostgreSQL databases populated
-
-### ✅ Phase 2: Backend - COMPLETE (Text Summarization)
-- RAG pipeline (Vector + BM25 + RRF)
-- Local cross-encoder reranking
-- SSE streaming with gpt-5-mini
-- Session management APIs
-
-### ✅ Phase 3: Frontend - COMPLETE (Text Summarization)
-- ChatGPT-style interface with sidebar
-- Real-time streaming responses
-- Session history management
-- Chapter filtering (8 chapters: Chương 2-9)
-- Clickable citations with timestamps
-
-### ⏳ Phase 4: Other Tasks - TODO
-- Q&A interface
-- Video Summary interface
-- Quiz Generation interface
-- Evaluation metrics
-
----
 
 ## Documentation
 
