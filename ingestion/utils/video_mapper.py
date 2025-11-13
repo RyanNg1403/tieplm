@@ -85,7 +85,7 @@ def find_video_by_transcript_filename(
 
 
 def normalize_title(title: str) -> str:
-    """Normalize title for comparison by replacing colons and removing extra spaces.
+    """Normalize title for comparison by replacing separators and removing extra spaces.
     
     Args:
         title: Video title string.
@@ -95,8 +95,9 @@ def normalize_title(title: str) -> str:
     """
     # CRITICAL: Normalize Unicode to NFC form first (macOS uses NFD for filenames)
     normalized = unicodedata.normalize('NFC', title)
-    # Replace both full-width and regular colons with a standard marker
-    normalized = normalized.replace("：", ":").replace(":", ":")
+    # Replace both full-width colon, regular colon, and hyphen with space
+    # This handles: "Part 1： Title", "Part 1: Title", "Part 1-Title"
+    normalized = normalized.replace("：", " ").replace(":", " ").replace("-", " ")
     # Replace underscores with spaces for comparison
     normalized = normalized.replace("_", " ")
     # Remove extra spaces

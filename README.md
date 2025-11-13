@@ -57,7 +57,26 @@ docker-compose up -d
 python scripts/verify_databases.py
 ```
 
-### 2. Run Ingestion Pipeline
+### 2. Data Setup (Choose One)
+
+#### Option A: Restore from Exports (Recommended for Team)
+
+Download the pre-processed data exports (shared separately) and place them in the project root:
+- `tieplm_db_dump.sql` - PostgreSQL database dump
+- `qdrant_snapshot.snapshot` - Qdrant vector database snapshot
+
+Then restore:
+
+```bash
+# 1. Restore PostgreSQL database
+docker exec -i tieplm-postgres psql -U tieplm -d tieplm < tieplm_db_dump.sql
+
+# 2. Upload Qdrant snapshot
+curl -X POST 'http://localhost:6333/collections/cs431_course_transcripts/snapshots/upload' \
+  -F 'snapshot=@qdrant_snapshot.snapshot'
+```
+
+#### Option B: Run Full Ingestion Pipeline
 
 ```bash
 cd ingestion

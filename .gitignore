@@ -68,3 +68,11 @@ htmlcov/
 .pytest_cache/
 ingestion/videos/
 CLAUDE.md
+
+# Databases
+postgres_data/
+qdrant_data/
+
+# Exported data (share via cloud storage)
+*.snapshot
+tieplm_db_dump.sql*
