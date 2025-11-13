@@ -11,22 +11,24 @@ class Video(Base):
     __tablename__ = "videos"
     
     id = Column(String, primary_key=True)
+    chapter = Column(String, nullable=False)
+    title = Column(String, nullable=False)
     url = Column(String, nullable=False)
-    title = Column(String)
-    chapter = Column(String)
     duration = Column(Integer)  # in seconds
+    transcript_path = Column(String)  # path to transcript JSON file
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class Transcript(Base):
-    """Video transcripts."""
-    __tablename__ = "transcripts"
+class Chunk(Base):
+    """Embedded chunks with timestamps."""
+    __tablename__ = "chunks"
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    video_id = Column(String, ForeignKey("videos.id"))
-    text = Column(Text, nullable=False)
-    start_time = Column(Integer)  # in seconds
-    end_time = Column(Integer)
+    video_id = Column(String, ForeignKey("videos.id"), nullable=False)
+    start_time = Column(Integer, nullable=False)  # in seconds
+    end_time = Column(Integer, nullable=False)  # in seconds
+    text = Column(Text, nullable=False)  # original chunk text
+    qdrant_id = Column(String, nullable=False)  # ID in Qdrant collection
     created_at = Column(DateTime, default=datetime.utcnow)
 
 

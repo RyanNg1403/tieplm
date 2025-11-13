@@ -5,15 +5,15 @@ services:
     image: postgres:15
     container_name: tieplm-postgres
     environment:
-      POSTGRES_DB: tieplm
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-tieplm}
+      POSTGRES_USER: ${POSTGRES_USER:-tieplm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tieplm}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d tieplm"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tieplm} -d ${POSTGRES_DB:-tieplm}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,11 +25,7 @@ services:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - qdrant_data:/qdrant/storage
+      - ./qdrant_data:/qdrant/storage
     environment:
       - QDRANT__SERVICE__GRPC_PORT=6334
-
-volumes:
-  postgres_data:
-  qdrant_data:
 

@@ -7,12 +7,15 @@ Quick reference for all project modules and their status.
 ### 1. **Ingestion** (`ingestion/`)
 **Purpose**: Process videos → transcripts → embeddings → database
 
-**Status**: 🟡 In Progress
-- ✅ Download videos from YouTube
-- ✅ Transcribe with Whisper (all models)
-- ❌ Generate embeddings
-- ❌ Extract keyframes
-- ❌ Store in databases
+**Status**: 🟢 Complete
+- ✅ Download videos from YouTube (`download.py` with yt-dlp)
+- ✅ Transcribe with Whisper large-v3 local model (`transcribe_videos.py`)
+- ✅ Generate embeddings with contextual chunking (`embed_videos.py`)
+  - Time-window chunking (60s + 10s overlap)
+  - LLM-driven contextual enrichment (gpt-5-mini)
+  - OpenAI text-embedding-3-small
+- ❌ Extract keyframes (skeleton only)
+- ✅ Store in databases (Qdrant + PostgreSQL with Alembic)
 
 **Owner**: Person 4
 
@@ -21,14 +24,16 @@ Quick reference for all project modules and their status.
 ### 2. **Backend** (`backend/`)
 **Purpose**: FastAPI backend with 4 AI tasks
 
-**Status**: 🔴 Not Started
+**Status**: 🟡 In Progress
 - ✅ Project structure
 - ✅ API endpoint skeletons
 - ✅ Pydantic models
-- ❌ Shared RAG library
-- ❌ LLM clients
-- ❌ Database clients
-- ❌ All 4 task implementations
+- ✅ Database clients (PostgreSQL + Qdrant, fully implemented)
+- ✅ Database models (Video, Chunk, ChatHistory, QuizQuestion)
+- ✅ Embedding system (OpenAIEmbedder, ContextualChunker)
+- ❌ Shared RAG library (skeleton only)
+- ❌ LLM clients (skeleton only)
+- ❌ All 4 task implementations (skeletons only)
 
 **Owners**: Person 2 (Q&A, Text Summary), Person 3 (Video Summary, Quiz), Person 4 (Shared)
 
@@ -64,11 +69,12 @@ Quick reference for all project modules and their status.
 
 ## 🎯 Current Priority
 
-1. ✅ **Ingestion**: Finish transcription (in progress)
-2. 🔄 **Ingestion**: Implement embeddings module (next)
-3. 🔄 **Backend**: Shared RAG library
-4. 🔄 **Backend**: Database clients
-5. 🔄 **Backend**: Task implementations
+1. ✅ **Ingestion**: Download, transcription, embeddings (COMPLETE)
+2. ✅ **Backend**: Database clients (PostgreSQL + Qdrant) (COMPLETE)
+3. ✅ **Backend**: Database models and Alembic migrations (COMPLETE)
+4. 🔄 **Backend**: Shared RAG library (NEXT - skeleton exists)
+5. 🔄 **Backend**: LLM clients (NEXT - skeleton exists)
+6. 🔄 **Backend**: Task implementations (4 tasks)
 
 ---
 

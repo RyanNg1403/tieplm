@@ -17,19 +17,23 @@ A video course AI assistant that helps students interact with course content thr
 ## Tech Stack
 
 ### Core Technologies
-- **Backend**: Python with FastAPI (or Flask)
+- **Backend**: Python with FastAPI
 - **Frontend**: React with TypeScript
 - **Databases**: 
-  - PostgreSQL (video metadata, chapters, timestamps, chat history, quizzes)
-  - Vector DB - options: Qdrant/pgvector/Weaviate (embeddings)
-- **Transcription**: Whisper API / Deepgram
-- **Video Processing**: FFmpeg or OpenCV for keyframe extraction
-- **Orchestration**: LangChain / LlamaIndex (or custom implementation)
+  - PostgreSQL (video metadata, chunks, timestamps, chat history, quizzes)
+  - Qdrant (vector embeddings for transcript chunks)
+- **Transcription**: Whisper large-v3 (local, open-source model)
+- **Embeddings**: OpenAI text-embedding-3-small with contextual chunking (Anthropic's approach)
+- **Contextual LLM**: OpenAI gpt-5-mini for chunk context generation
+- **Video Processing**: FFmpeg or OpenCV for keyframe extraction (not yet implemented)
+- **Orchestration**: Custom implementation
 
 ### Infrastructure
-- Docker Compose for local development (Postgres + Vector DB)
-- Vector DB data tracked in git (shared embeddings)
-- Postgres data NOT in git (schema only)
+- Docker Compose for local development (Postgres + Qdrant)
+- Qdrant data persisted locally in `qdrant_data/` (not in git)
+- PostgreSQL data persisted locally in `postgres_data/` (not in git)
+- Alembic for database migrations
+- Environment variables in `.env` (single root-level file)
 
 ---
 
@@ -283,18 +287,59 @@ tieplm/
 
 ### 3. Database Layer (`backend/app/shared/database/`)
 
-**PostgreSQL Schema**:
-- `videos`: Video metadata (URL, title, duration, course_id)
-- `chapters`: Course chapter structure
-- `transcripts`: Full transcripts with timestamps
-- `chat_history`: User sessions and conversations
-- `quiz_questions`: Generated quiz questions and answers
-- `dynamic_configs`: Runtime configuration overrides
+**PostgreSQL Schema** (✅ Implemented with Alembic):
+- `videos`: Video metadata (id, chapter, title, url, duration, transcript_path)
+- `chunks`: Transcript chunks (id, video_id, start_time, end_time, text, qdrant_id)
+- `chat_history`: User sessions and conversations (skeleton)
+- `quiz_questions`: Generated quiz questions and answers (skeleton)
 
-**Vector DB Schema**:
-- Transcript embeddings (chunked by time segments)
-- Keyframe descriptions embeddings
-- Metadata: video_id, timestamp_start, timestamp_end, chunk_text
+**Qdrant Collection** (✅ Implemented):
+- Collection: `cs431_course_transcripts`
+- Vector dimension: 1536 (text-embedding-3-small)
+- Payload: chapter, video_title, video_url, full_title, start_time, end_time, text
+- Chunking strategy: 60s time windows with 10s overlap
+- Context enrichment: LLM-generated contextual prefix per chunk
+
+---
+
+## Implementation Status
+
+### ✅ Fully Implemented Components
+
+**Ingestion Pipeline** (`ingestion/pipeline/`):
+- `download.py`: Download videos/audio from YouTube using yt-dlp
+- `transcribe_videos.py`: Transcribe with local Whisper large-v3 model
+- `embed_videos.py`: CLI script for embedding pipeline with:
+  - Time-window chunking (60s + 10s overlap)
+  - LLM-driven contextual enrichment (gpt-5-mini)
+  - Batch embedding with OpenAI text-embedding-3-small
+  - Storage in both Qdrant and PostgreSQL
+  - `--reset` flag for clearing existing data
+
+**Database Clients** (`backend/app/shared/database/`):
+- `models.py`: SQLAlchemy models (Video, Chunk, ChatHistory, QuizQuestion)
+- `postgres.py`: Full PostgreSQL client with session management
+- `vector_db.py`: Full Qdrant client with CRUD operations
+
+**Embedding System** (`backend/app/shared/embeddings/`):
+- `embedder.py`: OpenAIEmbedder + ContextualChunker classes
+- Implements Anthropic's Contextual Retrieval approach
+
+**Infrastructure**:
+- Docker Compose setup (PostgreSQL + Qdrant)
+- Alembic migrations
+- Single `.env` configuration file
+- Video mapping utilities (`ingestion/utils/video_mapper.py`)
+
+### 🚧 Skeleton Components (Not Yet Implemented)
+
+- Shared RAG library (`backend/app/shared/rag/`)
+- LLM clients (`backend/app/shared/llm/`)
+- All 4 core task services (`backend/app/core/*/service.py`)
+- API endpoints (`backend/app/api/`)
+- Frontend (entire `frontend/` directory)
+- Evaluation module (entire `evaluation/` directory)
+- Keyframe extraction (`ingestion/pipeline/keyframes.py`)
 
 ---
 
@@ -408,37 +453,42 @@ User: Select video → "Generate MCQ Quiz"
 
 ---
 
-## Docker Compose Services
+## Docker Compose Services (✅ Implemented)
 
 ```yaml
 services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: tieplm
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-tieplm}
+      POSTGRES_USER: ${POSTGRES_USER:-tieplm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tieplm}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    
-  vector_db:
-    image: qdrant/qdrant  # or alternative (pgvector, weaviate)
+      - ./postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tieplm} -d ${POSTGRES_DB:-tieplm}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
     ports:
       - "6333:6333"
+      - "6334:6334"
     volumes:
-      - vector_data:/qdrant/storage
-
-volumes:
-  postgres_data:
-  vector_data:
+      - ./qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
 ```
 
 **Note**: 
-- Vector DB data can be committed to git (manageable size)
-- Postgres data NOT in git (only schema migrations)
-- Each team member runs ingestion pipeline once to populate local DBs
+- Both `postgres_data/` and `qdrant_data/` are mounted locally (not in git)
+- Database credentials read from `.env` file
+- Each team member runs embedding pipeline once: `python ingestion/pipeline/embed_videos.py --all --reset`
+- Alembic handles schema migrations for PostgreSQL
 
 ---
 
@@ -557,71 +607,85 @@ def get_prompt(task: str, prompt_type: str) -> str:
 ## Environment Variables
 
 ```bash
-# .env.example
+# .env.example (✅ Implemented)
 
-# Database
+# OpenAI API Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+
+# PostgreSQL Configuration
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=tieplm
-POSTGRES_USER=user
-POSTGRES_PASSWORD=password
+POSTGRES_USER=tieplm
+POSTGRES_PASSWORD=tieplm
 
-# Vector DB
-VECTOR_DB_TYPE=qdrant  # or pgvector, weaviate
-VECTOR_DB_HOST=localhost
-VECTOR_DB_PORT=6333
+# Qdrant Configuration
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
+QDRANT_COLLECTION_NAME=cs431_course_transcripts
 
-# LLM APIs
-OPENAI_API_KEY=your_key_here
-ANTHROPIC_API_KEY=your_key_here  # optional
+# Embedding Hyperparameters
+EMBEDDING_DIMENSION=1536
+EMBEDDING_MODEL_NAME=text-embedding-3-small
+EMBEDDING_PROVIDER=openai
+TIME_WINDOW=60
+CHUNK_OVERLAP=10
+EMBEDDING_BATCH_SIZE=100
 
-# Transcription
-WHISPER_API_KEY=your_key_here
-# or
-DEEPGRAM_API_KEY=your_key_here
+# LLM for Contextual Chunking
+MODEL_NAME=gpt-5-mini
+MODEL_PROVIDER=openai
+CONTEXT_TOKEN_LIMIT=200
+LLM_TEMPERATURE=1.0  # gpt-5-mini only supports default temperature=1.0
 
-# Application
-ENVIRONMENT=development
+# Logging
+LOG_DIR=logs
 LOG_LEVEL=INFO
 ```
 
 ---
 
-## Next Steps for Team Discussion
+## Next Steps for Development
 
-### Questions to Discuss:
-1. **Tech Stack Finalization**:
-   - Vector DB choice: Qdrant, pgvector, or Weaviate?
-   - LLM provider: OpenAI, Anthropic, or open-source?
-   - Orchestration: LangChain, LlamaIndex, or custom?
+### ✅ Completed Foundation
+1. ✅ Project structure created
+2. ✅ Docker environment set up (PostgreSQL + Qdrant)
+3. ✅ Ingestion pipeline fully implemented
+4. ✅ Database clients and models implemented
+5. ✅ 39 course videos downloaded, transcribed, and embedded
 
-2. **Module Assignment**:
-   - Confirm 4-person split outlined above
-   - Any preferences for specific modules?
+### 🔄 Next Immediate Tasks
 
-3. **Timeline**:
-   - Project deadline?
-   - Milestone dates for each phase?
+**Priority 1: Shared RAG Library** (`backend/app/shared/rag/`)
+- Implement `retriever.py`: Query embedding + vector search + metadata retrieval
+- Implement `pipeline.py`: End-to-end RAG orchestration
+- Test with existing Qdrant embeddings
 
-4. **Course Content**:
-   - How many videos in the course?
-   - Average video length?
-   - Course structure (chapters/modules)?
+**Priority 2: LLM Client** (`backend/app/shared/llm/`)
+- Implement `client.py`: OpenAI API wrapper for text generation
+- Implement `vlm.py`: Vision LLM for keyframe analysis
 
-5. **Evaluation**:
-   - Who will create evaluation datasets?
-   - Success criteria for each task?
+**Priority 3: Core Task Implementation**
+- Person 2: Q&A + Text Summarization services
+- Person 3: Video Summarization + Quiz Generation services
 
-### Ready to Start?
-Once team agrees on architecture:
-1. Create initial project structure
-2. Set up Docker environment
-3. Define detailed API contracts
-4. Begin parallel development!
+**Priority 4: API Layer**
+- Connect core services to FastAPI endpoints
+- Define request/response schemas
+
+**Priority 5: Frontend**
+- Person 1: React UI with ChatGPT-like interface
+
+### Current Data Status
+- 39 videos from CS431 course
+- All transcribed with Whisper large-v3
+- All embedded in Qdrant with contextual chunking
+- Ready for RAG retrieval tasks
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: November 11, 2025  
+**Document Version**: 2.0  
+**Last Updated**: November 13, 2025  
 **Team Size**: 4 developers  
-**Project Type**: University AI Assistant Project
+**Project Type**: University AI Assistant Project  
+**Phase**: Foundation Complete - Ready for RAG & Task Implementation

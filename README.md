@@ -1,166 +1,145 @@
 # Tieplm AI Assistant
 
-A NotebookLM-like AI assistant for video course content, supporting Q&A, text summarization, video summarization, and quiz generation.
-
-## Features
-
-- **Q&A**: Ask questions about course content with exact video timestamp citations
-- **Text Summarization**: Get concise summaries on specific topics across videos
-- **Video Summarization**: Summarize individual video content using transcripts and keyframes
-- **Quiz Generation**: Generate MCQ and Yes/No quizzes based on video content
+NotebookLM-like AI assistant for CS431 video course content with Q&A, text summarization, video summarization, and quiz generation.
 
 ## Architecture
 
-- **Backend**: Python FastAPI (Modular Monolith)
-- **Frontend**: React TypeScript
+- **Backend**: FastAPI (modular monolith)
+- **Frontend**: React TypeScript  
 - **Databases**: PostgreSQL (metadata) + Qdrant (vector embeddings)
-- **Ingestion**: Standalone pipeline for processing YouTube videos
+- **Ingestion**: Standalone pipeline with contextual retrieval
 
 ## Project Structure
 
 ```
 tieplm/
-├── backend/          # FastAPI backend
-├── frontend/         # React frontend
-├── ingestion/        # Video processing pipeline
-├── evaluation/       # Evaluation scripts
-└── docker-compose.yml
+├── .env.example              # Configuration template
+├── requirements.txt          # Python dependencies
+├── docker-compose.yml        # PostgreSQL + Qdrant
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/             # API endpoints
+│   │   ├── core/            # Business logic (Q&A, quiz, etc.)
+│   │   └── shared/          # Shared utilities
+│   │       ├── database/    # PostgreSQL + Qdrant clients
+│   │       ├── embeddings/  # Embedding & chunking logic
+│   │       ├── rag/         # RAG pipeline
+│   │       └── config/      # Settings management
+│   └── alembic/             # Database migrations
+│
+├── ingestion/
+│   ├── pipeline/            # Download, transcribe, embed
+│   ├── videos/              # Downloaded videos
+│   └── transcripts/         # Generated transcripts
+│
+├── frontend/                # React UI
+├── evaluation/              # Evaluation scripts
+└── scripts/                 # Utility scripts
 ```
 
 ## Quick Start
 
-### 1. Prerequisites
-
-- Python 3.10+
-- Node.js 18+
-- Docker & Docker Compose
-- FFmpeg (for video/audio processing)
-
-### 2. Setup Databases
+### 1. Environment Setup
 
 ```bash
-# Start PostgreSQL + Qdrant
-docker-compose up -d
-```
+# Copy and configure environment variables
+cp .env.example .env
+# Edit .env: Add OPENAI_API_KEY and configure hyperparameters
 
-### 3. Install Python Dependencies
-
-```bash
-# Install all Python dependencies from root
+# Install dependencies
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+
+# Start databases
+docker-compose up -d
+python scripts/verify_databases.py
 ```
 
-### 4. Download & Process Videos
+### 2. Run Ingestion Pipeline
 
 ```bash
-cd ingestion/pipeline
+cd ingestion
 
-# Step 1: Download videos from YouTube
-python download.py --all
+# Download videos from YouTube
+python pipeline/download.py --all
 
-# Step 2: Transcribe videos
-python transcribe_videos.py --all
+# Transcribe with Whisper
+python pipeline/transcribe_videos.py --all
 
-# Step 3: Generate embeddings & store (coming soon)
-# python embed_transcripts.py --all
+# Generate embeddings with contextual chunking
+python pipeline/embed_videos.py --all
 ```
 
-### 5. Setup Frontend
+See [`ingestion/README.md`](./ingestion/README.md) for details.
+
+### 3. Run Application
 
 ```bash
-cd frontend
-npm install
-```
-
-### 6. Run Application
-
-```bash
-# Terminal 1: Backend
+# Backend
 cd backend
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload
 
-# Terminal 2: Frontend
+# Frontend (separate terminal)
 cd frontend
-npm start
+npm install && npm start
 ```
 
 Visit: http://localhost:3000
 
-## Project Structure
+## Configuration
 
-```
-tieplm/
-├── requirements.txt      # All Python dependencies
-├── chapters_urls.json    # Video URLs by chapter
-│
-├── ingestion/            # Video processing pipeline
-│   ├── videos/          # Downloaded video files
-│   ├── transcripts/     # JSON transcripts
-│   └── pipeline/        # Processing scripts
-│       ├── download.py  # Download videos
-│       ├── transcribe_videos.py  # Transcribe videos
-│       ├── embeddings.py
-│       ├── keyframes.py
-│       └── storage.py
-│
-├── backend/              # FastAPI backend
-├── frontend/             # React frontend
-└── docker-compose.yml    # Databases
-```
+All hyperparameters are configured via `.env` file:
 
-## Development Workflow
+**Core Settings:**
+- `OPENAI_API_KEY` - Required for embeddings and LLM
+- `MODEL_NAME` - LLM for contextual chunking (default: `gpt-5-mini`)
+- `EMBEDDING_MODEL_NAME` - Embedding model (default: `text-embedding-3-small`)
+- `EMBEDDING_DIMENSION` - Vector dimension (default: `1536`)
 
-### Module Ownership (4-Person Team)
+**Chunking Settings:**
+- `TIME_WINDOW` - Chunk duration in seconds (default: `60`)
+- `CHUNK_OVERLAP` - Overlap between chunks (default: `10`)
+- `CONTEXT_TOKEN_LIMIT` - Max tokens for context (default: `200`)
 
-- **Person 1**: Frontend + Integration
-- **Person 2**: Q&A + Text Summarization modules
-- **Person 3**: Video Summarization + Quiz Generation modules
-- **Person 4**: Ingestion Pipeline + Shared Infrastructure
+**Database Settings:**
+- `POSTGRES_*` - PostgreSQL configuration
+- `QDRANT_*` - Qdrant vector database configuration
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed architecture documentation.
+See `.env.example` for full configuration options.
 
-## API Documentation
+## Module Overview
 
-Once backend is running:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+### Ingestion Pipeline
+Download, transcribe, and embed video content with contextual retrieval.
+- **Download**: YouTube videos via `yt-dlp`
+- **Transcription**: Open-source Whisper (large-v3)
+- **Embedding**: Contextual chunking + OpenAI embeddings
 
-## Environment Variables
+### Backend (Modular Monolith)
+- **API Layer**: FastAPI endpoints for each task
+- **Core Modules**: Q&A, text summary, video summary, quiz generation
+- **Shared Infrastructure**: Database clients, RAG pipeline, embeddings
 
-Key environment variables (see `.env.example`):
-- `OPENAI_API_KEY`: For LLM and embeddings
-- `WHISPER_API_KEY`: For transcription
-- `POSTGRES_*`: Database configuration
-- `VECTOR_DB_*`: Vector database configuration
+### Frontend
+React TypeScript UI with ChatGPT-like interface and task switching.
 
-## Evaluation
-
-```bash
-cd evaluation
-source venv/bin/activate
-
-# Run evaluations
-python scripts/run_qa_eval.py
-python scripts/run_summary_eval.py
-python scripts/run_video_eval.py
-python scripts/run_quiz_eval.py
-```
+### Evaluation
+Metrics and test scripts for all four tasks.
 
 ## Tech Stack
 
-- **Backend**: FastAPI, SQLAlchemy, Qdrant
-- **Frontend**: React, TypeScript
-- **LLM**: OpenAI GPT-4
+- **Backend**: FastAPI, SQLAlchemy, Alembic
+- **Databases**: PostgreSQL, Qdrant
+- **LLM**: OpenAI gpt-5-mini, gpt-5-mini
 - **Embeddings**: OpenAI text-embedding-3-small
-- **Transcription**: Whisper API / Deepgram
+- **Transcription**: OpenAI Whisper (local)
 - **Video Processing**: yt-dlp, FFmpeg
 
-## License
+## Documentation
 
-University Project - Educational Use Only
-
-## Team
-
-4-person development team  
-Project: AI Assistant for Video Course Content
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) - Detailed architecture design
+- [`ingestion/README.md`](./ingestion/README.md) - Ingestion pipeline guide
+- API Docs (when running): http://localhost:8000/docs
 

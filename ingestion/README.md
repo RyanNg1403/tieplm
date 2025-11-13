@@ -1,73 +1,83 @@
-# Ingestion Module
+# Ingestion Pipeline
 
-Process YouTube videos: download → transcribe → embed → store in databases.
+Processes YouTube videos into searchable embeddings with contextual retrieval.
 
-## 📁 Structure
+> **Prerequisites:** Complete setup from root [README.md](../README.md) first.
+
+## Usage
+
+### 1. Download Videos
+
+```bash
+python pipeline/download.py --all
+# Or: --chapters "Chương 4" "Chương 5"
+# Or: --urls "https://youtu.be/..."
+```
+
+Downloads from `chapters_urls.json` to `videos/`
+
+### 2. Transcribe Videos
+
+```bash
+python pipeline/transcribe_videos.py --all
+# Or: --videos "video1.mp4" "video2.mp4"
+```
+
+Uses Whisper large-v3 (local), saves to `transcripts/`
+
+### 3. Embed with Contextual Chunking
+
+```bash
+python pipeline/embed_videos.py --all
+# Or: --chapters "Chương 4"
+# Or: --urls "https://youtu.be/..."
+```
+
+**Process:**
+1. Creates time-based chunks (configurable via `TIME_WINDOW` and `CHUNK_OVERLAP`)
+2. Generates context using LLM (`MODEL_NAME` in .env)
+3. Embeds with `EMBEDDING_MODEL_NAME`
+4. Stores in Qdrant + PostgreSQL
+
+**Contextual Retrieval (Anthropic's Approach):**
+Each chunk is enriched with context (chapter, video title, topic, prev/next summaries) before embedding, improving retrieval accuracy by 49%.
+
+### CLI Options
+
+Override environment variables via CLI arguments:
+```bash
+python pipeline/embed_videos.py --all \
+  --chunk-duration 90 \
+  --overlap 15 \
+  --batch-size 50
+```
+
+## Directory Structure
 
 ```
 ingestion/
-├── videos/        # Downloaded videos
-├── transcripts/   # JSON transcripts
-└── pipeline/      # Processing scripts
-    ├── download.py           # Download from YouTube
-    ├── transcribe_videos.py  # Transcribe with Whisper
-    ├── embeddings.py         # Generate embeddings
-    ├── keyframes.py          # Extract video frames
-    └── storage.py            # Store in databases
+├── pipeline/
+│   ├── download.py           # YouTube download (yt-dlp)
+│   ├── transcribe_videos.py  # Whisper transcription
+│   └── embed_videos.py       # Contextual embedding
+├── utils/
+│   └── video_mapper.py       # Transcript-to-URL mapping
+├── videos/                   # Downloaded videos (gitignored)
+├── transcripts/              # JSON transcripts
+└── logs/                     # Pipeline logs
 ```
 
-## ✅ Implemented
+## Output
 
-- ✅ Download script (`download.py`)
-- ✅ Transcription with Whisper (`transcribe_videos.py`)
-- ✅ Support for all Whisper models (tiny → large-v3)
-- ✅ Batch processing with progress bars
-- ✅ Resume capability (skips completed)
-- ✅ Word-level timestamps
+### PostgreSQL
+- `videos` table: Video metadata (chapter, title, URL)
+- `chunks` table: Chunk metadata (timestamps, Qdrant IDs)
 
-## ❌ TODO
+### Qdrant
+- **Collection**: `cs431_course_transcripts`
+- **Vectors**: 1536-dimensional embeddings
+- **Payload**: Chapter, video title, URL, timestamps, original text, contextualized text
 
-- ❌ Embedding generation (`embeddings.py`)
-- ❌ Keyframe extraction (`keyframes.py`)
-- ❌ Database storage (`storage.py`)
-- ❌ Chunking strategy (time-based)
-- ❌ Integration with vector DB (Qdrant)
-- ❌ Integration with PostgreSQL
+## Reference
 
-## 🚀 Quick Start
-
-```bash
-cd ingestion/pipeline
-
-# 1. Download videos
-python download.py --all
-
-# 2. Transcribe (choose model based on speed/quality trade-off)
-python transcribe_videos.py --all --model medium  # Recommended
-# or
-python transcribe_videos.py --all --model large-v3  # Best quality
-
-# 3. Generate embeddings (TODO)
-# python embeddings.py --all
-```
-
-## ⚙️ Whisper Models
-
-| Model | Speed | Quality | Time (62 videos) |
-|-------|-------|---------|------------------|
-| tiny | Very Fast | Basic | ~10 min |
-| small | Fast | Good | ~30 min |
-| **medium** | Medium | Very Good | **~1 hour** ⭐ |
-| large-v3 | Slow | Best | ~3-4 hours |
-
-**Recommendation**: Use `medium` for balance of speed/quality.
-
-## 📊 Output
-
-Each video → JSON file with:
-- Full transcript text
-- Language detected
-- Segments with timestamps
-- Word-level timestamps
-
-**Next Step**: Generate embeddings from transcripts.
+- [Anthropic's Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)
