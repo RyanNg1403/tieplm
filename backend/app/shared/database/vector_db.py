@@ -11,6 +11,7 @@ from qdrant_client.models import (
     Filter,
     FieldCondition,
     MatchValue,
+    MatchAny,
 )
 
 
@@ -115,12 +116,21 @@ class VectorDBClient:
         if filters:
             conditions = []
             for key, value in filters.items():
-                conditions.append(
-                    FieldCondition(
-                        key=key,
-                        match=MatchValue(value=value)
+                # Handle list values (e.g., multiple chapters) with MatchAny
+                if isinstance(value, list):
+                    conditions.append(
+                        FieldCondition(
+                            key=key,
+                            match=MatchAny(any=value)
+                        )
                     )
-                )
+                else:
+                    conditions.append(
+                        FieldCondition(
+                            key=key,
+                            match=MatchValue(value=value)
+                        )
+                    )
             if conditions:
                 query_filter = Filter(must=conditions)
         

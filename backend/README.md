@@ -4,25 +4,30 @@ FastAPI backend with modular monolith architecture for CS431 AI assistant.
 
 > **Prerequisites:** Complete setup from root [README.md](../README.md) first.
 
-## Structure
+## 📁 Folder Structure
 
 ```
 backend/
 ├── app/
 │   ├── api/              # API endpoints
+│   │   ├── sessions.py   # Universal session management (all tasks)
+│   │   ├── text_summary.py  # Text summarization endpoints (SSE streaming)
+│   │   ├── qa.py         # Q&A endpoints (skeleton)
+│   │   ├── video_summary.py  # Video summary endpoints (skeleton)
+│   │   └── quiz.py       # Quiz endpoints (skeleton)
 │   ├── core/             # Business logic modules
-│   │   ├── qa/
-│   │   ├── text_summary/
-│   │   ├── video_summary/
-│   │   └── quiz/
+│   │   ├── text_summary/ # ✅ Complete (RAG + streaming)
+│   │   ├── qa/           # ❌ Skeleton
+│   │   ├── video_summary/  # ❌ Skeleton
+│   │   └── quiz/         # ❌ Skeleton
 │   ├── shared/           # Shared infrastructure
-│   │   ├── database/     # Database clients
-│   │   ├── embeddings/   # Embedding & chunking
-│   │   ├── rag/          # RAG pipeline
-│   │   ├── llm/          # LLM clients
+│   │   ├── database/     # Database clients + models
+│   │   ├── embeddings/   # Embedding & contextual chunking
+│   │   ├── rag/          # RAG pipeline (retriever + reranker)
+│   │   ├── llm/          # LLM client (OpenAI)
 │   │   └── config/       # Settings management
-│   └── main.py           # FastAPI app
-└── alembic/              # Database migrations
+│   └── main.py           # FastAPI app entry point
+└── alembic/              # Database migrations (Alembic)
 ```
 
 ## Shared Infrastructure (Implemented)
@@ -41,10 +46,11 @@ backend/
 - `search()` - Semantic search with filters
 
 **Models** (`shared/database/models.py`):
-- `Video` - Video metadata
+- `Video` - Video metadata (chapter, title, URL, duration)
 - `Chunk` - Chunk metadata with Qdrant references
-- `ChatHistory` - User conversations
-- `QuizQuestion` - Generated quizzes
+- `ChatSession` - Chat sessions (all tasks)
+- `ChatMessage` - Chat messages with sources (citations)
+- `QuizQuestion` - Generated quizzes (placeholder)
 
 ### Embeddings & Chunking
 
@@ -67,16 +73,39 @@ Implements [Anthropic's Contextual Retrieval](https://www.anthropic.com/engineer
 - Environment variable loading
 - Type-safe settings with Pydantic
 
+## Installation
+
+> **Note:** The backend uses the project's shared Python virtual environment. Complete the setup from root [README.md](../README.md) first.
+
+```bash
+# Activate virtual environment
+source ../.venv/bin/activate
+
+# Verify environment
+which python  # Should point to .venv/bin/python
+```
+
 ## Usage
 
 ### Start Backend
 
 ```bash
 cd backend
-uvicorn app.main:app --reload
+source ../.venv/bin/activate
+
+# Start server (uses BACKEND_PORT from root .env, default: 8000)
+uvicorn app.main:app --reload --port ${BACKEND_PORT:-8000}
+
+# Or explicitly:
+# uvicorn app.main:app --reload --port 8000
 ```
 
-API Documentation: http://localhost:8000/docs
+**API Documentation:** http://localhost:8000/docs
+
+**Key Endpoints:**
+- `GET /api/sessions` - List all chat sessions
+- `POST /api/text-summary/summarize` - Text summarization (SSE stream)
+- `GET /api/health` - Health check
 
 ### Database Migrations
 
@@ -121,11 +150,31 @@ chunker = ContextualChunker()
 chunks = chunker.create_contextualized_chunks(transcript, video_metadata)
 ```
 
-## Development Tasks
+## ✅ Implemented
 
-- [ ] Implement RAG retrieval module
-- [ ] Build Q&A core logic
-- [ ] Build text summarization
-- [ ] Build video summarization with VLM
-- [ ] Build quiz generation
-- [ ] Create API endpoints for all tasks
+### Shared Infrastructure
+- ✅ PostgreSQL + Qdrant database clients
+- ✅ SQLAlchemy models with Alembic migrations
+- ✅ OpenAI embedder + contextual chunker
+- ✅ RAG retriever (Vector + BM25 + RRF)
+- ✅ Local cross-encoder reranker
+- ✅ LLM client (OpenAI with SSE streaming)
+
+### Text Summarization (Complete)
+- ✅ RAG pipeline with hybrid search
+- ✅ SSE streaming responses
+- ✅ Session management
+- ✅ Inline citation generation
+- ✅ Chapter filtering
+- ✅ Followup questions
+
+### Universal APIs
+- ✅ Session management endpoints (`/api/sessions/*`)
+- ✅ Health check endpoint
+
+## ❌ TODO
+
+- ❌ Q&A core logic and endpoints
+- ❌ Video summarization with VLM
+- ❌ Quiz generation logic
+- ❌ Implement remaining task endpoints

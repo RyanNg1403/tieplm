@@ -1,7 +1,9 @@
 """SQLAlchemy database models."""
-from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey
+from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, JSON
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from datetime import datetime
+import uuid
 
 Base = declarative_base()
 
@@ -32,15 +34,34 @@ class Chunk(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class ChatHistory(Base):
-    """Chat history."""
-    __tablename__ = "chat_history"
+class ChatSession(Base):
+    """Chat session for tracking conversations."""
+    __tablename__ = "chat_sessions"
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    session_id = Column(String)
-    user_message = Column(Text)
-    assistant_message = Column(Text)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, default="default_user")  # For future multi-user support
+    task_type = Column(String, nullable=False)  # "text_summary", "qa", "video_summary", "quiz"
+    title = Column(String)  # Auto-generated from first query
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationship to messages
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+
+
+class ChatMessage(Base):
+    """Individual messages in a chat session."""
+    __tablename__ = "chat_messages"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    session_id = Column(String, ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False)
+    role = Column(String, nullable=False)  # "user" or "assistant"
+    content = Column(Text, nullable=False)  # User query or LLM response
+    sources = Column(JSON)  # List of source references with timestamps (for assistant messages)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationship to session
+    session = relationship("ChatSession", back_populates="messages")
 
 
 class QuizQuestion(Base):

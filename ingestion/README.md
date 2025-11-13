@@ -4,6 +4,21 @@ Processes YouTube videos into searchable embeddings with contextual retrieval.
 
 > **Prerequisites:** Complete setup from root [README.md](../README.md) first.
 
+## 📁 Folder Structure
+
+```
+ingestion/
+├── pipeline/
+│   ├── download.py           # ✅ YouTube download (yt-dlp)
+│   ├── transcribe_videos.py  # ✅ Whisper transcription
+│   └── embed_videos.py       # ✅ Contextual embedding
+├── utils/
+│   └── video_mapper.py       # ✅ Transcript-to-URL mapping
+├── videos/                   # Downloaded videos (gitignored)
+├── transcripts/              # ✅ JSON transcripts (62 videos)
+└── logs/                     # Pipeline logs
+```
+
 ## Usage
 
 ### 1. Download Videos
@@ -52,21 +67,6 @@ python pipeline/embed_videos.py --all \
   --batch-size 50
 ```
 
-## Directory Structure
-
-```
-ingestion/
-├── pipeline/
-│   ├── download.py           # YouTube download (yt-dlp)
-│   ├── transcribe_videos.py  # Whisper transcription
-│   └── embed_videos.py       # Contextual embedding
-├── utils/
-│   └── video_mapper.py       # Transcript-to-URL mapping
-├── videos/                   # Downloaded videos (gitignored)
-├── transcripts/              # JSON transcripts
-└── logs/                     # Pipeline logs
-```
-
 ## Output
 
 ### PostgreSQL
@@ -77,6 +77,32 @@ ingestion/
 - **Collection**: `cs431_course_transcripts`
 - **Vectors**: 1536-dimensional embeddings
 - **Payload**: Chapter, video title, URL, timestamps, original text, contextualized text
+
+## ✅ Implemented
+
+- ✅ YouTube video download (`download.py`)
+  - Audio-only download with fallback to video
+  - Support for `--all`, `--chapters`, `--urls` filters
+- ✅ Whisper transcription (`transcribe_videos.py`)
+  - Local Whisper large-v3 model
+  - Word-level timestamps
+  - Support for `--all`, `--videos` filters
+- ✅ Contextual embedding (`embed_videos.py`)
+  - Time-window chunking (60s + 10s overlap)
+  - LLM-driven context generation (gpt-5-mini)
+  - OpenAI text-embedding-3-small
+  - Batch embedding with retry logic
+  - Qdrant + PostgreSQL storage
+  - Support for `--all`, `--chapters`, `--urls`, `--reset` flags
+- ✅ Video mapping utilities with Unicode normalization
+- ✅ **Current Data**: 62 videos, 1059 chunks embedded
+
+## ❌ TODO
+
+- ❌ Keyframe extraction (skeleton only)
+- ❌ Video quality optimization
+- ❌ Multi-language support
+- ❌ Incremental updates (currently full pipeline only)
 
 ## Reference
 

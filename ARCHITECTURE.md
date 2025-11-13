@@ -290,7 +290,8 @@ tieplm/
 **PostgreSQL Schema** (✅ Implemented with Alembic):
 - `videos`: Video metadata (id, chapter, title, url, duration, transcript_path)
 - `chunks`: Transcript chunks (id, video_id, start_time, end_time, text, qdrant_id)
-- `chat_history`: User sessions and conversations (skeleton)
+- `chat_sessions`: Chat sessions (id, user_id, task_type, title, created_at, updated_at)
+- `chat_messages`: Chat messages with sources (id, session_id, role, content, sources, created_at)
 - `quiz_questions`: Generated quiz questions and answers (skeleton)
 
 **Qdrant Collection** (✅ Implemented):
@@ -307,37 +308,101 @@ tieplm/
 ### ✅ Fully Implemented Components
 
 **Ingestion Pipeline** (`ingestion/pipeline/`):
-- `download.py`: Download videos/audio from YouTube using yt-dlp
+- `download.py`: Download videos/audio from YouTube using yt-dlp (audio-only with fallback)
 - `transcribe_videos.py`: Transcribe with local Whisper large-v3 model
 - `embed_videos.py`: CLI script for embedding pipeline with:
   - Time-window chunking (60s + 10s overlap)
-  - LLM-driven contextual enrichment (gpt-5-mini)
+  - LLM-driven contextual enrichment (gpt-5-mini with minimal reasoning effort)
   - Batch embedding with OpenAI text-embedding-3-small
   - Storage in both Qdrant and PostgreSQL
   - `--reset` flag for clearing existing data
+  - UUID-based Qdrant point IDs for compatibility
+- `tmp_embed_new_transcripts.py`: Temporary script for embedding newly added transcripts
 
 **Database Clients** (`backend/app/shared/database/`):
-- `models.py`: SQLAlchemy models (Video, Chunk, ChatHistory, QuizQuestion)
+- `models.py`: SQLAlchemy models (Video, Chunk, ChatSession, ChatMessage, QuizQuestion)
 - `postgres.py`: Full PostgreSQL client with session management
-- `vector_db.py`: Full Qdrant client with CRUD operations
+- `vector_db.py`: Full Qdrant client with CRUD operations and chapter filtering
 
 **Embedding System** (`backend/app/shared/embeddings/`):
 - `embedder.py`: OpenAIEmbedder + ContextualChunker classes
-- Implements Anthropic's Contextual Retrieval approach
+- Implements Anthropic's Contextual Retrieval approach with:
+  - Vietnamese-optimized LLM prompts with examples
+  - Retry logic for token limit overflow (300→400→500 tokens)
+  - Hardcoded `reasoning_effort="minimal"` for gpt-5-mini
+  - Unicode normalization (NFC) for cross-platform filename compatibility
+
+**RAG Pipeline** (`backend/app/shared/rag/`):
+- `retriever.py`: RAGRetriever with hybrid search (Vector + BM25 + RRF)
+  - Vector search via Qdrant
+  - BM25 lexical search via rank-bm25
+  - Reciprocal Rank Fusion for combining results
+  - Chapter filtering support
+- `reranker.py`: LocalReranker with cross-encoder model
+  - Uses `cross-encoder/ms-marco-MiniLM-L-6-v2`
+  - Reranks top-K results for better relevance
+
+**LLM Client** (`backend/app/shared/llm/`):
+- `client.py`: OpenAI LLM client with SSE streaming
+  - Support for `gpt-5-mini` with reasoning effort
+  - Synchronous and asynchronous generation
+  - Server-Sent Events (SSE) streaming for real-time responses
+  - Automatic parameter handling (temperature, max_completion_tokens)
+
+**Backend API Layer** (`backend/app/api/`):
+- `sessions.py`: Universal session management (all tasks)
+  - `GET /api/sessions` - List all sessions with optional task_type filter
+  - `GET /api/sessions/{id}/messages` - Get session messages
+  - `DELETE /api/sessions/{id}` - Delete session
+- `text_summary.py`: Text summarization endpoints (✅ Complete)
+  - `POST /api/text-summary/summarize` - SSE streaming summarization
+  - `POST /api/text-summary/sessions/{id}/followup` - Followup questions
+- `qa.py`, `video_summary.py`, `quiz.py`: Task endpoints (skeletons)
+- `health.py`: Health check endpoint
+
+**Text Summarization Module** (`backend/app/core/text_summary/`): ✅ Complete
+- `service.py`: Full RAG pipeline orchestration
+  - Hybrid retrieval (Vector + BM25 + RRF)
+  - Cross-encoder reranking
+  - Session management (create, retrieve, update)
+  - Streaming LLM responses with inline citations
+  - Chapter filtering support
+- `prompts.py`: Task-specific prompts for hierarchical summaries
+
+**Frontend** (`frontend/`): ✅ Text Summarization Complete
+- React 18 + TypeScript with Vite bundler
+- Zustand state management
+- TanStack React Query for API calls
+- Chakra UI v2 for styling
+- **Components**:
+  - `ChatContainer.tsx`: Main orchestration
+  - `Sidebar.tsx`: Session history (Today/Yesterday/Older grouping)
+  - `MessageList.tsx`: Message display with streaming
+  - `Message.tsx`: Individual messages with clickable citations
+  - `ChatInput.tsx`: Input with task switcher and chapter filter
+- **Features**:
+  - Real-time SSE streaming responses
+  - Session history management
+  - Inline citations [1], [2], etc. (open video at timestamp)
+  - Chapter filtering (8 chapters: Chương 2-9)
+  - Followup questions in same session
 
 **Infrastructure**:
 - Docker Compose setup (PostgreSQL + Qdrant)
-- Alembic migrations
-- Single `.env` configuration file
-- Video mapping utilities (`ingestion/utils/video_mapper.py`)
+- Alembic migrations for PostgreSQL schema management
+- Single `.env` configuration file at project root
+- Video mapping utilities (`ingestion/utils/video_mapper.py`) with:
+  - Unicode NFC normalization for macOS filesystem compatibility
+  - Flexible separator matching (`:`, `：`, `-`) for filename variations
+- Database verification scripts (`scripts/verify_databases.py`, `scripts/check_postgres_data.py`)
 
 ### 🚧 Skeleton Components (Not Yet Implemented)
 
-- Shared RAG library (`backend/app/shared/rag/`)
-- LLM clients (`backend/app/shared/llm/`)
-- All 4 core task services (`backend/app/core/*/service.py`)
-- API endpoints (`backend/app/api/`)
-- Frontend (entire `frontend/` directory)
+- Q&A module (`backend/app/core/qa/`)
+- Video Summarization module (`backend/app/core/video_summary/`)
+- Quiz Generation module (`backend/app/core/quiz/`)
+- Vision LLM client (`backend/app/shared/llm/vlm.py`)
+- Frontend: Q&A, Video Summary, Quiz interfaces
 - Evaluation module (entire `evaluation/` directory)
 - Keyframe extraction (`ingestion/pipeline/keyframes.py`)
 
@@ -635,8 +700,9 @@ EMBEDDING_BATCH_SIZE=100
 # LLM for Contextual Chunking
 MODEL_NAME=gpt-5-mini
 MODEL_PROVIDER=openai
-CONTEXT_TOKEN_LIMIT=200
+CONTEXT_TOKEN_LIMIT=300  # Initial limit; retries with +100 tokens (up to 3 attempts: 300->400->500)
 LLM_TEMPERATURE=1.0  # gpt-5-mini only supports default temperature=1.0
+# Note: reasoning_effort="minimal" is hardcoded in embedder.py for gpt-5-mini
 
 # Logging
 LOG_DIR=logs
@@ -649,10 +715,10 @@ LOG_LEVEL=INFO
 
 ### ✅ Completed Foundation
 1. ✅ Project structure created
-2. ✅ Docker environment set up (PostgreSQL + Qdrant)
-3. ✅ Ingestion pipeline fully implemented
-4. ✅ Database clients and models implemented
-5. ✅ 39 course videos downloaded, transcribed, and embedded
+2. ✅ Docker environment set up (PostgreSQL + Qdrant with local persistence)
+3. ✅ Ingestion pipeline fully implemented and battle-tested
+4. ✅ Database clients and models implemented with Alembic migrations
+5. ✅ **62 course videos** downloaded, transcribed, and embedded (1059 chunks total)
 
 ### 🔄 Next Immediate Tasks
 
@@ -677,15 +743,16 @@ LOG_LEVEL=INFO
 - Person 1: React UI with ChatGPT-like interface
 
 ### Current Data Status
-- 39 videos from CS431 course
-- All transcribed with Whisper large-v3
-- All embedded in Qdrant with contextual chunking
+- **62 videos** from CS431 course (Chapters 2-10)
+- All transcribed with Whisper large-v3 (local model)
+- All embedded in Qdrant with contextual chunking (**1059 total chunks**)
+- Metadata stored in PostgreSQL (videos, chunks with timestamps and Qdrant IDs)
 - Ready for RAG retrieval tasks
 
 ---
 
-**Document Version**: 2.0  
+**Document Version**: 2.1  
 **Last Updated**: November 13, 2025  
 **Team Size**: 4 developers  
 **Project Type**: University AI Assistant Project  
-**Phase**: Foundation Complete - Ready for RAG & Task Implementation
+**Phase**: Foundation Complete - 62 Videos Embedded - Ready for RAG & Task Implementation

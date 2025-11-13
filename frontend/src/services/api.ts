@@ -1,7 +1,12 @@
+/**
+ * API service for backend communication
+ */
 import axios from 'axios';
+import { ChatSession, ChatMessage } from '../types';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+// Axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -9,49 +14,86 @@ const apiClient = axios.create({
   },
 });
 
-// Q&A API
-export const askQuestion = async (question: string, sessionId?: string) => {
-  const response = await apiClient.post('/qa/ask', { question, session_id: sessionId });
-  return response.data;
+// ============================================================================
+// Universal Session API (used by all tasks)
+// ============================================================================
+
+export const sessionsAPI = {
+  /**
+   * Get all sessions for a user, optionally filtered by task type
+   */
+  getSessions: async (
+    userId: string = 'default_user',
+    taskType?: string
+  ): Promise<ChatSession[]> => {
+    const response = await apiClient.get<ChatSession[]>('/api/sessions', {
+      params: { 
+        user_id: userId,
+        ...(taskType && { task_type: taskType })
+      }
+    });
+    return response.data;
+  },
+  
+  /**
+   * Get messages in a session
+   */
+  getSessionMessages: async (sessionId: string): Promise<ChatMessage[]> => {
+    const response = await apiClient.get<ChatMessage[]>(
+      `/api/sessions/${sessionId}/messages`
+    );
+    return response.data;
+  },
+  
+  /**
+   * Delete a session
+   */
+  deleteSession: async (sessionId: string): Promise<void> => {
+    await apiClient.delete(`/api/sessions/${sessionId}`);
+  },
 };
 
-// Text Summarization API
-export const summarizeTopic = async (topic: string, chapterFilter?: string) => {
-  const response = await apiClient.post('/text-summary/summarize', {
-    topic,
-    chapter_filter: chapterFilter,
-  });
-  return response.data;
+// ============================================================================
+// Text Summary API (task-specific endpoints)
+// ============================================================================
+
+export const textSummaryAPI = {
+  /**
+   * Get SSE stream URL for summarization
+   */
+  getSummarizeStreamURL: (): string => {
+    return `${API_BASE_URL}/api/text-summary/summarize`;
+  },
+  
+  /**
+   * Get SSE stream URL for followup
+   */
+  getFollowupStreamURL: (sessionId: string): string => {
+    return `${API_BASE_URL}/api/text-summary/sessions/${sessionId}/followup`;
+  },
 };
 
-// Video Summarization API
-export const summarizeVideo = async (videoId: string) => {
-  const response = await apiClient.post('/video-summary/summarize', { video_id: videoId });
-  return response.data;
+// ============================================================================
+// Chapters API (for filter)
+// ============================================================================
+
+export const chaptersAPI = {
+  /**
+   * Get available chapters (hardcoded based on chapters_urls.json ground truth)
+   * 
+   * Note: Chapters are static course content (Chương 2-9) and won't change.
+   * No need for API call - this is the single source of truth.
+   */
+  getChapters: (): string[] => {
+    return [
+      'Chương 2',
+      'Chương 3',
+      'Chương 4',
+      'Chương 5',
+      'Chương 6',
+      'Chương 7',
+      'Chương 8',
+      'Chương 9',
+    ];
+  },
 };
-
-export const listVideos = async () => {
-  const response = await apiClient.get('/video-summary/videos');
-  return response.data;
-};
-
-// Quiz API
-export const generateQuiz = async (videoId: string, questionType: string, numQuestions: number = 5) => {
-  const response = await apiClient.post('/quiz/generate', {
-    video_id: videoId,
-    question_type: questionType,
-    num_questions: numQuestions,
-  });
-  return response.data;
-};
-
-export const validateQuiz = async (quizId: number, answers: Record<string, string>) => {
-  const response = await apiClient.post('/quiz/validate', {
-    quiz_id: quizId,
-    answers,
-  });
-  return response.data;
-};
-
-export default apiClient;
-

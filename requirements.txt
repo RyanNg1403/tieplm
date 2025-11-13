@@ -29,6 +29,10 @@ qdrant-client
 # OpenAI (for embeddings and LLM)
 openai
 
+# RAG and Reranking
+sentence-transformers  # For cross-encoder reranking
+rank-bm25  # For BM25 lexical search
+
 # Evaluation metrics
 rouge-score
 nltk

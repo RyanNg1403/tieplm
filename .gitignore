@@ -76,3 +76,7 @@ qdrant_data/
 # Exported data (share via cloud storage)
 *.snapshot
 tieplm_db_dump.sql*
+# Vite
+dist
+*.local
+.vite
