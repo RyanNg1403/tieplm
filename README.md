@@ -66,11 +66,6 @@ pip install -r requirements.txt
 
 # Start databases
 docker-compose up -d
-
-# Verify databases are running
-cd backend
-python ../scripts/verify_databases.py
-cd ..
 ```
 
 ### 2. Data Setup (Choose One)
@@ -78,19 +73,32 @@ cd ..
 #### Option A: Restore from Exports (Recommended for Team)
 
 Download the pre-processed data exports (shared separately) and place them in the project root:
-- `tieplm_db_dump.sql` - PostgreSQL database dump
+- `tieplm_db_dump.sql` - PostgreSQL database dump (62 videos, 1059 chunks)
 - `qdrant_snapshot.snapshot` - Qdrant vector database snapshot
 
 Then restore:
 
 ```bash
-# 1. Restore PostgreSQL database
+# 1. Restore PostgreSQL database (creates old schema)
 docker exec -i tieplm-postgres psql -U tieplm -d tieplm < tieplm_db_dump.sql
 
-# 2. Upload Qdrant snapshot
+# 2. Run migrations (updates to latest schema)
+cd backend
+source ../.venv/bin/activate
+alembic upgrade head
+cd ..
+
+# 3. Upload Qdrant snapshot
 curl -X POST 'http://localhost:6333/collections/cs431_course_transcripts/snapshots/upload' \
   -F 'snapshot=@qdrant_snapshot.snapshot'
+
+# 4. Verify setup
+cd backend
+python ../scripts/verify_databases.py
+cd ..
 ```
+
+**Note:** Migration updates chat history schema. Videos/chunks data preserved, chat history starts fresh.
 
 #### Option B: Run Full Ingestion Pipeline
 
@@ -211,4 +219,3 @@ Framework for measuring performance across all four AI tasks.
 - [`backend/README.md`](./backend/README.md) - Backend module guide
 - [`frontend/README.md`](./frontend/README.md) - Frontend module guide
 - API Docs (when running): http://localhost:8000/docs
-
