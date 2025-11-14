@@ -8,7 +8,7 @@ import { ChatInput } from './ChatInput';
 import { Sidebar } from './Sidebar';
 import { useChatStore } from '../../stores/chatStore';
 import { useSSE } from '../../hooks/useSSE';
-import { textSummaryAPI, sessionsAPI } from '../../services/api';
+import { textSummaryAPI, qaAPI, sessionsAPI } from '../../services/api';
 import { ChatMessage, ChatSession } from '../../types';
 
 export const ChatContainer: React.FC = () => {
@@ -142,10 +142,20 @@ export const ChatContainer: React.FC = () => {
     resetStreamingContent();
     
     try {
-      // Determine URL based on whether we have a session
-      const url = currentSession
-        ? textSummaryAPI.getFollowupStreamURL(currentSession.id)
-        : textSummaryAPI.getSummarizeStreamURL();
+      // Determine URL based on task mode and session
+      let url = '';
+      
+      if (currentMode === 'text_summary') {
+        url = currentSession
+          ? textSummaryAPI.getFollowupStreamURL(currentSession.id)
+          : textSummaryAPI.getSummarizeStreamURL();
+      } else if (currentMode === 'qa') {
+        url = currentSession
+          ? qaAPI.getFollowupStreamURL(currentSession.id)
+          : qaAPI.getAskStreamURL();
+      } else {
+        throw new Error(`Task ${currentMode} not implemented yet`);
+      }
       
       // Prepare request body
       const body = {
@@ -170,6 +180,7 @@ export const ChatContainer: React.FC = () => {
       });
     }
   }, [
+    currentMode,
     currentSession,
     selectedChapters,
     addMessage,

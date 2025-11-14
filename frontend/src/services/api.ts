@@ -74,6 +74,26 @@ export const textSummaryAPI = {
 };
 
 // ============================================================================
+// Q&A API (task-specific endpoints)
+// ============================================================================
+
+export const qaAPI = {
+  /**
+   * Get SSE stream URL for Q&A
+   */
+  getAskStreamURL: (): string => {
+    return `${API_BASE_URL}/api/qa/ask`;
+  },
+  
+  /**
+   * Get SSE stream URL for followup
+   */
+  getFollowupStreamURL: (sessionId: string): string => {
+    return `${API_BASE_URL}/api/qa/sessions/${sessionId}/followup`;
+  },
+};
+
+// ============================================================================
 // Chapters API (for filter)
 // ============================================================================
 

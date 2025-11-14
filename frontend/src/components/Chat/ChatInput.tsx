@@ -101,8 +101,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </MenuList>
       </Menu>
       
-      {/* Chapter Filter (only for text_summary) */}
-      {currentMode === 'text_summary' && (
+      {/* Chapter Filter (for text_summary and qa) */}
+      {(currentMode === 'text_summary' || currentMode === 'qa') && (
         <Menu closeOnSelect={false}>
           <MenuButton
             as={IconButton}
