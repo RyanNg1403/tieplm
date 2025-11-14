@@ -37,6 +37,7 @@ export const ChatContainer: React.FC = () => {
   const [videoLoading, setVideoLoading] = useState<boolean>(false);
   const [videoError, setVideoError] = useState<string | null>(null);
   const videoPlayerRef = useRef<any>(null);
+  const [embedStartTime, setEmbedStartTime] = useState<number | null>(null);
 
   // Fetch video metadata when a video is selected
   useEffect(() => {
@@ -89,7 +90,22 @@ export const ChatContainer: React.FC = () => {
     }
   };
   
-  // SSE hook
+    // Reset embed start time when selected video changes
+    useEffect(() => {
+      setEmbedStartTime(null);
+    }, [selectedVideo]);
+
+    // Handle seek requests from messages (timestamps)
+    const handleSeek = useCallback((timestamp: number) => {
+      const embed = videoInfo ? toYouTubeEmbed(videoInfo.url) : null;
+      if (embed) {
+        setEmbedStartTime(Math.floor(timestamp));
+      } else {
+        videoPlayerRef.current?.seekToTime(Math.floor(timestamp));
+      }
+    }, [videoInfo, videoPlayerRef]);
+
+    // SSE hook
   const { startStream } = useSSE({
     onToken: (token) => {
       appendStreamingContent(token);
@@ -323,9 +339,10 @@ export const ChatContainer: React.FC = () => {
                 (() => {
                   const embed = toYouTubeEmbed(videoInfo.url);
                   if (embed) {
+                    const srcWithStart = embed + (embedStartTime !== null ? `${embed.includes('?') ? '&' : '?'}start=${embedStartTime}&autoplay=1` : '');
                     return (
                       <Box w="full" h="full" overflow="hidden">
-                        <Box as="iframe" src={embed} width="100%" height="100%" border={0} />
+                        <Box as="iframe" src={srcWithStart} width="100%" height="100%" border={0} />
                       </Box>
                     );
                   }
@@ -368,7 +385,7 @@ export const ChatContainer: React.FC = () => {
               messages={messages}
               isStreaming={isStreaming}
               streamingContent={streamingContent}
-              onSeekVideo={(timestamp) => videoPlayerRef.current?.seekToTime(timestamp)}
+              onSeekVideo={handleSeek}
             />
             
             {/* Input Area */}
