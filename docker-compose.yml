@@ -8,6 +8,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-tieplm}
       POSTGRES_USER: ${POSTGRES_USER:-tieplm}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tieplm}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
     ports:
       - "5432:5432"
     volumes:

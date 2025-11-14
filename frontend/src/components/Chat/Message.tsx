@@ -9,9 +9,10 @@ import { SourcesModal } from './SourcesModal';
 
 interface MessageProps {
   message: ChatMessage;
+  onSeekVideo?: (timestamp: number) => void;
 }
 
-export const Message: React.FC<MessageProps> = ({ message }) => {
+export const Message: React.FC<MessageProps> = ({ message, onSeekVideo }) => {
   const isUser = message.role === 'user';
   const [isSourcesModalOpen, setIsSourcesModalOpen] = useState(false);
   
@@ -22,9 +23,14 @@ export const Message: React.FC<MessageProps> = ({ message }) => {
     const source = sources[index - 1]; // Citations are 1-indexed
     if (!source) return;
     
-    // Construct YouTube URL with timestamp
-    const url = `${source.video_url}&t=${source.start_time}s`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // If onSeekVideo callback provided (for video_summary), seek in embedded player
+    if (onSeekVideo) {
+      onSeekVideo(source.start_time);
+    } else {
+      // Otherwise, open YouTube URL with timestamp (for other modes)
+      const url = `${source.video_url}&t=${source.start_time}s`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   };
   
   // Replace citations [1], [2], etc. with clickable links

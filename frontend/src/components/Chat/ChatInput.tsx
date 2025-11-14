@@ -1,7 +1,7 @@
 /**
  * ChatInput component with mode switcher and chapter filter
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   HStack,
   Input,
@@ -14,10 +14,11 @@ import {
   Checkbox,
   VStack,
   Text,
+  Select,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, SettingsIcon } from '@chakra-ui/icons';
 import { TaskType } from '../../types';
-import { chaptersAPI } from '../../services/api';
+import { chaptersAPI, videoSummaryAPI, type VideoInfo } from '../../services/api';
 
 interface ChatInputProps {
   currentMode: TaskType;
@@ -26,6 +27,8 @@ interface ChatInputProps {
   isStreaming: boolean;
   selectedChapters: string[];
   onChaptersChange: (chapters: string[]) => void;
+  selectedVideo: string | null;
+  onVideoChange: (videoId: string | null) => void;
 }
 
 const MODE_LABELS: Record<TaskType, string> = {
@@ -42,14 +45,41 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   isStreaming,
   selectedChapters,
   onChaptersChange,
+  selectedVideo,
+  onVideoChange,
 }) => {
   const [input, setInput] = useState('');
+  const [videos, setVideos] = useState<VideoInfo[]>([]);
+  const [loadingVideos, setLoadingVideos] = useState(false);
   
   // Get available chapters (hardcoded from chapters_urls.json ground truth)
   const availableChapters = chaptersAPI.getChapters();
   
+  // Load videos when video_summary mode is active
+  useEffect(() => {
+    if (currentMode === 'video_summary' && videos.length === 0) {
+      setLoadingVideos(true);
+      videoSummaryAPI.getVideos()
+        .then((list) => {
+          // Sort by chapter then title using localeCompare for correct Vietnamese ordering
+          list.sort((a, b) => {
+            const chapterCompare = a.chapter.localeCompare(b.chapter, 'vi');
+            return chapterCompare !== 0 ? chapterCompare : a.title.localeCompare(b.title, 'vi');
+          });
+          setVideos(list);
+        })
+        .catch(console.error)
+        .finally(() => setLoadingVideos(false));
+    }
+  }, [currentMode, videos.length]);
+  
   const handleSend = () => {
-    if (input.trim() && !isStreaming) {
+    if (currentMode === 'video_summary') {
+      // For video_summary, send button triggers summarization
+      if (selectedVideo && !isStreaming) {
+        onSend('Summarize'); // Send empty message, video_id is in request
+      }
+    } else if (input.trim() && !isStreaming) {
       onSend(input.trim());
       setInput('');
     }
@@ -142,19 +172,39 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </Menu>
       )}
       
-      {/* Input Field */}
-      <Input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder={
-          currentMode === 'text_summary'
-            ? 'Enter topic or question (e.g., "ResNet architecture")...'
-            : 'Type your message...'
-        }
-        size="md"
-        disabled={isStreaming}
-      />
+      {/* Video Selection (for video_summary) */}
+      {currentMode === 'video_summary' && (
+        <Select
+          placeholder="Select a video..."
+          value={selectedVideo || ''}
+          onChange={(e) => onVideoChange(e.target.value || null)}
+          disabled={isStreaming || loadingVideos}
+          size="md"
+          flex={1}
+        >
+          {videos.map((video) => (
+            <option key={video.id} value={video.id}>
+              {video.title}
+            </option>
+          ))}
+        </Select>
+      )}
+      
+      {/* Input Field (only for text_summary and qa) */}
+      {(currentMode === 'text_summary' || currentMode === 'qa') && (
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={
+            currentMode === 'text_summary'
+              ? 'Enter topic or question (e.g., "ResNet architecture")...'
+              : 'Type your message...'
+          }
+          size="md"
+          disabled={isStreaming}
+        />
+      )}
       
       {/* Send Button */}
       <Button
@@ -162,9 +212,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         colorScheme="blue"
         size="md"
         isLoading={isStreaming}
-        disabled={!input.trim() || isStreaming}
+        disabled={
+          currentMode === 'video_summary'
+            ? !selectedVideo || isStreaming
+            : !input.trim() || isStreaming
+        }
       >
-        Send
+        {currentMode === 'video_summary' ? 'Summarize' : 'Send'}
       </Button>
     </HStack>
   );

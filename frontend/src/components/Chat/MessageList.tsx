@@ -10,12 +10,14 @@ interface MessageListProps {
   messages: ChatMessage[];
   isStreaming: boolean;
   streamingContent: string;
+  onSeekVideo?: (timestamp: number) => void;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
   messages,
   isStreaming,
-  streamingContent
+  streamingContent,
+  onSeekVideo,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -35,7 +37,7 @@ export const MessageList: React.FC<MessageListProps> = ({
     >
       {/* Render all messages */}
       {messages.map((message) => (
-        <Message key={message.id} message={message} />
+        <Message key={message.id} message={message} onSeekVideo={onSeekVideo} />
       ))}
       
       {/* Show streaming message */}

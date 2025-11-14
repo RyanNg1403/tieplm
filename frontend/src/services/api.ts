@@ -10,8 +10,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json; charset=utf-8',
   },
+  responseType: 'json',
 });
 
 // ============================================================================
@@ -90,6 +91,44 @@ export const qaAPI = {
    */
   getFollowupStreamURL: (sessionId: string): string => {
     return `${API_BASE_URL}/api/qa/sessions/${sessionId}/followup`;
+  },
+};
+
+// ============================================================================
+// Video Summary API (task-specific endpoints)
+// ============================================================================
+
+export interface VideoInfo {
+  id: string;
+  chapter: string;
+  title: string;
+  url: string;
+  duration: number;
+}
+
+export const videoSummaryAPI = {
+  /**
+   * Get SSE stream URL for video summarization
+   */
+  getSummarizeStreamURL: (): string => {
+    return `${API_BASE_URL}/api/video-summary/summarize`;
+  },
+  
+  /**
+   * Get list of all available videos
+   */
+  getVideos: async (): Promise<VideoInfo[]> => {
+    const response = await apiClient.get<VideoInfo[]>('/api/video-summary/videos');
+    return response.data;
+  },
+  
+  /**
+   * Get info for a specific video
+   */
+  getVideoInfo: async (videoId: string): Promise<VideoInfo> => {
+    const encoded = encodeURIComponent(videoId);
+    const response = await apiClient.get<VideoInfo>(`/api/video-summary/videos/${encoded}`);
+    return response.data;
   },
 };
 

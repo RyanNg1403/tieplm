@@ -31,9 +31,13 @@ interface ChatStore {
   appendStreamingContent: (token: string) => void;
   resetStreamingContent: () => void;
   
-  // Chapter filter
+  // Chapter filter (for text_summary, qa)
   selectedChapters: string[];
   setSelectedChapters: (chapters: string[]) => void;
+  
+  // Video selection (for video_summary)
+  selectedVideo: string | null;
+  setSelectedVideo: (videoId: string | null) => void;
   
   // Reset all state
   reset: () => void;
@@ -48,6 +52,7 @@ export const useChatStore = create<ChatStore>((set) => ({
   isStreaming: false,
   streamingContent: '',
   selectedChapters: [],
+  selectedVideo: null,
   
   // Actions
   setMode: (mode) => set({ currentMode: mode }),
@@ -74,6 +79,8 @@ export const useChatStore = create<ChatStore>((set) => ({
   
   setSelectedChapters: (chapters) => set({ selectedChapters: chapters }),
   
+  setSelectedVideo: (videoId) => set({ selectedVideo: videoId }),
+  
   reset: () => set({
     currentMode: 'text_summary',
     sessions: [],
@@ -81,7 +88,8 @@ export const useChatStore = create<ChatStore>((set) => ({
     messages: [],
     isStreaming: false,
     streamingContent: '',
-    selectedChapters: []
+    selectedChapters: [],
+    selectedVideo: null,
   })
 }));
 

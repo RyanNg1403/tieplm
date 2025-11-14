@@ -18,7 +18,7 @@ def get_database_url() -> str:
     port = os.getenv("POSTGRES_PORT", "5432")
     db = os.getenv("POSTGRES_DB", "tieplm")
     
-    return f"postgresql://{user}:{password}@{host}:{port}/{db}"
+    return f"postgresql://{user}:{password}@{host}:{port}/{db}?client_encoding=utf8"
 
 
 class PostgresClient:
@@ -34,7 +34,8 @@ class PostgresClient:
         self.engine = create_engine(
             self.connection_string,
             poolclass=NullPool,
-            echo=False
+            echo=False,
+            connect_args={"client_encoding": "utf8"}
         )
         self.SessionLocal = sessionmaker(
             autocommit=False,
