@@ -93,9 +93,7 @@ curl -X POST 'http://localhost:6333/collections/cs431_course_transcripts/snapsho
   -F 'snapshot=@qdrant_snapshot.snapshot'
 
 # 4. Verify setup
-cd backend
-python ../scripts/verify_databases.py
-cd ..
+python scripts/verify_databases.py
 ```
 
 **Note:** Migration updates chat history schema. Videos/chunks data preserved, chat history starts fresh.
@@ -122,7 +120,6 @@ See [`ingestion/README.md`](./ingestion/README.md) for details.
 **Backend (Terminal 1):**
 ```bash
 cd backend
-source ../.venv/bin/activate
 
 # Load .env and start backend (port from BACKEND_PORT in .env)
 uvicorn app.main:app --reload --port ${BACKEND_PORT:-8000}

@@ -64,8 +64,14 @@ class QAService:
             Dict events for SSE:
             - {"type": "token", "content": str}
             - {"type": "sources", "sources": list}
-            - {"type": "done", "content": str, "sources": list}
+            - {"type": "done", "content": str, "sources": list, "session_id": str}
         """
+        # Step 0: Create or get session BEFORE streaming
+        created_session_id = await self._create_or_get_session(
+            session_id=session_id,
+            query=query
+        )
+        
         # Step 1: Retrieve relevant chunks
         print(f"📚 Retrieving chunks for question: {query[:50]}...")
         retrieved_chunks = await self.retriever.retrieve(
@@ -117,18 +123,18 @@ class QAService:
             if event["type"] == "token":
                 full_response += event["content"]
             
-            # Add session_id to "done" event
+            # Add session_id to "done" event (now guaranteed to be set)
             if event["type"] == "done":
-                event["session_id"] = session_id
+                event["session_id"] = created_session_id
             
             yield event
         
-        # Step 6: Save to database
-        await self._save_to_history(
+        # Step 6: Save messages to database (session already exists)
+        await self._save_messages(
             query=query,
             response=full_response,
             sources=sources_for_response,
-            session_id=session_id
+            session_id=created_session_id
         )
         
         print("✅ Answer generated and saved")
@@ -197,10 +203,15 @@ class QAService:
         ):
             if event["type"] == "token":
                 full_response += event["content"]
+            
+            # Add session_id to "done" event for consistency
+            if event["type"] == "done":
+                event["session_id"] = session_id
+            
             yield event
         
-        # Step 6: Save to history
-        await self._save_to_history(
+        # Step 6: Save messages to database
+        await self._save_messages(
             query=query,
             response=full_response,
             sources=sources_for_response,
@@ -246,37 +257,52 @@ class QAService:
             })
         return sources
     
-    async def _save_to_history(
+    async def _create_or_get_session(
         self,
-        query: str,
-        response: str,
-        sources: List[Dict[str, Any]],
-        session_id: Optional[str] = None
-    ):
-        """Save conversation to database."""
+        session_id: Optional[str],
+        query: str
+    ) -> str:
+        """
+        Create new session or validate existing one BEFORE streaming.
+        
+        Returns:
+            session_id (str): ID of created or validated session
+        """
         with self.postgres.session_scope() as session:
-            # Create or get session
             if session_id:
+                # Validate existing session
                 chat_session = session.query(ChatSession).filter_by(id=session_id).first()
                 if not chat_session:
                     raise ValueError(f"Session {session_id} not found")
                 
-                # Update session timestamp
+                # Update timestamp
                 chat_session.updated_at = datetime.utcnow()
+                return chat_session.id
             else:
                 # Create new session
-                chat_session = ChatSession(
+                new_session = ChatSession(
                     id=str(uuid.uuid4()),
                     task_type="qa",
                     title=query[:100],  # Use first 100 chars of query as title
                     user_id="default_user"
                 )
-                session.add(chat_session)
-            
+                session.add(new_session)
+                session.commit()
+                return new_session.id
+    
+    async def _save_messages(
+        self,
+        query: str,
+        response: str,
+        sources: List[Dict[str, Any]],
+        session_id: str
+    ):
+        """Save user and assistant messages to existing session."""
+        with self.postgres.session_scope() as session:
             # Save user message
             user_message = ChatMessage(
                 id=str(uuid.uuid4()),
-                session_id=chat_session.id,
+                session_id=session_id,
                 role="user",
                 content=query
             )
@@ -285,7 +311,7 @@ class QAService:
             # Save assistant message with sources
             assistant_message = ChatMessage(
                 id=str(uuid.uuid4()),
-                session_id=chat_session.id,
+                session_id=session_id,
                 role="assistant",
                 content=response,
                 sources=sources  # JSON column

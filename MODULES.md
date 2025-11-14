@@ -27,12 +27,13 @@ Quick reference for all project modules and their status.
 ### 2. **Backend** (`backend/`)
 **Purpose**: FastAPI backend with 4 AI tasks
 
-**Status**: 🟡 In Progress (Text Summarization ✅ Complete)
+**Status**: 🟡 In Progress (Text Summarization ✅, Q&A ✅)
 - ✅ Project structure
 - ✅ API endpoints:
   - Universal session management (`sessions.py`) - ✅ Complete
   - Text summarization (`text_summary.py`) - ✅ Complete
-  - Q&A, Video Summary, Quiz - ❌ Skeletons
+  - Q&A (`qa.py`) - ✅ Complete
+  - Video Summary, Quiz - ❌ Skeletons
 - ✅ Pydantic models
 - ✅ Database clients (PostgreSQL + Qdrant with chapter filtering)
 - ✅ Database models (Video, Chunk, ChatSession, ChatMessage, QuizQuestion)
@@ -40,8 +41,9 @@ Quick reference for all project modules and their status.
 - ✅ Shared RAG library (RAGRetriever with Vector + BM25 + RRF)
 - ✅ Local cross-encoder reranker (`cross-encoder/ms-marco-MiniLM-L-6-v2`)
 - ✅ LLM client (OpenAI with SSE streaming, `gpt-5-mini` support)
-- ✅ Text summarization module (full implementation with session management)
-- ❌ Q&A, Video Summary, Quiz modules (skeletons only)
+- ✅ Text summarization module (full implementation with bug fixes)
+- ✅ Q&A module (full implementation with proper session management)
+- ❌ Video Summary, Quiz modules (skeletons only)
 
 
 ---
@@ -49,18 +51,19 @@ Quick reference for all project modules and their status.
 ### 3. **Frontend** (`frontend/`)
 **Purpose**: React web UI with ChatGPT-like interface
 
-**Status**: 🟡 In Progress (Text Summarization ✅ Complete)
+**Status**: 🟡 In Progress (Text Summarization ✅, Q&A ✅)
 - ✅ Project structure (Vite + React 18 + TypeScript)
 - ✅ API service layer with universal session APIs
 - ✅ State management (Zustand)
 - ✅ SSE streaming hook (`useSSE`)
 - ✅ Chat components (ChatContainer, MessageList, Message, ChatInput, Sidebar)
 - ✅ Session history sidebar (Today/Yesterday/Older grouping)
-- ✅ Task switcher in chat input
+- ✅ Task switcher in chat input (Text Summary + Q&A working)
 - ✅ Chapter filtering (8 chapters: Chương 2-9)
 - ✅ Clickable citations with timestamp navigation
 - ✅ Real-time streaming responses
-- ❌ Q&A, Video Summary, Quiz interfaces (skeletons only)
+- ✅ Q&A interface (fully integrated with task switcher)
+- ❌ Video Summary, Quiz interfaces (skeletons only)
 - ❌ Video player component
 
 ---
@@ -80,7 +83,7 @@ Quick reference for all project modules and their status.
 
 ## 🎯 Current Priority
 
-### ✅ Completed (Phase 1: Text Summarization)
+### ✅ Completed (Phase 1: Text Summarization + Q&A)
 1. ✅ **Ingestion**: Download, transcription, embeddings (62 videos, 1059 chunks)
 2. ✅ **Backend**: Database clients (PostgreSQL + Qdrant with chapter filtering)
 3. ✅ **Backend**: Database models and Alembic migrations
@@ -88,18 +91,19 @@ Quick reference for all project modules and their status.
 5. ✅ **Backend**: Shared RAG library (Vector + BM25 + RRF)
 6. ✅ **Backend**: Local cross-encoder reranker
 7. ✅ **Backend**: LLM client (OpenAI with SSE streaming)
-8. ✅ **Backend**: Text summarization module (full implementation)
-9. ✅ **Backend**: Universal session management API
-10. ✅ **Frontend**: Text summarization interface (ChatGPT-like with streaming)
+8. ✅ **Backend**: Text summarization module (full implementation with bug fixes)
+9. ✅ **Backend**: Q&A module (full implementation)
+10. ✅ **Backend**: Universal session management API (refactored for all tasks)
+11. ✅ **Frontend**: Text summarization interface (ChatGPT-like with streaming)
+12. ✅ **Frontend**: Q&A interface (integrated with task switcher)
+13. ✅ **Critical Fix**: Session management bug - new sessions now return valid `session_id`
 
 ### 🔄 Next (Phase 2: Remaining Tasks)
-1. 🔄 **Backend**: Q&A module implementation
-2. 🔄 **Backend**: Video summarization module (with VLM)
-3. 🔄 **Backend**: Quiz generation module
-4. 🔄 **Frontend**: Q&A interface
-5. 🔄 **Frontend**: Video summary interface
-6. 🔄 **Frontend**: Quiz interface
-7. 🔄 **Evaluation**: Build evaluation datasets and metrics
+1. 🔄 **Backend**: Video summarization module (with VLM)
+2. 🔄 **Backend**: Quiz generation module
+3. 🔄 **Frontend**: Video summary interface
+4. 🔄 **Frontend**: Quiz interface
+5. 🔄 **Evaluation**: Build evaluation datasets and metrics
 
 ---
 
