@@ -1,0 +1,206 @@
+{
+  "description": "Test dataset for text summarization evaluation - 50 topics covering CS431 Deep Learning course",
+  "total_questions": 50,
+  "questions": [
+    {
+      "id": "sum_001",
+      "query": "Transformer Architecture"
+    },
+    {
+      "id": "sum_002",
+      "query": "Attention Mechanism"
+    },
+    {
+      "id": "sum_003",
+      "query": "Self-Attention"
+    },
+    {
+      "id": "sum_004",
+      "query": "Multi-Head Self-Attention"
+    },
+    {
+      "id": "sum_005",
+      "query": "Query, Key, and Value (QKV) Vectors"
+    },
+    {
+      "id": "sum_006",
+      "query": "Attention Score Calculation"
+    },
+    {
+      "id": "sum_007",
+      "query": "Attention Distribution (Softmax)"
+    },
+    {
+      "id": "sum_008",
+      "query": "Attention Output/Context Vector"
+    },
+    {
+      "id": "sum_009",
+      "query": "Cross-Attention (Encoder-Decoder Attention)"
+    },
+    {
+      "id": "sum_010",
+      "query": "Masked Multi-Head Self-Attention"
+    },
+    {
+      "id": "sum_011",
+      "query": "Transformer Encoder Architecture"
+    },
+    {
+      "id": "sum_012",
+      "query": "Transformer Decoder Architecture"
+    },
+    {
+      "id": "sum_013",
+      "query": "Positional Encoding/Embedding"
+    },
+    {
+      "id": "sum_014",
+      "query": "Feed-Forward Networks in Transformer"
+    },
+    {
+      "id": "sum_015",
+      "query": "BERT Model Architecture"
+    },
+    {
+      "id": "sum_016",
+      "query": "GPT Model Architecture"
+    },
+    {
+      "id": "sum_017",
+      "query": "Vanishing Gradient Problem"
+    },
+    {
+      "id": "sum_018",
+      "query": "Computational Cost of Self-Attention"
+    },
+    {
+      "id": "sum_019",
+      "query": "Recurrent Neural Networks (RNN) Architecture"
+    },
+    {
+      "id": "sum_020",
+      "query": "Long Short-Term Memory (LSTM) Architecture"
+    },
+    {
+      "id": "sum_021",
+      "query": "LSTM Gates (Forget, Input, Output)"
+    },
+    {
+      "id": "sum_022",
+      "query": "Context Cell/State in LSTM"
+    },
+    {
+      "id": "sum_023",
+      "query": "Bidirectional RNN (BiRNN)"
+    },
+    {
+      "id": "sum_024",
+      "query": "Deep Stacked/Multi-layer RNN"
+    },
+    {
+      "id": "sum_025",
+      "query": "Sequence-to-Sequence (Seq2Seq) Model"
+    },
+    {
+      "id": "sum_026",
+      "query": "Encoder-Decoder Architecture"
+    },
+    {
+      "id": "sum_027",
+      "query": "RNN Handling of Variable Length Sequences"
+    },
+    {
+      "id": "sum_028",
+      "query": "Skip Connection (Residual Module)"
+    },
+    {
+      "id": "sum_029",
+      "query": "Convolutional Neural Networks (CNN) Introduction"
+    },
+    {
+      "id": "sum_030",
+      "query": "Convolution Operation (Tích Chập)"
+    },
+    {
+      "id": "sum_031",
+      "query": "Filter/Kernel in CNNs"
+    },
+    {
+      "id": "sum_032",
+      "query": "Feature Maps (Tensor Output)"
+    },
+    {
+      "id": "sum_033",
+      "query": "Pooling Layer (Max Pooling/Average Pooling)"
+    },
+    {
+      "id": "sum_034",
+      "query": "ReLU Activation Function"
+    },
+    {
+      "id": "sum_035",
+      "query": "Sigmoid/Tanh Activation Functions"
+    },
+    {
+      "id": "sum_036",
+      "query": "Fully Connected (Dense) Layer"
+    },
+    {
+      "id": "sum_037",
+      "query": "Weight Sharing in CNNs"
+    },
+    {
+      "id": "sum_038",
+      "query": "Local Connectivity in CNNs"
+    },
+    {
+      "id": "sum_039",
+      "query": "Overfitting Mitigation"
+    },
+    {
+      "id": "sum_040",
+      "query": "Data Augmentation"
+    },
+    {
+      "id": "sum_041",
+      "query": "ResNet Architecture"
+    },
+    {
+      "id": "sum_042",
+      "query": "MobileNet Architecture"
+    },
+    {
+      "id": "sum_043",
+      "query": "Depthwise Separable Convolution"
+    },
+    {
+      "id": "sum_044",
+      "query": "CNN Visualization Techniques"
+    },
+    {
+      "id": "sum_045",
+      "query": "Object Detection (YOLO/R-CNN)"
+    },
+    {
+      "id": "sum_046",
+      "query": "Semantic Segmentation (U-Net)"
+    },
+    {
+      "id": "sum_047",
+      "query": "Gradient Descent Optimization"
+    },
+    {
+      "id": "sum_048",
+      "query": "Adam Optimizer"
+    },
+    {
+      "id": "sum_049",
+      "query": "Binary Cross Entropy Loss"
+    },
+    {
+      "id": "sum_050",
+      "query": "Categorical Cross Entropy Loss"
+    }
+  ]
+}

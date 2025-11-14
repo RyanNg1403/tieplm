@@ -25,7 +25,6 @@ class LocalReranker:
             "cross-encoder/ms-marco-MiniLM-L-6-v2"
         )
         self.batch_size = batch_size or int(os.getenv("RERANKER_BATCH_SIZE", "32"))
-        self.top_k = int(os.getenv("RERANKER_TOP_K", "10"))
         
         print(f"Loading reranker model: {self.model_name}...")
         self.model = CrossEncoder(self.model_name)
@@ -35,7 +34,7 @@ class LocalReranker:
         self, 
         query: str, 
         results: List[Dict[str, Any]],
-        top_k: int = None
+        top_k: int
     ) -> List[Dict[str, Any]]:
         """
         Rerank results using cross-encoder.
@@ -43,15 +42,13 @@ class LocalReranker:
         Args:
             query: User query string
             results: List of retrieval results with 'metadata' containing 'text'
-            top_k: Number of top results to return (default from env)
+            top_k: Number of top results to return (required)
         
         Returns:
             Reranked results with 'rerank_score' added
         """
         if not results:
             return []
-        
-        top_k = top_k or self.top_k
         
         # Prepare query-document pairs for cross-encoder
         pairs = []
@@ -88,7 +85,7 @@ class LocalReranker:
         self, 
         query: str, 
         results: List[Dict[str, Any]],
-        top_k: int = None
+        top_k: int
     ) -> List[Dict[str, Any]]:
         """
         Async wrapper for rerank (runs in sync since cross-encoder is CPU-bound).

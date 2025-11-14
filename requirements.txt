@@ -34,6 +34,7 @@ sentence-transformers  # For cross-encoder reranking
 rank-bm25  # For BM25 lexical search
 
 # Evaluation metrics
+deepeval  # LLM evaluation framework with QAG metrics
 rouge-score
 nltk
 

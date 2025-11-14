@@ -58,6 +58,9 @@ ingestion/keyframes/
 evaluation/datasets/*.json
 !evaluation/datasets/.gitkeep
 
+# DeepEval
+.deepeval/
+
 # Logs
 *.log
 logs/

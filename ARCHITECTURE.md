@@ -125,11 +125,11 @@ tieplm/
 │   ├── transcripts/            # Generated transcripts
 │   └── ...
 │
-├── evaluation/                  # Evaluation module
-│   ├── datasets/               # Ground truth data (not in git)
-│   ├── scripts/                # Evaluation runners
-│   ├── metrics/                # Metric computation
-│   └── ...
+├── evaluation/                  # Evaluation module (task-specific folders)
+│   ├── text_summary/           # Text summary eval (DONE)
+│   ├── qa/                     # Q&A eval (TODO)
+│   ├── video_summary/          # Video summary eval (TODO)
+│   └── quiz/                   # Quiz eval (TODO)
 │
 ├── scripts/                     # Utility scripts (DB verification, etc.)
 ├── docker-compose.yml           # PostgreSQL + Qdrant
@@ -307,21 +307,30 @@ services:
 
 ### End-to-End Task Evaluation
 
-Each task will have separate evaluation dataset and script in `evaluation/` module:
+Each task has its own folder in `evaluation/` with task-specific evaluation service, runner script, and test dataset.
 
-**Planned Metrics by Task:**
-1. **Q&A**: Answer accuracy, source relevance, timestamp precision
-2. **Text Summarization**: ROUGE scores, factual consistency, conciseness
-3. **Video Summarization**: Coverage, coherence, key point extraction
-4. **Quiz Generation**: Question quality, difficulty distribution, answer correctness
+**Evaluation Metrics by Task:**
+1. **Q&A**: Answer accuracy, source relevance, timestamp precision (TODO)
+2. **Text Summarization**: ✅ **DeepEval QAG-based metrics**
+   - Coverage Score: Detail inclusion from original text
+   - Alignment Score: Factual accuracy (no hallucinations)
+   - Overall Score: min(coverage, alignment)
+   - 50 test questions covering all 8 chapters
+3. **Video Summarization**: Coverage, coherence, key point extraction (TODO)
+4. **Quiz Generation**: Question quality, difficulty distribution, answer correctness (TODO)
 
-**Evaluation Workflow** (to be implemented):
-1. Prepare ground truth datasets in `evaluation/datasets/`
-2. Run evaluation scripts that call main system APIs
-3. Compute metrics using `evaluation/metrics/`
-4. Analyze results and iterate on prompts/RAG strategies
+**Evaluation Workflow** (Text Summarization - Implemented):
+1. Test questions stored in `evaluation/text_summary/test_questions.json`
+2. Runner script (`run_eval.py`) generates summaries via RAG pipeline
+3. DeepEval's QAG framework evaluates using closed-ended questions
+4. Results saved as JSON with statistics (mean, min, max, chapter distribution)
+5. Iterate on prompts/RAG strategies based on results
 
-**Note**: Evaluation module structure and file names to be designed during implementation.
+**Configuration**:
+```bash
+EVAL_MODEL=gpt-5-mini                    # Model for evaluation
+EVAL_SUMMARIZATION_THRESHOLD=0.5         # Pass/fail threshold
+```
 
 ---
 
@@ -406,43 +415,3 @@ def get_prompt(task: str, prompt_type: str) -> str:
 - `GET /api/chapters` - List course chapters
 
 ---
-
-## Environment Variables
-
-```bash
-# .env.example
-
-# OpenAI API Configuration
-OPENAI_API_KEY=your_openai_api_key_here
-
-# PostgreSQL Configuration
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=tieplm
-POSTGRES_USER=tieplm
-POSTGRES_PASSWORD=tieplm
-
-# Qdrant Configuration
-QDRANT_HOST=localhost
-QDRANT_PORT=6333
-QDRANT_COLLECTION_NAME=cs431_course_transcripts
-
-# Embedding Hyperparameters
-EMBEDDING_DIMENSION=1536
-EMBEDDING_MODEL_NAME=text-embedding-3-small
-EMBEDDING_PROVIDER=openai
-TIME_WINDOW=60
-CHUNK_OVERLAP=10
-EMBEDDING_BATCH_SIZE=100
-
-# LLM for Contextual Chunking
-MODEL_NAME=gpt-5-mini
-MODEL_PROVIDER=openai
-CONTEXT_TOKEN_LIMIT=300  # Initial limit; retries with +100 tokens (up to 3 attempts: 300->400->500)
-LLM_TEMPERATURE=1.0  # gpt-5-mini only supports default temperature=1.0
-# Note: reasoning_effort="minimal" is hardcoded in embedder.py for gpt-5-mini
-
-# Logging
-LOG_DIR=logs
-LOG_LEVEL=INFO
-```

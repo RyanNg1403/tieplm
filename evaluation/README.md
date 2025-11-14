@@ -6,53 +6,91 @@ Evaluate performance of 4 AI tasks: Q&A, Text Summary, Video Summary, Quiz Gener
 
 ```
 evaluation/
-├── datasets/         # Test datasets for each task (JSON/CSV format, not in git)
-├── scripts/          # Evaluation runner scripts (one per task)
-└── metrics/          # Metric computation and evaluation logic
+├── text_summary/
+│   ├── eval_service.py        # Evaluation service
+│   ├── run_eval.py            # Evaluation runner script
+│   ├── test_questions.json    # Test dataset (50 questions)
+│   └── results/               # Evaluation results (gitignored)
+├── qa/
+│   ├── eval_service.py        # TODO
+│   ├── run_eval.py            # TODO
+│   └── results/
+├── video_summary/
+│   ├── eval_service.py        # TODO
+│   ├── run_eval.py            # TODO
+│   └── results/
+└── quiz/
+    ├── eval_service.py        # TODO
+    ├── run_eval.py            # TODO
+    └── results/
 ```
 
-**Expected Folders:**
-- **`datasets/`**: Ground truth evaluation data for each AI task (Q&A, Text Summary, Video Summary, Quiz)
-- **`scripts/`**: Python scripts to run evaluations and generate reports
-- **`metrics/`**: Metric calculators (ROUGE, accuracy, relevance scoring, etc.)
+**Task-Specific Structure:**
+Each task folder contains:
+- **Evaluation service**: Core evaluation logic
+- **Runner script**: Script to execute evaluation
+- **Test dataset**: Questions/test cases (JSON)
+- **Results folder**: Evaluation results (stored locally, gitignored)
 
 ## ✅ Implemented
 
-- ✅ Folder structure (`datasets/`, `scripts/`, `metrics/`)
-- ✅ Script skeletons (placeholders for each task)
-- ✅ Evaluator class skeleton
+- ✅ Task-specific folder structure
+- ✅ **Text Summary Evaluation**:
+  - DeepEval with QAG (Question-Answer Generation) metrics
+  - 50 test questions covering all 8 chapters
+  - Evaluation service with comprehensiveness-focused prompts
+  - Runner script with batch evaluation and statistics
 
 ## ❌ TODO
 
-- ❌ Create evaluation datasets
-- ❌ Q&A evaluation metrics (accuracy, relevance)
-- ❌ Summary evaluation (ROUGE, coherence)
+- ❌ Q&A evaluation
 - ❌ Video summary evaluation
-- ❌ Quiz evaluation (quality, difficulty)
-- ❌ Implement evaluation scripts
-- ❌ Results aggregation
-- ❌ Visualization/reporting
+- ❌ Quiz evaluation
 
-## 🚀 Usage (After Implementation)
+## 🚀 Usage
+
+### Text Summarization Evaluation
 
 ```bash
-cd evaluation
+# Activate virtual environment
+source .venv/bin/activate
 
-# Run evaluation for specific task
-python scripts/<task_eval_script>.py
+# Navigate to text_summary folder
+cd evaluation/text_summary
 
-# Example workflow:
-# 1. Prepare ground truth datasets in datasets/
-# 2. Run evaluation script (calls main system APIs)
-# 3. Compute metrics using metrics/
-# 4. Generate reports and visualizations
+# Run all 50 questions
+python run_eval.py --all
+
+# Run specific range
+python run_eval.py --start 0 --end 10
+
+# Run specific questions
+python run_eval.py --question-id sum_001 sum_002
+
+# Results saved to: evaluation/text_summary/results/
 ```
 
-## 📊 Planned Metrics
+### Other Tasks (TODO)
 
-- **Q&A**: Answer accuracy, source relevance, timestamp precision
-- **Text Summary**: ROUGE scores, factual consistency
-- **Video Summary**: Coverage, coherence, key points
-- **Quiz**: Question quality, difficulty distribution
+Similar structure for qa/, video_summary/, quiz/ when implemented.
 
-**Note**: Build this module after main features are complete.
+## 📊 Evaluation Metrics
+
+- **Text Summary**: 
+  - **QAG-based** (DeepEval SummarizationMetric)
+  - Coverage Score: Detail inclusion from original text
+  - Alignment Score: Factual accuracy
+  - Overall Score: min(coverage, alignment)
+  
+- **Q&A**: TBD (accuracy, source relevance)
+- **Video Summary**: TBD (coverage, coherence)
+- **Quiz**: TBD (question quality, difficulty)
+
+## 🔧 Configuration
+
+Add to `.env`:
+```bash
+# Evaluation Configuration
+EVAL_MODEL=gpt-5-mini                    # Model for evaluation
+EVAL_SUMMARIZATION_THRESHOLD=0.5         # Pass/fail threshold
+```

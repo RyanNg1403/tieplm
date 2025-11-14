@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
++ Don't create markdown files if not asked to
++ Always start the virtual environment before running any Python code.
++ After each task, always update the docs which contains info about project progress tracking. 

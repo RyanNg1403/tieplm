@@ -19,7 +19,7 @@ backend/app/core/<task>/
 1. Create `<Task>Service` class with `__init__` importing shared services
 2. Define main method (e.g., `answer()`, `generate()`) that:
    - Retrieves chunks via `self.retriever.retrieve(query, chapters)`
-   - Reranks via `self.reranker.rerank(query, chunks)`
+   - Reranks via `self.reranker.rerank(query, chunks, top_k=self.final_top_k)`
    - Builds task-specific prompt
    - Streams response via `self.llm.stream_with_sources()`
    - Saves to session using `ChatSession` with `task_type='<task>'`
@@ -86,7 +86,7 @@ chunks = await retriever.retrieve(query, top_k=10, chapter_filter=['Chương 2']
 ```python
 from backend.app.shared.rag.reranker import LocalReranker
 reranker = LocalReranker()
-reranked = reranker.rerank(query, chunks)
+reranked = reranker.rerank(query, chunks, top_k=10)
 ```
 
 **LLM Client:**

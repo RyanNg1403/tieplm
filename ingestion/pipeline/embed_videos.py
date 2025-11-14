@@ -211,6 +211,7 @@ class EmbeddingPipeline:
                             start_time=int(chunk["start_time"]),
                             end_time=int(chunk["end_time"]),
                             text=chunk["text"],
+                            contextualized_text=chunk["contextualized_text"],
                             qdrant_id=qdrant_id
                         )
                         session.add(chunk_entry)

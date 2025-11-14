@@ -54,8 +54,22 @@ class VectorDBClient:
             vectors_config=VectorParams(
                 size=self.vector_size,
                 distance=Distance.COSINE
-            )
+            ),
+            timeout=60  # Wait up to 60 seconds for collection to be created
         )
+
+        # Wait for collection to be fully ready
+        import time
+        max_retries = 10
+        for i in range(max_retries):
+            try:
+                info = self.client.get_collection(self.collection_name)
+                if info.status == "green":
+                    break
+            except Exception:
+                pass
+            time.sleep(0.5)
+
         print(f"Created collection '{self.collection_name}' with dimension {self.vector_size}")
     
     def upsert_points(
@@ -65,18 +79,21 @@ class VectorDBClient:
         ids: Optional[List[str]] = None
     ) -> List[str]:
         """Insert or update vectors with metadata.
-        
+
         Args:
             vectors: List of embedding vectors.
             payloads: List of metadata dictionaries for each vector.
             ids: Optional list of point IDs. If None, will generate UUIDs.
-        
+
         Returns:
             List of point IDs.
+
+        Raises:
+            Exception: If upsert fails after retries.
         """
         if ids is None:
             ids = [str(uuid.uuid4()) for _ in range(len(vectors))]
-        
+
         points = [
             PointStruct(
                 id=point_id,
@@ -85,13 +102,30 @@ class VectorDBClient:
             )
             for point_id, vector, payload in zip(ids, vectors, payloads)
         ]
-        
-        self.client.upsert(
-            collection_name=self.collection_name,
-            points=points
-        )
-        
-        return ids
+
+        # Retry logic for robustness
+        import time
+        max_retries = 3
+        last_error = None
+
+        for attempt in range(max_retries):
+            try:
+                self.client.upsert(
+                    collection_name=self.collection_name,
+                    points=points,
+                    wait=True  # Wait for operation to complete before returning
+                )
+                return ids
+            except Exception as e:
+                last_error = e
+                if attempt < max_retries - 1:
+                    wait_time = (attempt + 1) * 2  # Exponential backoff: 2s, 4s, 6s
+                    print(f"Upsert failed (attempt {attempt + 1}/{max_retries}), retrying in {wait_time}s: {e}")
+                    time.sleep(wait_time)
+                else:
+                    print(f"Upsert failed after {max_retries} attempts: {e}")
+
+        raise Exception(f"Failed to upsert points after {max_retries} attempts: {last_error}")
     
     def search(
         self,

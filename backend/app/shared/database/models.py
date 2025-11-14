@@ -24,12 +24,13 @@ class Video(Base):
 class Chunk(Base):
     """Embedded chunks with timestamps."""
     __tablename__ = "chunks"
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     video_id = Column(String, ForeignKey("videos.id"), nullable=False)
     start_time = Column(Integer, nullable=False)  # in seconds
     end_time = Column(Integer, nullable=False)  # in seconds
     text = Column(Text, nullable=False)  # original chunk text
+    contextualized_text = Column(Text)  # contextualized chunk text (for BM25 and embeddings)
     qdrant_id = Column(String, nullable=False)  # ID in Qdrant collection
     created_at = Column(DateTime, default=datetime.utcnow)
 

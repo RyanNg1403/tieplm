@@ -33,22 +33,25 @@ class RAGRetriever:
         self.bm25_chunk_ids = []
     
     def build_bm25_index(self):
-        """Build BM25 index from all chunks in PostgreSQL."""
+        """Build BM25 index from all chunks in PostgreSQL using contextualized text."""
         print("Building BM25 index from database...")
-        
+
         with self.postgres.session_scope() as session:
             chunks = session.query(Chunk).all()
-            
+
             # Tokenize corpus (simple whitespace tokenization)
             self.bm25_corpus = []
             self.bm25_chunk_ids = []
-            
+
             for chunk in chunks:
+                # Use contextualized_text if available, otherwise fall back to text
+                text_to_index = chunk.contextualized_text if chunk.contextualized_text else chunk.text
+
                 # Simple tokenization: lowercase + split
-                tokenized = chunk.text.lower().split()
+                tokenized = text_to_index.lower().split()
                 self.bm25_corpus.append(tokenized)
                 self.bm25_chunk_ids.append(chunk.qdrant_id)
-            
+
             # Build BM25 index
             self.bm25_index = BM25Okapi(self.bm25_corpus)
             print(f"✅ BM25 index built with {len(self.bm25_corpus)} chunks")
