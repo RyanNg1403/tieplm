@@ -126,6 +126,8 @@ uvicorn app.main:app --reload --port ${BACKEND_PORT:-8000}
 
 # Or explicitly:
 # uvicorn app.main:app --reload --port 8000
+# $env:BACKEND_PORT = 8000
+# uvicorn app.main:app --reload --port $env:BACKEND_PORT
 # Backend API: http://localhost:8000
 # API Docs: http://localhost:8000/docs
 ```

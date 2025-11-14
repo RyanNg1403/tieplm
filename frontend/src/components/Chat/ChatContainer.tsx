@@ -272,107 +272,97 @@ export const ChatContainer: React.FC = () => {
         onDeleteSession={handleDeleteSession}
       />
       
-      {/* Video Summary Layout (side-by-side) */}
+      {/* Video Summary Layout (Title -> Video -> Summary) */}
       {currentMode === 'video_summary' && (
-        <HStack flex={1} spacing={0} align="stretch">
-          {/* Video Player (Left) */}
-          <VStack flex={0.4} spacing={0} bg="black">
-            <Box w="full" p={4}>
-              {/* If a video is selected, show the player; otherwise prompt selection */}
-              {selectedVideo ? (
-                videoLoading ? (
-                  <Box
-                    bg="gray.700"
-                    borderRadius="md"
-                    overflow="hidden"
-                    w="full"
-                    aspectRatio="16/9"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    color="gray.400"
-                    fontSize="sm"
-                  >
-                    Loading video...
-                  </Box>
-                ) : videoError ? (
-                  <Box
-                    bg="red.600"
-                    borderRadius="md"
-                    overflow="hidden"
-                    w="full"
-                    aspectRatio="16/9"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    color="white"
-                    fontSize="sm"
-                  >
-                    Error loading video
-                  </Box>
-                ) : videoInfo ? (
-                  (() => {
-                    const embed = toYouTubeEmbed(videoInfo.url);
-                    if (embed) {
-                      return (
-                        <Box w="full" h="100%" borderRadius="md" overflow="hidden">
-                          <Box as="iframe" src={embed} width="100%" height="100%" border={0} />
-                        </Box>
-                      );
-                    }
-                    return <VideoPlayer ref={videoPlayerRef} videoUrl={videoInfo.url} videoTitle={videoInfo.title} />;
-                  })()
-                ) : (
-                  <Box
-                    bg="gray.700"
-                    borderRadius="md"
-                    overflow="hidden"
-                    w="full"
-                    aspectRatio="16/9"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    color="gray.400"
-                    fontSize="sm"
-                  >
-                    Video Player
-                  </Box>
-                )
-              ) : (
+        <VStack flex={1} spacing={0} align="stretch">
+          {/* Header */}
+          <Box
+            w="full"
+            bg="white"
+            borderBottom="1px"
+            borderColor="gray.200"
+            p={4}
+            textAlign="center"
+            fontWeight="bold"
+            fontSize="lg"
+          >
+            Video Summary & Chat
+          </Box>
+
+          {/* Video Player Area (Middle - Takes maximum available space) */}
+          <Box flex={1} w="full" display="flex" flexDirection="column" minH={0} bg="gray.900">
+            {/* If a video is selected, show the player; otherwise prompt selection */}
+            {selectedVideo ? (
+              videoLoading ? (
                 <Box
-                  bg="gray.800"
-                  borderRadius="md"
-                  overflow="hidden"
+                  bg="gray.700"
                   w="full"
-                  aspectRatio="16/9"
+                  h="full"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                  color="gray.300"
+                  color="gray.400"
                   fontSize="sm"
                 >
-                  Please select a video from the sidebar
+                  Loading video...
                 </Box>
-              )}
-            </Box>
-          </VStack>
+              ) : videoError ? (
+                <Box
+                  bg="red.600"
+                  w="full"
+                  h="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  color="white"
+                  fontSize="sm"
+                >
+                  Error loading video
+                </Box>
+              ) : videoInfo ? (
+                (() => {
+                  const embed = toYouTubeEmbed(videoInfo.url);
+                  if (embed) {
+                    return (
+                      <Box w="full" h="full" overflow="hidden">
+                        <Box as="iframe" src={embed} width="100%" height="100%" border={0} />
+                      </Box>
+                    );
+                  }
+                  return <VideoPlayer ref={videoPlayerRef} videoUrl={videoInfo.url} videoTitle={videoInfo.title} />;
+                })()
+              ) : (
+                <Box
+                  bg="gray.700"
+                  w="full"
+                  h="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  color="gray.400"
+                  fontSize="sm"
+                >
+                  Video Player
+                </Box>
+              )
+            ) : (
+              <Box
+                bg="gray.800"
+                w="full"
+                h="full"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                color="gray.300"
+                fontSize="sm"
+              >
+                Please select a video from the sidebar
+              </Box>
+            )}
+          </Box>
 
-          {/* Summary Area (Right) */}
-          <VStack flex={0.6} spacing={0} bg="gray.50">
-            {/* Header */}
-            <Box
-              w="full"
-              bg="white"
-              borderBottom="1px"
-              borderColor="gray.200"
-              p={4}
-              textAlign="center"
-              fontWeight="bold"
-              fontSize="lg"
-            >
-              Video Summary
-            </Box>
-            
+          {/* Summary Area (Bottom) */}
+          <VStack flex={0} spacing={0} bg="gray.50" align="stretch" maxH="50%">
             {/* Messages Area */}
             <MessageList
               messages={messages}
@@ -393,7 +383,7 @@ export const ChatContainer: React.FC = () => {
               onVideoChange={setSelectedVideo}
             />
           </VStack>
-        </HStack>
+        </VStack>
       )}
       
       {/* Standard Layout (for text_summary, qa, etc.) */}

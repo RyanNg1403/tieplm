@@ -2,7 +2,7 @@
  * VideoPlayer - Video player component with timestamp navigation
  * Displays a video with clickable timestamps from citations
  */
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import { Box, VStack, HStack, Text, IconButton } from '@chakra-ui/react';
 import { TriangleUpIcon, MinusIcon } from '@chakra-ui/icons';
 
@@ -12,11 +12,14 @@ interface VideoPlayerProps {
   onTimeUpdate?: (currentTime: number) => void;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({
-  videoUrl,
-  videoTitle,
-  onTimeUpdate,
-}: VideoPlayerProps) => {
+export const VideoPlayer = forwardRef(function VideoPlayer(
+  {
+    videoUrl,
+    videoTitle,
+    onTimeUpdate,
+  }: VideoPlayerProps,
+  ref
+) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handlePlayPause = () => {
@@ -36,12 +39,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
-  // Expose seek function to parent component via ref
-  useEffect(() => {
-    if (videoRef.current) {
-      (videoRef.current as any).seekToTime = seekToTime;
-    }
-  }, []);
+  // Expose seek function to parent component via forwarded ref
+  useImperativeHandle(ref, () => ({
+    seekToTime,
+  }));
 
   const handleTimeUpdate = () => {
     if (videoRef.current && onTimeUpdate) {
@@ -56,20 +57,19 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   return (
-    <VStack w="full" spacing={4} align="stretch">
+    <VStack w="full" h="full" spacing={0} align="stretch">
       <Box
-        bg="black"
-        borderRadius="md"
         overflow="hidden"
         w="full"
-        aspectRatio="16/9"
+        flex={1}
+        minH={0}
       >
         <video
           ref={videoRef}
           width="100%"
           height="100%"
           onTimeUpdate={handleTimeUpdate}
-          style={{ display: 'block' }}
+          style={{ display: 'block', objectFit: 'cover' }}
           crossOrigin="anonymous"
         >
           <source src={videoUrl} type="video/mp4" />
@@ -77,22 +77,23 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </video>
       </Box>
 
-      <VStack spacing={2} w="full">
-        <Text fontSize="lg" fontWeight="bold">
+      {/* Compact Controls Bar */}
+      <VStack spacing={1} w="full" bg="gray.900" p={2}>
+        <Text fontSize="xs" fontWeight="bold" noOfLines={1} color="white" w="full">
           {videoTitle}
         </Text>
 
-        <HStack w="full" justify="space-between" px={2}>
+        <HStack w="full" justify="space-between" px={1} spacing={1}>
           <IconButton
             aria-label="Play/Pause"
             icon={videoRef.current?.paused ? <TriangleUpIcon transform="rotate(90deg)" /> : <MinusIcon />}
             onClick={handlePlayPause}
-            size="lg"
+            size="sm"
             colorScheme="blue"
           />
 
           {videoRef.current && (
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize="xs" color="gray.300">
               {formatTime(videoRef.current.currentTime)} /{' '}
               {formatTime(videoRef.current.duration || 0)}
             </Text>
@@ -100,7 +101,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </HStack>
 
         {videoRef.current && (
-          <Box w="full" px={2}>
+          <Box w="full" px={1}>
             <input
               type="range"
               min="0"
@@ -122,4 +123,4 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       </VStack>
     </VStack>
   );
-};
+});
