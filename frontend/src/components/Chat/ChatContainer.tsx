@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { HStack, VStack, Box, useToast, useBreakpointValue } from '@chakra-ui/react';
 import { MessageList } from './MessageList';
+import { VideoSummaryDisplay } from './VideoSummaryDisplay';
 import { ChatInput } from './ChatInput';
 import { Sidebar } from './Sidebar';
 import { VideoPlayer } from '../VideoPlayer';
@@ -306,14 +307,19 @@ export const ChatContainer: React.FC = () => {
 
   // Handle send message
   const handleSend = useCallback(async (messageText: string) => {
-    // Add user message immediately
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: messageText,
-      created_at: new Date().toISOString(),
-    };
-    addMessage(userMessage);
+    // Skip adding user message for video_summary regenerate (special marker)
+    const isVideoSummaryRegenerate = messageText === '__VIDEO_SUMMARY_REGENERATE__';
+
+    if (!isVideoSummaryRegenerate) {
+      // Add user message immediately for other modes
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: messageText,
+        created_at: new Date().toISOString(),
+      };
+      addMessage(userMessage);
+    }
 
     // Start streaming
     setIsStreaming(true);
@@ -527,16 +533,16 @@ export const ChatContainer: React.FC = () => {
                   h="full"
                   overflow="hidden"
                 >
-                  {/* Messages Area */}
+                  {/* Summary Display Area - Full width for video_summary */}
                   <Box flex={1} minH={0} h="full" overflow="hidden" position="relative">
-                    <MessageList
+                    <VideoSummaryDisplay
                       messages={messages}
                       isStreaming={isStreaming}
                       streamingContent={streamingContent}
                       onSeekVideo={handleSeek}
                     />
                   </Box>
-                  
+
                   {/* Input Area */}
                   <Box flexShrink={0}>
                     <ChatInput
@@ -649,16 +655,16 @@ export const ChatContainer: React.FC = () => {
                   h="full"
                   overflow="hidden"
                 >
-                  {/* Messages Area */}
+                  {/* Summary Display Area - Full width for video_summary */}
                   <Box flex={1} minH={0} h="full" overflow="hidden" position="relative">
-                    <MessageList
+                    <VideoSummaryDisplay
                       messages={messages}
                       isStreaming={isStreaming}
                       streamingContent={streamingContent}
                       onSeekVideo={handleSeek}
                     />
                   </Box>
-                  
+
                   {/* Input Area */}
                   <Box flexShrink={0}>
                     <ChatInput

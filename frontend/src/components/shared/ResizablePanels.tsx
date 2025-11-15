@@ -26,70 +26,79 @@ export const ResizablePanels: React.FC<ResizablePanelsProps> = ({
   const startPosRef = useRef<number>(0);
   const startSizesRef = useRef<[number, number]>([0, 0]);
   const isResizingRef = useRef(false);
-  const directionRef = useRef(direction);
-  const minSizesRef = useRef(minSizes);
 
-  // Update refs when props change
+  // Store current sizes in ref to avoid stale closures
+  const sizesRef = useRef<[number, number]>(sizes);
   useEffect(() => {
-    directionRef.current = direction;
-    minSizesRef.current = minSizes;
-  }, [direction, minSizes]);
+    sizesRef.current = sizes;
+  }, [sizes]);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isResizingRef.current || !containerRef.current) return;
-
-    const container = containerRef.current;
-    const containerSize = directionRef.current === 'horizontal' 
-      ? container.offsetWidth 
-      : container.offsetHeight;
-    
-    const currentPos = directionRef.current === 'horizontal' ? e.clientX : e.clientY;
-    const delta = currentPos - startPosRef.current;
-    const deltaPercent = (delta / containerSize) * 100;
-
-    const [firstSize, secondSize] = startSizesRef.current;
-    let newFirstSize = firstSize + deltaPercent;
-    let newSecondSize = secondSize - deltaPercent;
-
-    // Apply minimum size constraints
-    const [minFirst, minSecond] = minSizesRef.current;
-    if (newFirstSize < minFirst) {
-      newFirstSize = minFirst;
-      newSecondSize = 100 - minFirst;
-    } else if (newSecondSize < minSecond) {
-      newSecondSize = minSecond;
-      newFirstSize = 100 - minSecond;
-    }
-
-    setSizes([newFirstSize, newSecondSize]);
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    isResizingRef.current = false;
-    setIsResizing(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    isResizingRef.current = true;
-    setIsResizing(true);
-    startPosRef.current = directionRef.current === 'horizontal' ? e.clientX : e.clientY;
-    startSizesRef.current = [...sizes] as [number, number];
-    
-    // Add global mouse event listeners
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [sizes, handleMouseMove, handleMouseUp]);
-
-  // Cleanup on unmount
+  // Setup mouse event handlers with useEffect
   useEffect(() => {
-    return () => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizingRef.current || !containerRef.current) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const container = containerRef.current;
+      const containerSize = direction === 'horizontal'
+        ? container.offsetWidth
+        : container.offsetHeight;
+
+      const currentPos = direction === 'horizontal' ? e.clientX : e.clientY;
+      const delta = currentPos - startPosRef.current;
+      const deltaPercent = (delta / containerSize) * 100;
+
+      const [firstSize, secondSize] = startSizesRef.current;
+      let newFirstSize = firstSize + deltaPercent;
+      let newSecondSize = secondSize - deltaPercent;
+
+      // Apply minimum size constraints
+      const [minFirst, minSecond] = minSizes;
+      if (newFirstSize < minFirst) {
+        newFirstSize = minFirst;
+        newSecondSize = 100 - minFirst;
+      } else if (newSecondSize < minSecond) {
+        newSecondSize = minSecond;
+        newFirstSize = 100 - minSecond;
+      }
+
+      setSizes([newFirstSize, newSecondSize]);
+    };
+
+    const handleMouseUp = () => {
+      if (!isResizingRef.current) return;
+
+      isResizingRef.current = false;
+      setIsResizing(false);
+
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [handleMouseMove, handleMouseUp]);
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isResizing, direction, minSizes]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isResizingRef.current) return;
+
+    isResizingRef.current = true;
+    setIsResizing(true);
+    startPosRef.current = direction === 'horizontal' ? e.clientX : e.clientY;
+    startSizesRef.current = sizesRef.current;
+  }, [direction]);
 
   // Make divider more touch-friendly with larger hit area
   const dividerHitArea = direction === 'horizontal' ? 8 : 8; // 8px on each side = 16px total
@@ -137,6 +146,7 @@ export const ResizablePanels: React.FC<ResizablePanelsProps> = ({
         minH={direction === 'vertical' ? `${minSizes[0]}%` : undefined}
         overflow="hidden"
         position="relative"
+        pointerEvents={isResizing ? 'none' : 'auto'}
       >
         {children[0]}
       </Box>
@@ -159,6 +169,7 @@ export const ResizablePanels: React.FC<ResizablePanelsProps> = ({
         minH={direction === 'vertical' ? `${minSizes[1]}%` : undefined}
         overflow="hidden"
         position="relative"
+        pointerEvents={isResizing ? 'none' : 'auto'}
       >
         {children[1]}
       </Box>

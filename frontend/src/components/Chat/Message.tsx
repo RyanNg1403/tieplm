@@ -36,24 +36,57 @@ export const Message: React.FC<MessageProps> = ({ message, onSeekVideo }) => {
   // Replace citations [1], [2], etc. with clickable links
   const renderContentWithCitations = (content: string, sources?: SourceReference[]) => {
     if (!sources || sources.length === 0) {
-      return <ReactMarkdown>{content}</ReactMarkdown>;
+      return (
+        <Box className="markdown-content">
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </Box>
+      );
     }
-    
-    // Split content by citation pattern [N]
+
+    // Custom text renderer to replace citations inline
+    const components = {
+      p: ({ children, ...props }: any) => {
+        // Process text nodes within paragraphs
+        const processedChildren = React.Children.map(children, (child) => {
+          if (typeof child === 'string') {
+            return processTextWithCitations(child, sources);
+          }
+          return child;
+        });
+        return <p {...props}>{processedChildren}</p>;
+      },
+      li: ({ children, ...props }: any) => {
+        // Process text nodes within list items
+        const processedChildren = React.Children.map(children, (child) => {
+          if (typeof child === 'string') {
+            return processTextWithCitations(child, sources);
+          }
+          return child;
+        });
+        return <li {...props}>{processedChildren}</li>;
+      },
+    };
+
+    return (
+      <Box className="markdown-content">
+        <ReactMarkdown components={components}>{content}</ReactMarkdown>
+      </Box>
+    );
+  };
+
+  // Helper function to process text and replace citations with clickable links
+  const processTextWithCitations = (text: string, sources: SourceReference[]) => {
     const citationRegex = /\[(\d+)\]/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match;
-    
-    while ((match = citationRegex.exec(content)) !== null) {
+
+    while ((match = citationRegex.exec(text)) !== null) {
       // Add text before citation
       if (match.index > lastIndex) {
-        const textBefore = content.slice(lastIndex, match.index);
-        parts.push(
-          <ReactMarkdown key={`text-${lastIndex}`}>{textBefore}</ReactMarkdown>
-        );
+        parts.push(text.slice(lastIndex, match.index));
       }
-      
+
       // Add clickable citation
       const citationIndex = parseInt(match[1]);
       parts.push(
@@ -64,23 +97,21 @@ export const Message: React.FC<MessageProps> = ({ message, onSeekVideo }) => {
           cursor="pointer"
           onClick={() => handleCitationClick(citationIndex, sources)}
           _hover={{ textDecoration: 'underline' }}
+          display="inline"
         >
           [{citationIndex}]
         </Link>
       );
-      
+
       lastIndex = match.index + match[0].length;
     }
-    
+
     // Add remaining text
-    if (lastIndex < content.length) {
-      const textAfter = content.slice(lastIndex);
-      parts.push(
-        <ReactMarkdown key={`text-${lastIndex}`}>{textAfter}</ReactMarkdown>
-      );
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
     }
-    
-    return <Box>{parts}</Box>;
+
+    return parts.length > 0 ? <>{parts}</> : text;
   };
   
   return (

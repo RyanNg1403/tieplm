@@ -91,7 +91,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     if (currentMode === 'video_summary') {
       // For video_summary, send button triggers summarization
       if (selectedVideo && !isStreaming) {
-        onSend('Summarize'); // Send empty message, video_id is in request
+        onSend('__VIDEO_SUMMARY_REGENERATE__'); // Special marker to skip user message
       }
     } else if (input.trim() && !isStreaming) {
       onSend(input.trim());

@@ -210,7 +210,7 @@ class VideoSummaryService:
         sources: List[Dict[str, Any]]
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """
-        Stream pre-computed summary word-by-word to simulate real-time generation.
+        Stream pre-computed summary chunk-by-chunk for faster streaming.
 
         Args:
             summary: Pre-computed summary text
@@ -219,21 +219,19 @@ class VideoSummaryService:
         Yields:
             SSE events with tokens and sources
         """
-        # Split summary into words
-        words = summary.split()
+        # Split summary into chunks (e.g., 50 characters per chunk)
+        chunk_size = 50  # Adjust this value for desired speed
+        chunks = [summary[i:i + chunk_size] for i in range(0, len(summary), chunk_size)]
 
-        # Stream words one by one
-        for i, word in enumerate(words):
-            # Add space after word (except first word)
-            token = word if i == 0 else f" {word}"
-
+        # Stream chunks one by one
+        for chunk in chunks:
             yield {
                 "type": "token",
-                "content": token
+                "content": chunk
             }
 
-            # Small delay to simulate typing (adjust as needed)
-            await asyncio.sleep(0.02)  # 20ms delay between words
+            # Small delay between chunks for smoother streaming
+            await asyncio.sleep(0.05)  # 50ms delay between chunks
 
         # Send sources after all tokens
         yield {

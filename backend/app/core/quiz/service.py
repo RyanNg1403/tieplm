@@ -3,7 +3,6 @@ import os
 import json
 import uuid
 from typing import AsyncGenerator, Dict, Any, List, Optional
-from datetime import datetime
 
 from ...shared.rag.reranker import LocalReranker, get_local_reranker
 from ...shared.rag.retriever import RAGRetriever, get_rag_retriever
@@ -81,7 +80,11 @@ class QuizService:
         """
         num_questions = num_questions or self.default_num_questions
 
-        source_identifier = f"{len(video_ids)} video(s)" if len(video_ids) > 1 else video_ids[0]
+        # Handle video_ids - default to empty list if None
+        if video_ids is None:
+            video_ids = []
+        
+        source_identifier = f"{len(video_ids)} video(s)" if len(video_ids) > 1 else (video_ids[0] if video_ids else "all videos")
 
         # Step 0: Create or get session BEFORE generation
         created_session_id = await self._create_session(
@@ -89,123 +92,145 @@ class QuizService:
             query=f"{query if query else source_identifier} - {num_questions} {question_type} questions"
         )
 
-        # if query:
-        #     # Step 1: Retrieve relevant chunks
-        #     print(f"📚 Retrieving chunks for question: {query[:50]}...")
-        #     retrieved_chunks = await self.retriever.retrieve(
-        #         query=query,
-        #         top_k=self.retrieval_top_k,
-        #         # video_filter=video_ids,
-        #         use_bm25=True
-        #     )
-        #     print(f"✅ Retrieved {len(retrieved_chunks)} chunks")
+        # Step 1: Retrieve relevant chunks
+        if query:
+            print(f"📚 Retrieving chunks for query: {query[:50]}...")
+            retrieved_chunks = await self.retriever.retrieve(
+                query=query,
+                top_k=self.retrieval_top_k,
+                use_bm25=True
+            )
+            print(f"✅ Retrieved {len(retrieved_chunks)} chunks")
             
-        #     if not retrieved_chunks:
-        #         # No results found
-        #         yield {
-        #             "type": "error",
-        #             "content": "Không tìm thấy thông tin liên quan trong cơ sở dữ liệu."
-        #         }
-        #         return
+            if not retrieved_chunks:
+                # No results found
+                yield {
+                    "type": "error",
+                    "content": "Không tìm thấy thông tin liên quan trong cơ sở dữ liệu."
+                }
+                return
+        else:
+            # If no query, retrieve chunks from selected videos
+            # For now, we'll use a generic query to retrieve from all videos
+            # In the future, we could add video_id filtering to the retriever
+            print(f"📚 Retrieving chunks from {len(video_ids)} video(s)...")
+            retrieved_chunks = await self.retriever.retrieve(
+                query=source_identifier,
+                top_k=self.retrieval_top_k,
+                use_bm25=True
+            )
+            print(f"✅ Retrieved {len(retrieved_chunks)} chunks")
             
-        #     # Step 2: Rerank (if enabled)
-        #     if self.enable_reranking and len(retrieved_chunks) > self.final_top_k:
-        #         print(f"🔄 Reranking {len(retrieved_chunks)} chunks...")
-        #         reranked_chunks = self.reranker.rerank(
-        #             query=query,
-        #             results=retrieved_chunks,
-        #             top_k=self.final_top_k
-        #         )
-        #         print(f"✅ Reranked to top-{len(reranked_chunks)} chunks")
-        #     else:
-        #         reranked_chunks = retrieved_chunks[:self.final_top_k]
-        # else:
-        #     # If there is no query, filter the selected videos/chapters
-        #     reranked_chunks = []
-        #     pass
+            if not retrieved_chunks:
+                yield {
+                    "type": "error",
+                    "content": "Không tìm thấy thông tin liên quan trong cơ sở dữ liệu."
+                }
+                return
 
-        # # Step 2: Generate questions per video for better attribution
-        # print(f"🤖 Generating {num_questions} {question_type} questions...")
+        # Step 2: Rerank (if enabled)
+        if self.enable_reranking and len(retrieved_chunks) > self.final_top_k:
+            print(f"🔄 Reranking {len(retrieved_chunks)} chunks...")
+            reranked_chunks = self.reranker.rerank(
+                query=query if query else source_identifier,
+                results=retrieved_chunks,
+                top_k=self.final_top_k
+            )
+            print(f"✅ Reranked to top-{len(reranked_chunks)} chunks")
+        else:
+            reranked_chunks = retrieved_chunks[:self.final_top_k]
 
-        # # Step 3: Format sources for prompt and response
-        # sources_for_prompt = self._format_sources_for_prompt(reranked_chunks)
-        # sources_for_response = self._format_sources_for_response(reranked_chunks)
-        
-        # # Step 4: Stream LLM response with progress updates
-        # print("🤖 Generating questions with LLM...")
+        # Step 3: Format sources for prompt
+        sources_for_prompt = self._format_sources_for_prompt(reranked_chunks)
 
-        # # Generate questions with inline progress tracking
-        # accumulated_response = ""
-        # # Estimate total length: each question ~600-800 chars, plus JSON structure overhead
-        # base_estimate = num_questions * 700
-        # estimated_total_length = base_estimate
+        # Step 4: Generate questions with LLM
+        print(f"🤖 Generating {num_questions} {question_type} questions...")
 
-        # # Choose prompt based on question type
-        # match question_type:
-        #     case "mcq":
-        #         prompt = MCQ_GENERATION_PROMPT_TEMPLATE.format(
-        #             sources=sources_for_prompt,
-        #             num_questions=num_questions
-        #         )
-        #     case "open_ended":
-        #         prompt = OPEN_ENDED_GENERATION_PROMPT_TEMPLATE.format(
-        #             sources=sources_for_prompt,
-        #             num_questions=num_questions
-        #         )
-        #     # case "mixed":
-        #     #     prompt = MIXED_GENERATION_PROMPT_TEMPLATE.format(
-        #     #         sources=sources_for_prompt,
-        #     #         num_mcq=num_questions // 2,
-        #     #         num_open=num_questions - num_questions // 2
-        #     #     )
-        #     case _:
-        #         raise ValueError(f"Invalid question type: {question_type}")
+        # Choose prompt based on question type
+        match question_type:
+            case "mcq":
+                prompt = MCQ_GENERATION_PROMPT_TEMPLATE.format(
+                    sources=sources_for_prompt,
+                    num_questions=num_questions
+                )
+            case "open_ended":
+                prompt = OPEN_ENDED_GENERATION_PROMPT_TEMPLATE.format(
+                    sources=sources_for_prompt,
+                    num_questions=num_questions
+                )
+            case "mixed":
+                prompt = MIXED_GENERATION_PROMPT_TEMPLATE.format(
+                    sources=sources_for_prompt,
+                    num_mcq=num_questions // 2,
+                    num_open=num_questions - num_questions // 2
+                )
+            case _:
+                raise ValueError(f"Invalid question type: {question_type}")
 
-        # # Stream tokens from LLM and yield progress
-        # async for token in self.llm.stream(
-        #     prompt=prompt,
-        #     system_prompt=QUIZ_SYSTEM_PROMPT,
-        #     max_tokens=3000
-        # ):
-        #     accumulated_response += token
-        #     current_length = len(accumulated_response)
+        # Stream tokens from LLM and yield progress
+        print("🤖 Generating questions with LLM...")
+        accumulated_response = ""
+        # Estimate total length: each question ~600-800 chars, plus JSON structure overhead
+        base_estimate = num_questions * 700
+        estimated_total_length = base_estimate
 
-        #     # Dynamically adjust estimate if we exceed it
-        #     if current_length > estimated_total_length:
-        #         # Increase estimate by 20% to accommodate longer responses
-        #         estimated_total_length = int(current_length * 1.2)
+        async for token in self.llm.stream(
+            prompt=prompt,
+            system_prompt=QUIZ_SYSTEM_PROMPT,
+            max_tokens=3000
+        ):
+            accumulated_response += token
+            current_length = len(accumulated_response)
 
-        #     # Calculate progress based on actual JSON response length
-        #     # Cap at 95% until we're actually done parsing
-        #     progress = min(95, int((current_length / estimated_total_length) * 100))
+            # Dynamically adjust estimate if we exceed it
+            if current_length > estimated_total_length:
+                # Increase estimate by 20% to accommodate longer responses
+                estimated_total_length = int(current_length * 1.2)
 
-        #     yield {
-        #         "type": "progress",
-        #         "progress": progress,
-        #         "session_id": created_session_id
-        #     }
+            # Calculate progress based on actual JSON response length
+            # Cap at 95% until we're actually done parsing
+            progress = min(95, int((current_length / estimated_total_length) * 100))
 
-        accumulated_response = '{"questions": [{"question": "Mục đích chính của mạng Recurrent Neural Network (RNN) là gì?", "options": {"A": "Xử lý và học từ dữ liệu có cấu trúc lưới như ảnh", "B": "Xử lý dữ liệu dạng chuỗi và nắm bắt phụ thuộc theo thứ tự", "C": "Giảm chiều dữ liệu với mục đích nén", "D": "Thực hiện phân cụm các điểm dữ liệu không giám sát"}, "correct_answer": "B", "timestamp": 25, "explanation": "RNN được thiết kế để xử lý dữ liệu chuỗi, có khả năng giữ trạng thái ẩn theo thời gian để nắm bắt các phụ thuộc theo thứ tự giữa các phần tử trong chuỗi.", "question_type": "mcq"}, {"question": "Trong kiến trúc sequence-to-sequence (encoder-decoder) cho dịch máy, vai trò chính của encoder là gì?", "options": {"A": "Sinh ra câu dịch đầu ra từng token một", "B": "Đọc và mã hóa (encode) thông tin đầu vào thành hidden state biểu diễn", "C": "Tạo từ điển và tiền xử lý dữ liệu đầu vào", "D": "Áp dụng hàm softmax để chọn từ tiếp theo"}, "correct_answer": "B", "timestamp": 295, "explanation": "Encoder đọc chuỗi đầu vào và mã hóa thông tin vào các hidden state (biểu diễn) để decoder sử dụng khi sinh câu đầu ra.", "question_type": "mcq"}, {"question": "Tại sao các mạng feedforward (neural network thông thường) không phù hợp trực tiếp cho mọi bài toán dữ liệu dạng chuỗi?", "options": {"A": "Dữ liệu chuỗi có thứ tự và phụ thuộc thời gian nên cần cơ chế giữ trạng thái qua các bước thời gian", "B": "Vì mạng feedforward luôn yêu cầu dữ liệu có dạng ảnh", "C": "Vì mạng feedforward không thể tính softmax", "D": "Vì dữ liệu chuỗi luôn có kích thước cố định"}, "correct_answer": "A", "timestamp": 60, "explanation": "Dữ liệu chuỗi có quan hệ theo thứ tự (temporal dependencies); RNN cung cấp trạng thái ẩn theo thời gian để xử lý các phụ thuộc này, điều mà mạng feedforward tiêu chuẩn không làm được.", "question_type": "mcq"}, {"question": "Trong Keras, Embedding layer được dùng để làm gì trong bài toán xử lý ngôn ngữ?", "options": {"A": "Map mỗi token rời rạc sang một vector đặc trưng dày (dense vector)", "B": "Thực hiện lớp phân loại cuối cùng bằng softmax", "C": "Thực hiện phép tích chập trên chuỗi đầu vào", "D": "Chuẩn hóa đầu vào bằng batch normalization"}, "correct_answer": "A", "timestamp": 20, "explanation": "Embedding layer ánh xạ các chỉ số token rời rạc thành vector dày (vector nhúng) để mạng có thể học đại diện liên tục cho từ/ngữ.", "question_type": "mcq"}, {"question": "Khi giảng nói Neural Machine Translation là một phương pháp end-to-end, điều đó có nghĩa là gì?", "options": {"A": "Hệ thống sử dụng nhiều mô-đun thủ công xen kẽ với mô hình học máy", "B": "Hệ thống dựa hoàn toàn trên quy tắc ngôn ngữ viết tay", "C": "Toàn bộ ánh xạ từ câu nguồn sang câu đích được học bởi một (hoặc một hệ mô hình thần kinh) mà không cần các bước trung gian thủ công", "D": "Chỉ dùng các mô hình thống kê cổ điển chứ không dùng neural networks"}, "correct_answer": "C", "timestamp": 247, "explanation": "End-to-end ở đây nghĩa là mô hình neural (ví dụ RNN seq2seq) học trực tiếp ánh xạ từ câu nguồn sang câu đích mà không cần các bước xử lý trung gian thủ công hay mô-đun riêng biệt.", "question_type": "mcq"}]}'
-        
-        yield {
-            "type": "progress",
-            "progress": 50,
-            "session_id": created_session_id
-        }
+            yield {
+                "type": "progress",
+                "progress": progress,
+                "session_id": created_session_id
+            }
 
         print("LLM response received for quiz generation.")
-        print(f"Response: {accumulated_response}")
+        print(f"Response: {accumulated_response[:500]}...")  # Truncate for logging
 
         # Parse JSON response
         try:
             parsed = json.loads(accumulated_response)
-            all_questions = parsed.get("questions", [])
-
-            # Add type field
-            for q in all_questions:
-                q["question_type"] = question_type
+            
+            # Handle mixed question type format
+            if question_type == "mixed":
+                mcq_questions = parsed.get("mcq_questions", [])
+                open_ended_questions = parsed.get("open_ended_questions", [])
+                all_questions = mcq_questions + open_ended_questions
+                # Add type field to each question
+                for q in mcq_questions:
+                    q["question_type"] = "mcq"
+                    q["type"] = "mcq"
+                for q in open_ended_questions:
+                    q["question_type"] = "open_ended"
+                    q["type"] = "open_ended"
+            else:
+                all_questions = parsed.get("questions", [])
+                # Add type field
+                for q in all_questions:
+                    q["question_type"] = question_type
+                    q["type"] = question_type
 
             print(f"Generated {len(all_questions)} questions")
+
+            # Step 5: Enrich questions with video info from chunks
+            # This ensures consistency with Q&A and text_summary services
+            all_questions = self._enrich_questions_with_video_info(
+                questions=all_questions,
+                chunks=reranked_chunks
+            )
 
             # Yield final progress
             yield {
@@ -224,7 +249,7 @@ class QuizService:
             print(f"✅ Generated {len(all_questions)} questions")
             print(f"Questions: {json.dumps(all_questions, ensure_ascii=False)}")
 
-            # Step 5: Save questions to database
+            # Step 6: Save questions to database
             await self._save_questions(
                 questions=all_questions,
                 session_id=created_session_id
@@ -237,7 +262,6 @@ class QuizService:
                 "content": "Failed to generate valid quiz questions"
             }
 
-        
 
     async def validate_answers(
         self,
@@ -289,7 +313,11 @@ class QuizService:
                     "user_answer": user_answer,
                     "correct_answer": question["correct_answer"],
                     "is_correct": is_correct,
-                    "explanation": question.get("explanation", "")
+                    "explanation": question.get("explanation", ""),
+                    "timestamp": question.get("timestamp"),
+                    "video_id": question.get("video_id"),
+                    "video_title": question.get("video_title"),
+                    "video_url": question.get("video_url")
                 })
 
             elif question["type"] == "open_ended":
@@ -304,7 +332,11 @@ class QuizService:
                     "question_index": q_idx,
                     "question": question["question"],
                     "user_answer": user_answer,
-                    "feedback": feedback
+                    "feedback": feedback,
+                    "timestamp": question.get("timestamp"),
+                    "video_id": question.get("video_id"),
+                    "video_title": question.get("video_title"),
+                    "video_url": question.get("video_url")
                 })
 
         # Step 3: Calculate scores
@@ -377,6 +409,56 @@ class QuizService:
                 "score": chunk.get("rerank_score", chunk.get("rrf_score", chunk.get("score", 0)))
             })
         return sources
+
+    def _enrich_questions_with_video_info(
+        self,
+        questions: List[Dict[str, Any]],
+        chunks: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Enrich questions with video information from chunks using source_index.
+        
+        This method uses the source_index from each question to directly map to the
+        corresponding chunk and extract video_id, video_title, and video_url. This
+        ensures consistency with how Q&A and text_summary services handle video sources.
+        
+        Args:
+            questions: List of generated questions (should have source_index field)
+            chunks: List of RAG chunks with video metadata (indexed 0-based)
+            
+        Returns:
+            List of questions enriched with video information
+        """
+        if not chunks:
+            return questions
+        
+        for question in questions:
+            # Skip if video info already exists (LLM might have included it)
+            if question.get("video_id") and question.get("video_title") and question.get("video_url"):
+                continue
+            
+            source_index = question.get("source_index")
+            if source_index is None:
+                continue
+            
+            # Convert 1-based index to 0-based array index
+            # source_index should be between 1 and len(chunks)
+            if 1 <= source_index <= len(chunks):
+                chunk = chunks[source_index - 1]
+                metadata = chunk.get("metadata", {})
+                
+                # Extract video information from chunk
+                question["video_id"] = metadata.get("video_id", "")
+                question["video_title"] = metadata.get("video_title", "")
+                question["video_url"] = metadata.get("video_url", "")
+                
+                # Use chunk's start_time as timestamp (chunks already have this in metadata)
+                question["timestamp"] = metadata.get("start_time", 0)
+            else:
+                # Invalid source_index - log warning but don't fail
+                print(f"⚠️ Warning: Invalid source_index {source_index} for question. Valid range: 1-{len(chunks)}")
+        
+        return questions
 
     async def _evaluate_open_ended_answer(
         self,
