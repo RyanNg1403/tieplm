@@ -1,6 +1,5 @@
 """Video summarization service - orchestration logic."""
-import os
-import uuid
+import asyncio
 from typing import AsyncGenerator, Dict, Any, List, Optional
 from datetime import datetime
 
@@ -8,7 +7,7 @@ from ...shared.rag.retriever import RAGRetriever, get_rag_retriever
 from ...shared.rag.reranker import LocalReranker, get_local_reranker
 from ...shared.llm.client import LLMClient, get_llm_client
 from ...shared.database.postgres import PostgresClient, get_postgres_client
-from ...shared.database.models import ChatSession, ChatMessage, Video, Chunk
+from ...shared.database.models import Video, Chunk, VideoSummary
 
 from .prompts import (
     VIDEO_SUMMARY_SYSTEM_PROMPT,
@@ -44,28 +43,22 @@ class VideoSummaryService:
     async def summarize_video(
         self,
         video_id: str,
-        session_id: Optional[str] = None
+        regenerate: bool = False
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """
         Summarize a specific video with streaming response.
-        
+
         Args:
             video_id: ID of video to summarize
-            session_id: Optional existing session ID (for followup), otherwise creates new
-        
+            regenerate: If True, regenerate summary even if it exists
+
         Yields:
             Dict events for SSE:
             - {"type": "token", "content": str}
             - {"type": "sources", "sources": list}
-            - {"type": "done", "content": str, "sources": list, "session_id": str}
+            - {"type": "done", "content": str, "sources": list}
         """
-        # Step 0: Create or get session BEFORE streaming
-        created_session_id = await self._create_or_get_session(
-            session_id=session_id,
-            video_id=video_id
-        )
-        
-        # Step 1: Get video metadata (read attributes while session is open)
+        # Step 1: Check if pre-computed summary exists
         with self.postgres.session_scope() as session:
             video = session.query(Video).filter(Video.id == video_id).first()
             if not video:
@@ -75,30 +68,48 @@ class VideoSummaryService:
                 }
                 return
 
-            # Copy needed attributes to local vars to avoid DetachedInstanceError
+            # Copy video attributes
             video_title = video.title
             video_chapter = video.chapter
             video_duration = video.duration or 0
-            video_url = video.url
 
-        print(f"📽️  Summarizing video: {video_title}")
-        
+            # Check for existing summary
+            existing_summary = session.query(VideoSummary).filter(
+                VideoSummary.video_id == video_id
+            ).first()
+
+            if existing_summary and not regenerate:
+                # Return pre-computed summary with word-by-word streaming
+                print(f"📽️  Streaming pre-computed summary for: {video_title}")
+
+                summary_text = existing_summary.summary
+                sources = existing_summary.sources or []
+
+                # Stream word-by-word
+                async for event in self._stream_precomputed_summary(summary_text, sources):
+                    yield event
+
+                print("✅ Pre-computed summary streamed")
+                return
+
+        print(f"📽️  Generating new summary for: {video_title}")
+
         # Step 2: Retrieve all chunks for this video (sorted by time)
         retrieved_chunks = await self._get_video_chunks(video_id)
-        
+
         if not retrieved_chunks:
             yield {
                 "type": "error",
                 "content": f"Không tìm thấy chunks cho video {video_title}."
             }
             return
-        
+
         print(f"✅ Retrieved {len(retrieved_chunks)} chunks from video")
-        
+
         # Step 3: Format sources for prompt and response
         sources_for_prompt = self._format_sources_for_prompt(retrieved_chunks)
         sources_for_response = self._format_sources_for_response(retrieved_chunks)
-        
+
         # Step 4: Build prompt with video metadata
         prompt = VIDEO_SUMMARY_USER_PROMPT_TEMPLATE.format(
             video_title=video_title,
@@ -106,7 +117,7 @@ class VideoSummaryService:
             duration=video_duration,
             sources=sources_for_prompt
         )
-        
+
         # Step 5: Stream LLM response
         print("🤖 Generating video summary with LLM...")
         full_response = ""
@@ -117,21 +128,16 @@ class VideoSummaryService:
         ):
             if event["type"] == "token":
                 full_response += event["content"]
-            
-            # Add session_id to "done" event
-            if event["type"] == "done":
-                event["session_id"] = created_session_id
-            
+
             yield event
-        
-        # Step 6: Save messages to database
-        await self._save_messages(
+
+        # Step 6: Save to VideoSummary table (upsert)
+        await self._save_summary(
             video_id=video_id,
-            response=full_response,
-            sources=sources_for_response,
-            session_id=created_session_id
+            summary=full_response,
+            sources=sources_for_response
         )
-        
+
         print("✅ Video summary generated and saved")
     
     async def _get_video_chunks(self, video_id: str) -> List[Dict[str, Any]]:
@@ -197,70 +203,89 @@ class VideoSummaryService:
         minutes = seconds // 60
         secs = seconds % 60
         return f"{minutes:02d}:{secs:02d}"
-    
-    async def _create_or_get_session(
+
+    async def _stream_precomputed_summary(
         self,
-        session_id: Optional[str] = None,
-        video_id: Optional[str] = None
-    ) -> str:
-        """Create new session or get existing one."""
-        if session_id:
-            # Return existing session ID
-            return session_id
-        
-        # Create new session
-        with self.postgres.session_scope() as session:
-            # Get video title for session name
-            video = session.query(Video).filter(Video.id == video_id).first()
-            title = f"Video Summary: {video.title}" if video else "Video Summary"
-            
-            new_session = ChatSession(
-                id=str(uuid.uuid4()),
-                user_id="default_user",
-                task_type="video_summary",
-                title=title,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
-            )
-            session.add(new_session)
-            session.commit()
-            return new_session.id
-    
-    async def _save_messages(
+        summary: str,
+        sources: List[Dict[str, Any]]
+    ) -> AsyncGenerator[Dict[str, Any], None]:
+        """
+        Stream pre-computed summary word-by-word to simulate real-time generation.
+
+        Args:
+            summary: Pre-computed summary text
+            sources: List of source references
+
+        Yields:
+            SSE events with tokens and sources
+        """
+        # Split summary into words
+        words = summary.split()
+
+        # Stream words one by one
+        for i, word in enumerate(words):
+            # Add space after word (except first word)
+            token = word if i == 0 else f" {word}"
+
+            yield {
+                "type": "token",
+                "content": token
+            }
+
+            # Small delay to simulate typing (adjust as needed)
+            await asyncio.sleep(0.02)  # 20ms delay between words
+
+        # Send sources after all tokens
+        yield {
+            "type": "sources",
+            "sources": sources
+        }
+
+        # Send done event
+        yield {
+            "type": "done",
+            "content": summary,
+            "sources": sources
+        }
+
+    async def _save_summary(
         self,
         video_id: str,
-        response: str,
-        sources: List[Dict[str, Any]],
-        session_id: str
+        summary: str,
+        sources: List[Dict[str, Any]]
     ) -> None:
-        """Save user query and assistant response to database."""
+        """
+        Save or update video summary in database.
+
+        Args:
+            video_id: ID of the video
+            summary: Generated summary text
+            sources: List of source references
+        """
         with self.postgres.session_scope() as session:
-            # Get video title for user message
-            video = session.query(Video).filter(Video.id == video_id).first()
-            query = f"Summarize this video: {video.title}" if video else "Summarize this video"
-            
-            # User message
-            user_msg = ChatMessage(
-                id=str(uuid.uuid4()),
-                session_id=session_id,
-                role="user",
-                content=query,
-                sources=None,
-                created_at=datetime.utcnow()
-            )
-            session.add(user_msg)
-            
-            # Assistant message
-            assistant_msg = ChatMessage(
-                id=str(uuid.uuid4()),
-                session_id=session_id,
-                role="assistant",
-                content=response,
-                sources=sources,
-                created_at=datetime.utcnow()
-            )
-            session.add(assistant_msg)
-            
+            # Check if summary already exists
+            existing = session.query(VideoSummary).filter(
+                VideoSummary.video_id == video_id
+            ).first()
+
+            if existing:
+                # Update existing summary
+                existing.summary = summary
+                existing.sources = sources
+                existing.updated_at = datetime.utcnow()
+                print(f"✅ Updated existing summary for video {video_id}")
+            else:
+                # Create new summary
+                new_summary = VideoSummary(
+                    video_id=video_id,
+                    summary=summary,
+                    sources=sources,
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow()
+                )
+                session.add(new_summary)
+                print(f"✅ Created new summary for video {video_id}")
+
             session.commit()
 
 

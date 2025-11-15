@@ -68,7 +68,7 @@ class ChatMessage(Base):
 class QuizQuestion(Base):
     """Generated quiz questions."""
     __tablename__ = "quiz_questions"
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     video_id = Column(String, ForeignKey("videos.id"))
     question = Column(Text, nullable=False)
@@ -77,4 +77,16 @@ class QuizQuestion(Base):
     correct_answer = Column(String)
     timestamp = Column(Integer)  # in seconds
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class VideoSummary(Base):
+    """Pre-computed video summaries."""
+    __tablename__ = "video_summaries"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    video_id = Column(String, ForeignKey("videos.id"), unique=True, nullable=False)
+    summary = Column(Text, nullable=False)
+    sources = Column(JSON)  # List of source references with timestamps
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

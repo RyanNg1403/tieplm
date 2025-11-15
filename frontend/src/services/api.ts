@@ -106,6 +106,15 @@ export interface VideoInfo {
   duration: number;
 }
 
+export interface VideoSummaryResponse {
+  video_id: string;
+  summary: string;
+  sources: any[];
+  has_summary: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export const videoSummaryAPI = {
   /**
    * Get SSE stream URL for video summarization
@@ -128,6 +137,15 @@ export const videoSummaryAPI = {
   getVideoInfo: async (videoId: string): Promise<VideoInfo> => {
     const encoded = encodeURIComponent(videoId);
     const response = await apiClient.get<VideoInfo>(`/api/video-summary/videos/${encoded}`);
+    return response.data;
+  },
+
+  /**
+   * Get existing pre-computed summary for a video (non-streaming)
+   */
+  getVideoSummary: async (videoId: string): Promise<VideoSummaryResponse> => {
+    const encoded = encodeURIComponent(videoId);
+    const response = await apiClient.get<VideoSummaryResponse>(`/api/video-summary/summary/${encoded}`);
     return response.data;
   },
 };

@@ -1,13 +1,13 @@
 """Video summarization endpoints."""
 import json
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from ..core.video_summary.service import get_video_summary_service
 from ..shared.database.postgres import get_postgres_client
-from ..shared.database.models import Video
+from ..shared.database.models import Video, VideoSummary
 
 
 router = APIRouter(prefix="/video-summary", tags=["video_summary"])
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/video-summary", tags=["video_summary"])
 class SummarizeVideoRequest(BaseModel):
     """Request model for video summarization."""
     video_id: str
-    session_id: Optional[str] = None  # For followup questions
+    regenerate: bool = False  # If True, regenerate summary even if it exists
 
 
 class VideoInfo(BaseModel):
@@ -32,6 +32,16 @@ class VideoInfo(BaseModel):
     duration: int
 
 
+class VideoSummaryResponse(BaseModel):
+    """Response model for video summary."""
+    video_id: str
+    summary: str
+    sources: List[Dict[str, Any]]
+    has_summary: bool
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
 # ============================================================================
 # API Endpoints
 # ============================================================================
@@ -39,31 +49,31 @@ class VideoInfo(BaseModel):
 @router.post("/summarize", response_class=StreamingResponse)
 async def summarize_video(request: SummarizeVideoRequest):
     """
-    Summarize a specific video using RAG pipeline.
+    Summarize a specific video using pre-computed summaries or RAG pipeline.
     Returns SSE stream with tokens and sources.
-    
+
     Args:
-        request: Contains video_id and optional session_id
-    
+        request: Contains video_id and regenerate flag
+
     Returns:
         SSE stream with events:
         - {"type": "token", "content": str}
         - {"type": "sources", "sources": list}
-        - {"type": "done", "content": str, "sources": list, "session_id": str}
+        - {"type": "done", "content": str, "sources": list}
     """
     service = get_video_summary_service()
-    
+
     async def generate():
         try:
             async for event in service.summarize_video(
                 video_id=request.video_id,
-                session_id=request.session_id
+                regenerate=request.regenerate
             ):
                 yield f"data: {json.dumps(event)}\n\n"
         except Exception as e:
             print(f"❌ Error in video summarization: {str(e)}")
             yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
-    
+
     return StreamingResponse(
         generate(),
         media_type="text/event-stream"
@@ -107,10 +117,10 @@ async def list_videos():
 async def get_video_info(video_id: str):
     """
     Get information about a specific video.
-    
+
     Args:
         video_id: ID of the video
-    
+
     Returns:
         VideoInfo object
     """
@@ -147,5 +157,56 @@ async def get_video_info(video_id: str):
         raise
     except Exception as e:
         print(f"❌ Error getting video info: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/summary/{video_id}", response_model=VideoSummaryResponse)
+async def get_video_summary(video_id: str):
+    """
+    Get existing pre-computed summary for a video (non-streaming).
+
+    Args:
+        video_id: ID of the video
+
+    Returns:
+        VideoSummaryResponse with summary and sources, or empty if not exists
+    """
+    try:
+        postgres = get_postgres_client()
+
+        with postgres.session_scope() as session:
+            # Check if video exists
+            video = session.query(Video).filter(Video.id == video_id).first()
+            if not video:
+                raise HTTPException(status_code=404, detail=f"Video {video_id} not found")
+
+            # Get existing summary
+            summary_obj = session.query(VideoSummary).filter(
+                VideoSummary.video_id == video_id
+            ).first()
+
+            if summary_obj:
+                # Return existing summary
+                return VideoSummaryResponse(
+                    video_id=video_id,
+                    summary=summary_obj.summary,
+                    sources=summary_obj.sources or [],
+                    has_summary=True,
+                    created_at=summary_obj.created_at.isoformat() if summary_obj.created_at else None,
+                    updated_at=summary_obj.updated_at.isoformat() if summary_obj.updated_at else None
+                )
+            else:
+                # No summary exists yet
+                return VideoSummaryResponse(
+                    video_id=video_id,
+                    summary="",
+                    sources=[],
+                    has_summary=False
+                )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error getting video summary: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 

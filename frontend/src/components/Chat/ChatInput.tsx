@@ -21,7 +21,7 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from '@chakra-ui/react';
-import { ChevronDownIcon, SettingsIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, SettingsIcon, RepeatIcon } from '@chakra-ui/icons';
 import { TaskType } from '../../types';
 import { chaptersAPI, videoSummaryAPI, type VideoInfo } from '../../services/api';
 
@@ -252,10 +252,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
       )}
       
-      {/* Send Button */}
+      {/* Send/Regenerate Button */}
       <Button
         onClick={handleSend}
-        colorScheme="blue"
+        colorScheme={currentMode === 'video_summary' ? 'orange' : 'blue'}
         size="md"
         isLoading={isStreaming}
         disabled={
@@ -263,8 +263,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             ? !selectedVideo || isStreaming
             : !input.trim() || isStreaming
         }
+        leftIcon={currentMode === 'video_summary' ? <RepeatIcon /> : undefined}
       >
-        {currentMode === 'video_summary' ? 'Summarize' : 'Send'}
+        {currentMode === 'video_summary' ? 'Regenerate' : 'Send'}
       </Button>
     </HStack>
   );

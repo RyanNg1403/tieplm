@@ -27,38 +27,44 @@ export const MessageList: React.FC<MessageListProps> = ({
   }, [messages, streamingContent]);
   
   return (
-    <VStack
+    <Box
       flex={1}
       w="full"
-      spacing={0}
+      h="full"
       overflowY="auto"
+      overflowX="hidden"
       p={4}
-      align="stretch"
     >
-      {/* Render all messages */}
-      {messages.map((message) => (
-        <Message key={message.id} message={message} onSeekVideo={onSeekVideo} />
-      ))}
-      
-      {/* Show streaming message */}
-      {isStreaming && streamingContent && (
-        <Box
-          maxW="75%"
-          bg="gray.100"
-          px={4}
-          py={3}
-          borderRadius="lg"
-          boxShadow="sm"
-          mb={4}
-        >
-          <Text whiteSpace="pre-wrap">{streamingContent}</Text>
-          <Spinner size="sm" mt={2} />
-        </Box>
-      )}
-      
-      {/* Scroll anchor */}
-      <div ref={messagesEndRef} />
-    </VStack>
+      <VStack
+        spacing={0}
+        align="stretch"
+        w="full"
+      >
+        {/* Render all messages */}
+        {messages.map((message) => (
+          <Message key={message.id} message={message} onSeekVideo={onSeekVideo} />
+        ))}
+        
+        {/* Show streaming message */}
+        {isStreaming && streamingContent && (
+          <Box
+            maxW="75%"
+            bg="gray.100"
+            px={4}
+            py={3}
+            borderRadius="lg"
+            boxShadow="sm"
+            mb={4}
+          >
+            <Text whiteSpace="pre-wrap">{streamingContent}</Text>
+            <Spinner size="sm" mt={2} />
+          </Box>
+        )}
+        
+        {/* Scroll anchor */}
+        <div ref={messagesEndRef} />
+      </VStack>
+    </Box>
   );
 };
 

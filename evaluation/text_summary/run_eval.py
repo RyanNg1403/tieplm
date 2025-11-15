@@ -157,19 +157,19 @@ class EvaluationRunner:
             }
     
     async def evaluate_batch(
-        self, 
-        start_idx: int = 0, 
+        self,
+        start_idx: int = 0,
         end_idx: int = None,
         question_ids: List[str] = None
     ) -> List[Dict[str, Any]]:
         """
         Evaluate a batch of questions.
-        
+
         Args:
             start_idx: Start index (inclusive)
             end_idx: End index (exclusive), None for all
             question_ids: Specific question IDs to evaluate
-        
+
         Returns:
             List of evaluation results
         """
@@ -178,16 +178,20 @@ class EvaluationRunner:
         else:
             end_idx = end_idx or len(self.questions)
             questions_to_eval = self.questions[start_idx:end_idx]
-        
+
         print(f"\n🚀 Starting evaluation of {len(questions_to_eval)} questions")
         print(f"⏰ Started at: {datetime.utcnow().isoformat()}")
-        
+
         results = []
         for i, question_data in enumerate(questions_to_eval, 1):
             print(f"\n📍 Progress: {i}/{len(questions_to_eval)}")
             result = await self.evaluate_single(question_data)
             results.append(result)
-        
+
+            # Save incrementally after each evaluation
+            self.save_aggregated_results(results)
+            print(f"💾 Saved incremental results ({i}/{len(questions_to_eval)} completed)")
+
         return results
     
     def save_aggregated_results(self, results: List[Dict[str, Any]]):
@@ -233,6 +237,8 @@ class EvaluationRunner:
             
             generations_data['generations'].append(gen_entry)
         
+        # Ensure directory exists before writing
+        self.results_dir.mkdir(parents=True, exist_ok=True)
         generations_file = self.results_dir / "generations.json"
         with open(generations_file, 'w', encoding='utf-8') as f:
             json.dump(generations_data, f, indent=2, ensure_ascii=False)
@@ -310,6 +316,8 @@ class EvaluationRunner:
             
             evaluations_data['scores'].append(score_entry)
         
+        # Ensure directory exists before writing
+        self.results_dir.mkdir(parents=True, exist_ok=True)
         evaluations_file = self.results_dir / "evaluations.json"
         with open(evaluations_file, 'w', encoding='utf-8') as f:
             json.dump(evaluations_data, f, indent=2, ensure_ascii=False)
@@ -385,18 +393,15 @@ async def main():
         results_dir=str(results_dir)
     )
     
-    # Run evaluation
+    # Run evaluation (results are saved incrementally during evaluation)
     if args.all:
-        results = await runner.evaluate_batch()
+        await runner.evaluate_batch()
     elif args.question_id:
-        results = await runner.evaluate_batch(question_ids=args.question_id)
+        await runner.evaluate_batch(question_ids=args.question_id)
     else:
-        results = await runner.evaluate_batch(start_idx=args.start, end_idx=args.end)
-    
-    # Save aggregated results
-    runner.save_aggregated_results(results)
-    
-    print(f"\n✅ Evaluation complete!")
+        await runner.evaluate_batch(start_idx=args.start, end_idx=args.end)
+
+    print(f"\n✅ Evaluation complete! Results saved incrementally to: {runner.results_dir}")
 
 
 if __name__ == "__main__":

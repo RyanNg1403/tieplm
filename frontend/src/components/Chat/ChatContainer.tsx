@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { HStack, VStack, Box, useToast } from '@chakra-ui/react';
+import { HStack, VStack, Box, useToast, useBreakpointValue } from '@chakra-ui/react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { Sidebar } from './Sidebar';
 import { VideoPlayer } from '../VideoPlayer';
 import { QuizDisplay } from '../Quiz/QuizDisplay';
+import { ResizablePanels } from '../shared/ResizablePanels';
 import { useChatStore } from '../../stores/chatStore';
 import { useSSE } from '../../hooks/useSSE';
 import { textSummaryAPI, qaAPI, videoSummaryAPI, sessionsAPI, quizAPI, QuizQuestion } from '../../services/api';
@@ -40,6 +41,9 @@ export const ChatContainer: React.FC = () => {
   const videoPlayerRef = useRef<any>(null);
   const [embedStartTime, setEmbedStartTime] = useState<number | null>(null);
 
+  // Responsive layout: side-by-side on desktop (>= 1024px), stacked on mobile
+  const isDesktop = useBreakpointValue({ base: false, lg: true }, { ssr: false });
+
   // Quiz state
   const [quizProgress, setQuizProgress] = useState<number>(0);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
@@ -71,6 +75,48 @@ export const ChatContainer: React.FC = () => {
     fetchVideo();
     return () => { cancelled = true; };
   }, [selectedVideo]);
+
+  // Auto-load and stream pre-computed summary when video is selected (video_summary mode only)
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadAndStreamSummary = async () => {
+      if (currentMode !== 'video_summary' || !selectedVideo || isStreaming) {
+        return;
+      }
+
+      // Clear previous messages
+      setMessages([]);
+
+      try {
+        // Fetch pre-computed summary
+        const summaryData = await videoSummaryAPI.getVideoSummary(selectedVideo);
+
+        if (cancelled) return;
+
+        if (summaryData.has_summary) {
+          // Stream the pre-computed summary word-by-word using POST endpoint
+          setIsStreaming(true);
+          resetStreamingContent();
+
+          const url = videoSummaryAPI.getSummarizeStreamURL();
+          const body = {
+            video_id: selectedVideo,
+            regenerate: false, // Use pre-computed summary
+          };
+
+          await startStream(url, body);
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          console.error('Failed to load summary:', err);
+        }
+      }
+    };
+
+    loadAndStreamSummary();
+    return () => { cancelled = true; };
+  }, [selectedVideo, currentMode]); // Only trigger when video or mode changes
 
   // Helper to convert YouTube watch/share URLs to embed URLs
   const toYouTubeEmbed = (url: string): string | null => {
@@ -309,7 +355,7 @@ export const ChatContainer: React.FC = () => {
         url = videoSummaryAPI.getSummarizeStreamURL();
         body = {
           video_id: selectedVideo,
-          session_id: currentSession?.id,
+          regenerate: true, // User explicitly clicked "Regenerate" button
         };
       } else if (currentMode === 'quiz') {
         url = quizAPI.getGenerateStreamURL()
@@ -356,17 +402,19 @@ export const ChatContainer: React.FC = () => {
 
   return (
     <HStack h="100vh" spacing={0} align="stretch">
-      {/* Sidebar */}
-      <Sidebar
-        currentSessionId={currentSession?.id || null}
-        onNewChat={handleNewChat}
-        onSelectSession={handleSelectSession}
-        onDeleteSession={handleDeleteSession}
-      />
-
-      {/* Video Summary Layout (Title -> Video -> Summary) */}
+      {/* Sidebar - Hide for video_summary mode since it doesn't use chat sessions */}
+      {currentMode !== 'video_summary' && (
+        <Sidebar
+          currentSessionId={currentSession?.id || null}
+          onNewChat={handleNewChat}
+          onSelectSession={handleSelectSession}
+          onDeleteSession={handleDeleteSession}
+        />
+      )}
+      
+      {/* Video Summary Layout with Resizable Panels */}
       {currentMode === 'video_summary' && (
-        <VStack flex={1} spacing={0} align="stretch">
+        <VStack flex={1} spacing={0} align="stretch" h="100vh" overflow="hidden">
           {/* Header */}
           <Box
             w="full"
@@ -377,105 +425,257 @@ export const ChatContainer: React.FC = () => {
             textAlign="center"
             fontWeight="bold"
             fontSize="lg"
+            flexShrink={0}
           >
             Video Summary & Chat
           </Box>
 
-          {/* Video Player Area (Middle - Takes maximum available space) */}
-          <Box flex={1} w="full" display="flex" flexDirection="column" minH={0} bg="gray.900">
-            {/* If a video is selected, show the player; otherwise prompt selection */}
-            {selectedVideo ? (
-              videoLoading ? (
-                <Box
-                  bg="gray.700"
-                  w="full"
-                  h="full"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  color="gray.400"
-                  fontSize="sm"
-                >
-                  Loading video...
-                </Box>
-              ) : videoError ? (
-                <Box
-                  bg="red.600"
-                  w="full"
-                  h="full"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  color="white"
-                  fontSize="sm"
-                >
-                  Error loading video
-                </Box>
-              ) : videoInfo ? (
-                (() => {
-                  const embed = toYouTubeEmbed(videoInfo.url);
-                  if (embed) {
-                    const srcWithStart = embed + (embedStartTime !== null ? `${embed.includes('?') ? '&' : '?'}start=${embedStartTime}&autoplay=1` : '');
-                    return (
-                      <Box w="full" h="full" overflow="hidden">
-                        <Box as="iframe" src={srcWithStart} width="100%" height="100%" border={0} />
-                      </Box>
-                    );
-                  }
-                  return <VideoPlayer ref={videoPlayerRef} videoUrl={videoInfo.url} videoTitle={videoInfo.title} />;
-                })()
-              ) : (
-                <Box
-                  bg="gray.700"
-                  w="full"
-                  h="full"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  color="gray.400"
-                  fontSize="sm"
-                >
-                  Video Player
-                </Box>
-              )
-            ) : (
-              <Box
-                bg="gray.800"
-                w="full"
-                h="full"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                color="gray.300"
-                fontSize="sm"
+          {/* Main Content Area - Responsive Layout */}
+          {isDesktop ? (
+            // Desktop: Side-by-side resizable panels
+            <Box flex={1} minH={0} overflow="hidden">
+              <ResizablePanels
+                direction="horizontal"
+                defaultSizes={[55, 45]}
+                minSizes={[30, 30]}
               >
-                Please select a video from the sidebar
-              </Box>
-            )}
-          </Box>
+                {/* Left Panel: Video Player */}
+                <Box
+                  w="full"
+                  h="full"
+                  display="flex"
+                  flexDirection="column"
+                  bg="gray.900"
+                  overflow="hidden"
+                >
+                  {selectedVideo ? (
+                    videoLoading ? (
+                      <Box
+                        bg="gray.700"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="gray.400"
+                        fontSize="sm"
+                      >
+                        Loading video...
+                      </Box>
+                    ) : videoError ? (
+                      <Box
+                        bg="red.600"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="white"
+                        fontSize="sm"
+                      >
+                        Error loading video
+                      </Box>
+                    ) : videoInfo ? (
+                      (() => {
+                        const embed = toYouTubeEmbed(videoInfo.url);
+                        if (embed) {
+                          const srcWithStart = embed + (embedStartTime !== null ? `${embed.includes('?') ? '&' : '?'}start=${embedStartTime}&autoplay=1` : '');
+                          return (
+                            <Box w="full" h="full" overflow="hidden">
+                              <Box as="iframe" src={srcWithStart} width="100%" height="100%" border={0} />
+                            </Box>
+                          );
+                        }
+                        return <VideoPlayer ref={videoPlayerRef} videoUrl={videoInfo.url} videoTitle={videoInfo.title} />;
+                      })()
+                    ) : (
+                      <Box
+                        bg="gray.700"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="gray.400"
+                        fontSize="sm"
+                      >
+                        Video Player
+                      </Box>
+                    )
+                  ) : (
+                    <Box
+                      bg="gray.800"
+                      w="full"
+                      h="full"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      color="gray.300"
+                      fontSize="sm"
+                    >
+                      Please select a video from the dropdown
+                    </Box>
+                  )}
+                </Box>
 
-          {/* Summary Area (Bottom) */}
-          <VStack flex={0} spacing={0} bg="gray.50" align="stretch" maxH="50%">
-            {/* Messages Area */}
-            <MessageList
-              messages={messages}
-              isStreaming={isStreaming}
-              streamingContent={streamingContent}
-              onSeekVideo={handleSeek}
-            />
+                {/* Right Panel: Summary */}
+                <VStack
+                  flex={1}
+                  spacing={0}
+                  bg="gray.50"
+                  align="stretch"
+                  h="full"
+                  overflow="hidden"
+                >
+                  {/* Messages Area */}
+                  <Box flex={1} minH={0} h="full" overflow="hidden" position="relative">
+                    <MessageList
+                      messages={messages}
+                      isStreaming={isStreaming}
+                      streamingContent={streamingContent}
+                      onSeekVideo={handleSeek}
+                    />
+                  </Box>
+                  
+                  {/* Input Area */}
+                  <Box flexShrink={0}>
+                    <ChatInput
+                      currentMode={currentMode}
+                      onModeChange={setMode}
+                      onSend={handleSend}
+                      isStreaming={isStreaming}
+                      selectedChapters={selectedChapters}
+                      onChaptersChange={setSelectedChapters}
+                      selectedVideo={selectedVideo}
+                      onVideoChange={setSelectedVideo}
+                    />
+                  </Box>
+                </VStack>
+              </ResizablePanels>
+            </Box>
+          ) : (
+            // Mobile: Stacked layout with resizable vertical panels
+            <Box flex={1} minH={0} overflow="hidden">
+              <ResizablePanels
+                direction="vertical"
+                defaultSizes={[60, 40]}
+                minSizes={[30, 30]}
+              >
+                {/* Top Panel: Video Player */}
+                <Box
+                  w="full"
+                  h="full"
+                  display="flex"
+                  flexDirection="column"
+                  bg="gray.900"
+                  overflow="hidden"
+                >
+                  {selectedVideo ? (
+                    videoLoading ? (
+                      <Box
+                        bg="gray.700"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="gray.400"
+                        fontSize="sm"
+                      >
+                        Loading video...
+                      </Box>
+                    ) : videoError ? (
+                      <Box
+                        bg="red.600"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="white"
+                        fontSize="sm"
+                      >
+                        Error loading video
+                      </Box>
+                    ) : videoInfo ? (
+                      (() => {
+                        const embed = toYouTubeEmbed(videoInfo.url);
+                        if (embed) {
+                          const srcWithStart = embed + (embedStartTime !== null ? `${embed.includes('?') ? '&' : '?'}start=${embedStartTime}&autoplay=1` : '');
+                          return (
+                            <Box w="full" h="full" overflow="hidden">
+                              <Box as="iframe" src={srcWithStart} width="100%" height="100%" border={0} />
+                            </Box>
+                          );
+                        }
+                        return <VideoPlayer ref={videoPlayerRef} videoUrl={videoInfo.url} videoTitle={videoInfo.title} />;
+                      })()
+                    ) : (
+                      <Box
+                        bg="gray.700"
+                        w="full"
+                        h="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="gray.400"
+                        fontSize="sm"
+                      >
+                        Video Player
+                      </Box>
+                    )
+                  ) : (
+                    <Box
+                      bg="gray.800"
+                      w="full"
+                      h="full"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      color="gray.300"
+                      fontSize="sm"
+                    >
+                      Please select a video from the dropdown
+                    </Box>
+                  )}
+                </Box>
 
-            {/* Input Area */}
-            <ChatInput
-              currentMode={currentMode}
-              onModeChange={setMode}
-              onSend={handleSend}
-              isStreaming={isStreaming}
-              selectedChapters={selectedChapters}
-              onChaptersChange={setSelectedChapters}
-              selectedVideo={selectedVideo}
-              onVideoChange={setSelectedVideo}
-            />
-          </VStack>
+                {/* Bottom Panel: Summary */}
+                <VStack
+                  flex={1}
+                  spacing={0}
+                  bg="gray.50"
+                  align="stretch"
+                  h="full"
+                  overflow="hidden"
+                >
+                  {/* Messages Area */}
+                  <Box flex={1} minH={0} h="full" overflow="hidden" position="relative">
+                    <MessageList
+                      messages={messages}
+                      isStreaming={isStreaming}
+                      streamingContent={streamingContent}
+                      onSeekVideo={handleSeek}
+                    />
+                  </Box>
+                  
+                  {/* Input Area */}
+                  <Box flexShrink={0}>
+                    <ChatInput
+                      currentMode={currentMode}
+                      onModeChange={setMode}
+                      onSend={handleSend}
+                      isStreaming={isStreaming}
+                      selectedChapters={selectedChapters}
+                      onChaptersChange={setSelectedChapters}
+                      selectedVideo={selectedVideo}
+                      onVideoChange={setSelectedVideo}
+                    />
+                  </Box>
+                </VStack>
+              </ResizablePanels>
+            </Box>
+          )}
         </VStack>
       )}
 
