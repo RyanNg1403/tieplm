@@ -231,32 +231,60 @@ User: "What are the benefits of ResNet?"
 
 ### Example 2: Quiz Generation Task
 ```
-User: Select video → "Generate MCQ Quiz"
+User: Select video(s) → "Generate MCQ Quiz"
    │
    ▼
-[Frontend] POST /api/quiz
-   │
+[Frontend] POST /api/quiz/generate
+   │ Body: { "video_ids": ["video1", "video2"], "question_type": "mcq", "num_questions": 5 }
    ▼
 [API Layer] quiz.py endpoint
    │
    ▼
 [Core] quiz/service.py
-   ├─▶ [Shared] database.postgres → Fetch transcript + keyframes
-   ├─▶ [Shared] llm.vlm → Analyze keyframes with VLM
-   ├─▶ [Shared] llm.client → Generate MCQs
+   ├─▶ [Shared] database.postgres → Fetch transcripts for each video
+   ├─▶ Distribute questions across videos (e.g., 2-3 questions per video)
+   ├─▶ [Shared] llm.client → Generate questions per video
    │   └─▶ Prompt from quiz/prompts.py
-   ├─▶ [Shared] database.postgres → Store questions
+   ├─▶ Add video attribution (video_id, video_url) to each question
+   ├─▶ [Shared] database.postgres → Store questions in session
    ▼
 [Response]
 {
-  "quiz_id": "123",
+  "quiz_id": "session-123",
+  "video_ids": ["video1", "video2"],
+  "videos": [
+    {
+      "video_id": "video1",
+      "title": "ResNet Architecture",
+      "url": "https://youtube.com/watch?v=abc",
+      "chapter": "Deep Learning"
+    },
+    {
+      "video_id": "video2",
+      "title": "ResNet Applications",
+      "url": "https://youtube.com/watch?v=def",
+      "chapter": "Deep Learning"
+    }
+  ],
+  "question_type": "mcq",
   "questions": [
     {
+      "type": "mcq",
       "question": "What type of connection does ResNet use?",
       "options": ["A) Skip", "B) Dense", "C) Recurrent", "D) Pooling"],
       "correct_answer": "A",
-      "timestamp": "16:45",
+      "explanation": "ResNet uses skip connections...",
+      "video_id": "video1",
       "video_url": "https://youtube.com/watch?v=abc"
+    },
+    {
+      "type": "mcq",
+      "question": "In which domain is ResNet commonly applied?",
+      "options": ["A) NLP", "B) Computer Vision", "C) Audio", "D) Robotics"],
+      "correct_answer": "B",
+      "explanation": "ResNet is widely used in computer vision...",
+      "video_id": "video2",
+      "video_url": "https://youtube.com/watch?v=def"
     }
   ]
 }

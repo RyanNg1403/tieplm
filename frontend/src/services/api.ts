@@ -28,14 +28,14 @@ export const sessionsAPI = {
     taskType?: string
   ): Promise<ChatSession[]> => {
     const response = await apiClient.get<ChatSession[]>('/api/sessions', {
-      params: { 
+      params: {
         user_id: userId,
         ...(taskType && { task_type: taskType })
       }
     });
     return response.data;
   },
-  
+
   /**
    * Get messages in a session
    */
@@ -45,7 +45,7 @@ export const sessionsAPI = {
     );
     return response.data;
   },
-  
+
   /**
    * Delete a session
    */
@@ -65,7 +65,7 @@ export const textSummaryAPI = {
   getSummarizeStreamURL: (): string => {
     return `${API_BASE_URL}/api/text-summary/summarize`;
   },
-  
+
   /**
    * Get SSE stream URL for followup
    */
@@ -85,7 +85,7 @@ export const qaAPI = {
   getAskStreamURL: (): string => {
     return `${API_BASE_URL}/api/qa/ask`;
   },
-  
+
   /**
    * Get SSE stream URL for followup
    */
@@ -113,7 +113,7 @@ export const videoSummaryAPI = {
   getSummarizeStreamURL: (): string => {
     return `${API_BASE_URL}/api/video-summary/summarize`;
   },
-  
+
   /**
    * Get list of all available videos
    */
@@ -121,7 +121,7 @@ export const videoSummaryAPI = {
     const response = await apiClient.get<VideoInfo[]>('/api/video-summary/videos');
     return response.data;
   },
-  
+
   /**
    * Get info for a specific video
    */
@@ -133,13 +133,59 @@ export const videoSummaryAPI = {
 };
 
 // ============================================================================
+// Quiz API (task-specific endpoints)
+// ============================================================================
+
+export interface QuizQuestion {
+  question: string;
+  question_type: string; // "mcq" or "open_ended"
+  options?: {
+    "A": string;
+    "B": string;
+    "C": string;
+    "D": string;
+  }; // For MCQ questions
+  correct_answer?: string; // For MCQ (A, B, C, D)
+  explanation?: string;
+}
+
+export interface Quiz {
+  quiz_id: string;
+  questions: QuizQuestion[];
+}
+
+export interface ValidateAnswerItem {
+  question_index: number;
+  answer: string; // For MCQ: "A", "B", "C", "D"; For open-ended: full text
+}
+
+export interface ValidationResult {
+  score: number;
+  total: number;
+  results: Array<{
+    question_index: number;
+    is_correct: boolean;
+    feedback: string;
+  }>;
+}
+
+export const quizAPI = {
+  /**
+   * Get SSE stream URL for quiz generation
+   */
+  getGenerateStreamURL: (): string => {
+    return `${API_BASE_URL}/api/quiz/generate`;
+  },
+};
+
+// ============================================================================
 // Chapters API (for filter)
 // ============================================================================
 
 export const chaptersAPI = {
   /**
    * Get available chapters (hardcoded based on chapters_urls.json ground truth)
-   * 
+   *
    * Note: Chapters are static course content (Chương 2-9) and won't change.
    * No need for API call - this is the single source of truth.
    */

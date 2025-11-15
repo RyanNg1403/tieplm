@@ -4,15 +4,16 @@ import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { Sidebar } from './Sidebar';
 import { VideoPlayer } from '../VideoPlayer';
+import { QuizDisplay } from '../Quiz/QuizDisplay';
 import { useChatStore } from '../../stores/chatStore';
 import { useSSE } from '../../hooks/useSSE';
-import { textSummaryAPI, qaAPI, videoSummaryAPI, sessionsAPI } from '../../services/api';
+import { textSummaryAPI, qaAPI, videoSummaryAPI, sessionsAPI, quizAPI, QuizQuestion } from '../../services/api';
 import type { VideoInfo } from '../../services/api';
 import { ChatMessage, ChatSession } from '../../types';
 
 export const ChatContainer: React.FC = () => {
   const toast = useToast();
-  
+
   // Store state
   const {
     currentMode,
@@ -38,6 +39,12 @@ export const ChatContainer: React.FC = () => {
   const [videoError, setVideoError] = useState<string | null>(null);
   const videoPlayerRef = useRef<any>(null);
   const [embedStartTime, setEmbedStartTime] = useState<number | null>(null);
+
+  // Quiz state
+  const [quizProgress, setQuizProgress] = useState<number>(0);
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [quizQuestionType, setQuizQuestionType] = useState<string>('mcq');
+  const [quizNumQuestions, setQuizNumQuestions] = useState<number>(5);
 
   // Fetch video metadata when a video is selected
   useEffect(() => {
@@ -89,58 +96,99 @@ export const ChatContainer: React.FC = () => {
       return null;
     }
   };
-  
-    // Reset embed start time when selected video changes
-    useEffect(() => {
-      setEmbedStartTime(null);
-    }, [selectedVideo]);
 
-    // Handle seek requests from messages (timestamps)
-    const handleSeek = useCallback((timestamp: number) => {
-      const embed = videoInfo ? toYouTubeEmbed(videoInfo.url) : null;
-      if (embed) {
-        setEmbedStartTime(Math.floor(timestamp));
-      } else {
-        videoPlayerRef.current?.seekToTime(Math.floor(timestamp));
-      }
-    }, [videoInfo, videoPlayerRef]);
+  // Reset embed start time when selected video changes
+  useEffect(() => {
+    setEmbedStartTime(null);
+  }, [selectedVideo]);
 
-    // SSE hook
+  // Handle seek requests from messages (timestamps)
+  const handleSeek = useCallback((timestamp: number) => {
+    const embed = videoInfo ? toYouTubeEmbed(videoInfo.url) : null;
+    if (embed) {
+      setEmbedStartTime(Math.floor(timestamp));
+    } else {
+      videoPlayerRef.current?.seekToTime(Math.floor(timestamp));
+    }
+  }, [videoInfo, videoPlayerRef]);
+
+  // SSE hook
   const { startStream } = useSSE({
     onToken: (token) => {
       appendStreamingContent(token);
     },
-    onDone: (content, sources, sessionId) => {
-      // Add assistant message with sources
-      const assistantMessage: ChatMessage = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content,
-        sources,
-        created_at: new Date().toISOString(),
-      };
-      addMessage(assistantMessage);
-      
-      // Update current session if we got a new session_id from backend
-      if (sessionId && (!currentSession || currentSession.id !== sessionId)) {
-        setCurrentSession({ id: sessionId } as ChatSession);
+    onProgress: (progress) => {
+      // Update quiz progress for quiz mode
+      if (currentMode === 'quiz') {
+        setQuizProgress(progress);
       }
-      
-      // Reset streaming state
-      resetStreamingContent();
-      setIsStreaming(false);
-      
-      toast({
-        title: 'Response complete',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
+    },
+    onDone: (content, sources, sessionId) => {
+      // For quiz mode, parse and store the result
+      if (currentMode === 'quiz') {
+        setQuizProgress(100);
+
+        // Parse the JSON content to extract questions
+        try {
+          const questions: QuizQuestion[] = JSON.parse(content);
+          if (Array.isArray(questions)) {
+            setQuizQuestions(questions);
+          } else {
+            setQuizQuestions([]);
+          }
+        } catch (e) {
+          console.error('Failed to parse quiz JSON:', e);
+          setQuizQuestions([]);
+        }
+
+        // Update current session if we got a new session_id from backend
+        if (sessionId && (!currentSession || currentSession.id !== sessionId)) {
+          setCurrentSession({ id: sessionId } as ChatSession);
+        }
+
+        // Reset streaming state
+        resetStreamingContent();
+        setIsStreaming(false);
+
+        toast({
+          title: 'Quiz generated successfully',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      } else {
+        // For other modes, add assistant message with sources
+        const assistantMessage: ChatMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content,
+          sources,
+          created_at: new Date().toISOString(),
+        };
+        addMessage(assistantMessage);
+
+        // Update current session if we got a new session_id from backend
+        if (sessionId && (!currentSession || currentSession.id !== sessionId)) {
+          setCurrentSession({ id: sessionId } as ChatSession);
+        }
+
+        // Reset streaming state
+        resetStreamingContent();
+        setIsStreaming(false);
+
+        toast({
+          title: 'Response complete',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      }
     },
     onError: (error) => {
       setIsStreaming(false);
       resetStreamingContent();
-      
+      setQuizProgress(0);
+
       toast({
         title: 'Error',
         description: error,
@@ -150,7 +198,7 @@ export const ChatContainer: React.FC = () => {
       });
     },
   });
-  
+
   // Session management
   const handleNewChat = useCallback(() => {
     setCurrentSession(null);
@@ -158,12 +206,22 @@ export const ChatContainer: React.FC = () => {
     resetStreamingContent();
     setSelectedChapters([]);
     setSelectedVideo(null);
-  }, [setCurrentSession, setMessages, resetStreamingContent, setSelectedChapters, setSelectedVideo]);
+    setQuizProgress(0);
+    setQuizQuestions([]);
+  }, [setCurrentSession, setMessages, resetStreamingContent, setSelectedChapters, setSelectedVideo, setQuizProgress, setQuizQuestions]);
 
   const handleSelectSession = useCallback(async (sessionId: string) => {
     try {
       const sessionMessages = await sessionsAPI.getSessionMessages(sessionId);
-      setMessages(sessionMessages);
+      // Try to parse the content to see if it's a quiz JSON. If fails, fallback to original messages
+      try {
+        const parsed = JSON.parse(sessionMessages[0].content);
+        setQuizQuestions(parsed);
+        setMessages([]);
+        setMode('quiz');
+      } catch (e) {
+        setMessages(sessionMessages);
+      }
       setCurrentSession({ id: sessionId } as ChatSession); // Simplified, full session from sessions list
       resetStreamingContent();
     } catch (error: any) {
@@ -210,16 +268,22 @@ export const ChatContainer: React.FC = () => {
       created_at: new Date().toISOString(),
     };
     addMessage(userMessage);
-    
+
     // Start streaming
     setIsStreaming(true);
     resetStreamingContent();
-    
+
+    // Reset quiz state for quiz mode
+    if (currentMode === 'quiz') {
+      setQuizProgress(0);
+      setQuizQuestions([]);
+    }
+
     try {
       // Determine URL and body based on task mode
       let url = '';
       let body: any = {};
-      
+
       if (currentMode === 'text_summary') {
         url = currentSession
           ? textSummaryAPI.getFollowupStreamURL(currentSession.id)
@@ -247,17 +311,27 @@ export const ChatContainer: React.FC = () => {
           video_id: selectedVideo,
           session_id: currentSession?.id,
         };
+      } else if (currentMode === 'quiz') {
+        url = quizAPI.getGenerateStreamURL()
+        body = {
+          query: messageText,
+          chapters: selectedChapters.length > 0 ? selectedChapters : undefined,
+          video_ids: ["Chương 7_TqKBlC-zyKY", "Chương 8_S8__bXkLSbM"],
+          question_type: quizQuestionType,
+          num_questions: quizNumQuestions,
+          session_id: currentSession?.id,
+        };
       } else {
         throw new Error(`Task ${currentMode} not implemented yet`);
       }
-      
+
       // Start SSE stream
       await startStream(url, body);
-      
+
     } catch (error: any) {
       setIsStreaming(false);
       resetStreamingContent();
-      
+
       toast({
         title: 'Failed to start stream',
         description: error.message,
@@ -271,13 +345,15 @@ export const ChatContainer: React.FC = () => {
     currentSession,
     selectedChapters,
     selectedVideo,
+    quizQuestionType,
+    quizNumQuestions,
     addMessage,
     setIsStreaming,
     resetStreamingContent,
     startStream,
     toast,
   ]);
-  
+
   return (
     <HStack h="100vh" spacing={0} align="stretch">
       {/* Sidebar */}
@@ -287,7 +363,7 @@ export const ChatContainer: React.FC = () => {
         onSelectSession={handleSelectSession}
         onDeleteSession={handleDeleteSession}
       />
-      
+
       {/* Video Summary Layout (Title -> Video -> Summary) */}
       {currentMode === 'video_summary' && (
         <VStack flex={1} spacing={0} align="stretch">
@@ -387,7 +463,7 @@ export const ChatContainer: React.FC = () => {
               streamingContent={streamingContent}
               onSeekVideo={handleSeek}
             />
-            
+
             {/* Input Area */}
             <ChatInput
               currentMode={currentMode}
@@ -402,7 +478,7 @@ export const ChatContainer: React.FC = () => {
           </VStack>
         </VStack>
       )}
-      
+
       {/* Standard Layout (for text_summary, qa, etc.) */}
       {currentMode !== 'video_summary' && (
         <VStack flex={1} spacing={0} bg="gray.50">
@@ -419,14 +495,58 @@ export const ChatContainer: React.FC = () => {
           >
             Tieplm AI Assistant - CS431 Deep Learning
           </Box>
-          
+
           {/* Messages Area */}
-          <MessageList
-            messages={messages}
-            isStreaming={isStreaming}
-            streamingContent={streamingContent}
-          />
-          
+          {currentMode !== 'quiz' ? (
+            <MessageList
+              messages={messages}
+              isStreaming={isStreaming}
+              streamingContent={streamingContent}
+            />
+          ) : (
+            <Box
+              flex={1}
+              w="full"
+              overflow="auto"
+              bg="gray.50"
+              borderTop="1px"
+              borderColor="gray.200"
+            >
+              <QuizDisplay questions={quizQuestions} />
+            </Box>
+          )}
+
+          {/* Quiz Progress Bar */}
+          {currentMode === 'quiz' && isStreaming && quizProgress > 0 && (
+            <Box w="full" px={4} py={2} bg="white" borderTop="1px" borderColor="gray.200">
+              <Box fontSize="sm" mb={2} color="gray.600">
+                Generating quiz... {quizProgress}%
+              </Box>
+              <Box w="full" h="8px" bg="gray.200" borderRadius="md" overflow="hidden">
+                <Box
+                  h="full"
+                  bg="blue.500"
+                  transition="width 0.3s ease"
+                  style={{ width: `${quizProgress}%` }}
+                />
+              </Box>
+            </Box>
+          )}
+
+          {/* Quiz Result Display */}
+          {/* {currentMode === 'quiz' && quizQuestions.length > 0 && (
+            <Box
+              flex={1}
+              w="full"
+              overflow="auto"
+              bg="gray.50"
+              borderTop="1px"
+              borderColor="gray.200"
+            >
+              <QuizDisplay questions={quizQuestions} />
+            </Box>
+          )} */}
+
           {/* Input Area */}
           <ChatInput
             currentMode={currentMode}
@@ -437,6 +557,10 @@ export const ChatContainer: React.FC = () => {
             onChaptersChange={setSelectedChapters}
             selectedVideo={selectedVideo}
             onVideoChange={setSelectedVideo}
+            quizQuestionType={quizQuestionType}
+            onQuizQuestionTypeChange={setQuizQuestionType}
+            quizNumQuestions={quizNumQuestions}
+            onQuizNumQuestionsChange={setQuizNumQuestions}
           />
         </VStack>
       )}

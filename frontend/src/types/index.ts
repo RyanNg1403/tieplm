@@ -39,13 +39,14 @@ export interface ChatMessage {
 }
 
 // SSE Event types
-export type SSEEventType = 'token' | 'sources' | 'done' | 'error';
+export type SSEEventType = 'token' | 'sources' | 'done' | 'error' | 'progress';
 
 export interface SSEEvent {
   type: SSEEventType;
   content?: string;
   sources?: SourceReference[];
   session_id?: string;
+  progress?: number;
 }
 
 // API Request/Response types

@@ -15,6 +15,11 @@ import {
   VStack,
   Text,
   Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, SettingsIcon } from '@chakra-ui/icons';
 import { TaskType } from '../../types';
@@ -29,6 +34,11 @@ interface ChatInputProps {
   onChaptersChange: (chapters: string[]) => void;
   selectedVideo: string | null;
   onVideoChange: (videoId: string | null) => void;
+  // Quiz-specific props
+  quizQuestionType?: string;
+  onQuizQuestionTypeChange?: (type: string) => void;
+  quizNumQuestions?: number;
+  onQuizNumQuestionsChange?: (num: number) => void;
 }
 
 const MODE_LABELS: Record<TaskType, string> = {
@@ -47,6 +57,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onChaptersChange,
   selectedVideo,
   onVideoChange,
+  quizQuestionType = 'mcq',
+  onQuizQuestionTypeChange,
+  quizNumQuestions = 5,
+  onQuizNumQuestionsChange,
 }) => {
   const [input, setInput] = useState('');
   const [videos, setVideos] = useState<VideoInfo[]>([]);
@@ -131,8 +145,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </MenuList>
       </Menu>
       
-      {/* Chapter Filter (for text_summary and qa) */}
-      {(currentMode === 'text_summary' || currentMode === 'qa') && (
+      {/* Chapter Filter (for text_summary, qa, and quiz) */}
+      {(currentMode === 'text_summary' || currentMode === 'qa' || currentMode === 'quiz') && (
         <Menu closeOnSelect={false}>
           <MenuButton
             as={IconButton}
@@ -171,6 +185,38 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           </MenuList>
         </Menu>
       )}
+
+      {/* Quiz Options (for quiz mode) */}
+      {currentMode === 'quiz' && (
+        <>
+          <Select
+            value={quizQuestionType}
+            onChange={(e) => onQuizQuestionTypeChange?.(e.target.value)}
+            disabled={isStreaming}
+            size="md"
+            minW="140px"
+          >
+            <option value="mcq">MCQ</option>
+            <option value="open_ended">Open-ended</option>
+            <option value="mixed">Mixed</option>
+          </Select>
+          <NumberInput
+            value={quizNumQuestions}
+            onChange={(_, value) => onQuizNumQuestionsChange?.(isNaN(value) ? 5 : value)}
+            min={1}
+            max={20}
+            size="md"
+            minW="100px"
+            isDisabled={isStreaming}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+        </>
+      )}
       
       {/* Video Selection (for video_summary) */}
       {currentMode === 'video_summary' && (
@@ -190,14 +236,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </Select>
       )}
       
-      {/* Input Field (only for text_summary and qa) */}
-      {(currentMode === 'text_summary' || currentMode === 'qa') && (
+      {/* Input Field (for text_summary, qa, and quiz) */}
+      {(currentMode === 'text_summary' || currentMode === 'qa' || currentMode === 'quiz') && (
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={
-            currentMode === 'text_summary'
+            currentMode === 'text_summary' || currentMode === 'quiz'
               ? 'Enter topic or question (e.g., "ResNet architecture")...'
               : 'Type your message...'
           }
