@@ -2,14 +2,15 @@
  * Custom hook for Server-Sent Events (SSE) streaming
  */
 import { useState, useCallback, useRef } from 'react';
-import { SSEEvent, SourceReference } from '../types';
+import { SSEEvent, SourceReference, QuizValidationResult } from '../types';
 
 interface UseSSEOptions {
   onToken?: (token: string) => void;
   onSources?: (sources: SourceReference[]) => void;
-  onDone?: (content: string, sources: SourceReference[], sessionId?: string) => void;
+  onDone?: (content: string, sources: SourceReference[], sessionId?: string, quizId?: string) => void;
   onError?: (error: string) => void;
-  onProgress?: (progress: number, sessionId?: string) => void;
+  onProgress?: (progress: number, sessionId?: string, quizId?: string) => void;
+  onValidation?: (result: QuizValidationResult) => void;
 }
 
 interface UseSSEReturn {
@@ -118,7 +119,13 @@ export const useSSE = (options: UseSSEOptions = {}): UseSSEReturn => {
 
                 case 'progress':
                   if (event.progress !== undefined) {
-                    options.onProgress?.(event.progress, event.session_id);
+                    options.onProgress?.(event.progress, event.session_id, event.quiz_id);
+                  }
+                  break;
+
+                case 'validation':
+                  if (event.result) {
+                    options.onValidation?.(event.result);
                   }
                   break;
 
@@ -126,7 +133,7 @@ export const useSSE = (options: UseSSEOptions = {}): UseSSEReturn => {
                   if (event.content) {
                     console.log(event)
                     // Sources are optional (e.g., for quiz mode)
-                    options.onDone?.(event.content, event.sources || [], event.session_id);
+                    options.onDone?.(event.content, event.sources || [], event.session_id, event.quiz_id);
                   }
                   setIsStreaming(false);
                   break;

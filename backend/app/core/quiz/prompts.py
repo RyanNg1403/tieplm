@@ -174,7 +174,7 @@ Trả về câu hỏi theo định dạng JSON sau:
 Hãy tạo {num_mcq} câu hỏi trắc nghiệm và {num_open} câu hỏi tự luận ngay bây giờ.
 """
 
-VALIDATE_ANSWER_PROMPT_TEMPLATE = """Bạn đang đánh giá câu trả lời của sinh viên cho một câu hỏi tự luận.
+VALIDATE_ANSWER_PROMPT_TEMPLATE = """Bạn là một giảng viên chấm bài tự luận. Hãy đánh giá câu trả lời của sinh viên một cách CÔNG BẰNG và CHÍNH XÁC.
 
 # CÂU HỎI:
 {question}
@@ -190,21 +190,44 @@ VALIDATE_ANSWER_PROMPT_TEMPLATE = """Bạn đang đánh giá câu trả lời c�
 
 ---
 
-# YÊU CẦU ĐÁNH GIÁ:
+# HƯỚNG DẪN ĐÁNH GIÁ:
 
-Đánh giá câu trả lời của sinh viên dựa trên:
-1. **Độ chính xác**: Câu trả lời có phù hợp với câu trả lời tham khảo không?
-2. **Tính đầy đủ**: Câu trả lời có bao gồm các điểm chính không?
-3. **Sự hiểu biết**: Câu trả lời có thể hiện sự hiểu biết đúng đắn không?
+**QUAN TRỌNG - Các nguyên tắc chấm điểm:**
+
+1. **Đánh giá theo NỘI DUNG, không phải hình thức:**
+   - Nếu sinh viên diễn đạt khác nhưng Ý NGHĨA GIỐNG câu trả lời tham khảo → VẪN ĐƯỢC ĐIỂM ĐẦY ĐỦ
+   - Không trừ điểm nếu sinh viên dùng từ ngữ khác nhau nhưng ý nghĩa đúng
+   - Chấp nhận cả tiếng Việt và tiếng Anh cho các thuật ngữ kỹ thuật
+
+2. **Kiểm tra kỹ lưỡng các điểm chính:**
+   - ĐỌC KỸ toàn bộ câu trả lời trước khi kết luận điểm nào thiếu
+   - Một điểm được coi là "covered" NẾU sinh viên đã đề cập đến ý chính, dù cách diễn đạt khác
+   - CHỈ đánh dấu "missing" khi điểm đó HOÀN TOÀN KHÔNG được đề cập hoặc SAI về mặt khái niệm
+
+3. **Thang điểm cụ thể:**
+   - 100 điểm: Câu trả lời đầy đủ, chính xác tất cả các điểm chính (dù diễn đạt khác)
+   - 90-99 điểm: Đầy đủ các điểm chính nhưng thiếu một số chi tiết nhỏ hoặc ví dụ bổ sung
+   - 70-89 điểm: Đúng hầu hết điểm chính, thiếu 1 điểm quan trọng
+   - 50-69 điểm: Đúng một số điểm, thiếu nhiều điểm quan trọng
+   - < 50 điểm: Thiếu phần lớn các điểm chính hoặc có nhiều sai lệch
+
+4. **Ví dụ về "covered" vs "missing":**
+   - ✅ COVERED: "ResNet dùng skip connections" = "ResNet sử dụng kết nối tắt" = "ResNet có đường dẫn danh tính"
+   - ✅ COVERED: "Giải quyết vanishing gradient" = "Khắc phục vấn đề độ dốc biến mất" = "Xử lý gradient mất dần"
+   - ❌ MISSING: Câu trả lời không hề đề cập đến khái niệm đó
 
 # OUTPUT FORMAT:
 
-Trả về đánh giá theo định dạng JSON sau:
+Trả về đánh giá theo định dạng JSON sau (PHẢI tuân thủ JSON hợp lệ):
 {{
-  "score": 0-100,
-  "feedback": "Nhận xét chi tiết về những gì tốt và những gì cần cải thiện",
-  "covered_points": ["Điểm 1", "Điểm 2"],
-  "missing_points": ["Điểm 3"]
+  "score": <số từ 0-100>,
+  "feedback": "<Nhận xét ngắn gọn, cụ thể về câu trả lời>",
+  "covered_points": ["<Liệt kê CÁC ĐIỂM CHÍNH mà sinh viên ĐÃ ĐỀ CẬP - dùng ngôn ngữ rõ ràng>"],
+  "missing_points": ["<Liệt kê CÁC ĐIỂM CHÍNH mà sinh viên HOÀN TOÀN CHƯA ĐỀ CẬP - nếu không có gì thiếu thì để array rỗng []>"]
 }}
+
+LƯU Ý:
+- Nếu sinh viên đã đề cập TẤT CẢ các điểm chính (dù cách diễn đạt khác), hãy cho 100 điểm và để missing_points = []
+- Hãy CÔNG BẰNG và KHÔ NGHIÊM KHẮC - đánh giá dựa trên sự hiểu biết thực sự, không phải độ giống y hệt
 """
 

@@ -93,6 +93,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       if (selectedVideo && !isStreaming) {
         onSend('__VIDEO_SUMMARY_REGENERATE__'); // Special marker to skip user message
       }
+    } else if (currentMode === 'quiz') {
+      // For quiz, send button triggers quiz generation
+      if (!isStreaming) {
+        // Pass the query (optional) via the onSend handler
+        onSend(input.trim() || '__QUIZ_GENERATE__');
+        setInput('');
+      }
     } else if (input.trim() && !isStreaming) {
       onSend(input.trim());
       setInput('');
@@ -252,7 +259,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
       )}
       
-      {/* Send/Regenerate Button */}
+      {/* Send/Regenerate/Generate Button */}
       <Button
         onClick={handleSend}
         colorScheme={currentMode === 'video_summary' ? 'orange' : 'blue'}
@@ -261,11 +268,17 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         disabled={
           currentMode === 'video_summary'
             ? !selectedVideo || isStreaming
+            : currentMode === 'quiz'
+            ? isStreaming
             : !input.trim() || isStreaming
         }
         leftIcon={currentMode === 'video_summary' ? <RepeatIcon /> : undefined}
       >
-        {currentMode === 'video_summary' ? 'Regenerate' : 'Send'}
+        {currentMode === 'video_summary'
+          ? 'Regenerate'
+          : currentMode === 'quiz'
+          ? 'Generate Quiz'
+          : 'Send'}
       </Button>
     </HStack>
   );

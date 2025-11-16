@@ -2,7 +2,11 @@
  * API service for backend communication
  */
 import axios from 'axios';
-import { ChatSession, ChatMessage } from '../types';
+import {
+  ChatSession,
+  ChatMessage,
+  QuizQuestion,
+} from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -154,45 +158,76 @@ export const videoSummaryAPI = {
 // Quiz API (task-specific endpoints)
 // ============================================================================
 
-export interface QuizQuestion {
-  question: string;
-  question_type: string; // "mcq" or "open_ended"
-  options?: {
-    "A": string;
-    "B": string;
-    "C": string;
-    "D": string;
-  }; // For MCQ questions
-  correct_answer?: string; // For MCQ (A, B, C, D)
-  explanation?: string;
-}
-
-export interface Quiz {
-  quiz_id: string;
-  questions: QuizQuestion[];
-}
-
-export interface ValidateAnswerItem {
-  question_index: number;
-  answer: string; // For MCQ: "A", "B", "C", "D"; For open-ended: full text
-}
-
-export interface ValidationResult {
-  score: number;
-  total: number;
-  results: Array<{
-    question_index: number;
-    is_correct: boolean;
-    feedback: string;
-  }>;
+export interface QuizHistory {
+  id: string;
+  topic?: string;
+  chapters?: string[];
+  question_type: string;
+  num_questions: number;
+  created_at: string;
 }
 
 export const quizAPI = {
   /**
    * Get SSE stream URL for quiz generation
+   * POST /api/quiz/generate with GenerateQuizRequest body
+   * Returns SSE stream with progress and quiz_id
    */
   getGenerateStreamURL: (): string => {
     return `${API_BASE_URL}/api/quiz/generate`;
+  },
+
+  /**
+   * Get SSE stream URL for answer validation
+   * POST /api/quiz/validate with ValidateAnswersRequest body
+   * Returns SSE stream with incremental validation results
+   */
+  getValidateStreamURL: (): string => {
+    return `${API_BASE_URL}/api/quiz/validate`;
+  },
+
+  /**
+   * Get a specific quiz by ID (non-streaming)
+   * GET /api/quiz/{quiz_id}
+   */
+  getQuiz: async (quizId: string): Promise<{ quiz_id: string; questions: QuizQuestion[] }> => {
+    const response = await apiClient.get(`/api/quiz/${quizId}`);
+    return response.data;
+  },
+
+  /**
+   * Get quiz history for a user
+   * GET /api/quiz/history
+   */
+  getQuizHistory: async (userId: string = 'default_user'): Promise<QuizHistory[]> => {
+    const response = await apiClient.get<QuizHistory[]>('/api/quiz/history', {
+      params: { user_id: userId }
+    });
+    return response.data;
+  },
+
+  /**
+   * Delete a quiz by ID
+   * DELETE /api/quiz/{quiz_id}
+   */
+  deleteQuiz: async (quizId: string): Promise<void> => {
+    await apiClient.delete(`/api/quiz/${quizId}`);
+  },
+
+  /**
+   * Get previous attempts for a quiz
+   * GET /api/quiz/{quiz_id}/attempts
+   */
+  getQuizAttempts: async (quizId: string): Promise<Array<{
+    question_id: number;
+    user_answer: string;
+    is_correct?: boolean;
+    llm_score?: number;
+    llm_feedback?: any;
+    submitted_at?: string;
+  }>> => {
+    const response = await apiClient.get(`/api/quiz/${quizId}/attempts`);
+    return response.data;
   },
 };
 

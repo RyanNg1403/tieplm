@@ -1,22 +1,25 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { HStack, VStack, Box, useToast, useBreakpointValue } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { MessageList } from './MessageList';
 import { VideoSummaryDisplay } from './VideoSummaryDisplay';
 import { ChatInput } from './ChatInput';
 import { Sidebar } from './Sidebar';
 import { VideoPlayer } from '../VideoPlayer';
-import { QuizDisplay } from '../Quiz/QuizDisplay';
+import { QuizDisplay } from './QuizDisplay';
 import { ResizablePanels } from '../shared/ResizablePanels';
 import { useChatStore } from '../../stores/chatStore';
+import { useQuizStore } from '../../stores/quizStore';
 import { useSSE } from '../../hooks/useSSE';
-import { textSummaryAPI, qaAPI, videoSummaryAPI, sessionsAPI, quizAPI, QuizQuestion } from '../../services/api';
+import { textSummaryAPI, qaAPI, videoSummaryAPI, sessionsAPI, quizAPI } from '../../services/api';
 import type { VideoInfo } from '../../services/api';
-import { ChatMessage, ChatSession } from '../../types';
+import { ChatMessage, ChatSession, Quiz } from '../../types';
 
 export const ChatContainer: React.FC = () => {
   const toast = useToast();
+  const queryClient = useQueryClient();
 
-  // Store state
+  // Chat store state
   const {
     currentMode,
     setMode,
@@ -30,26 +33,183 @@ export const ChatContainer: React.FC = () => {
     streamingContent,
     appendStreamingContent,
     resetStreamingContent,
-    selectedChapters,
-    setSelectedChapters,
+    selectedChapters: chatSelectedChapters,
+    setSelectedChapters: setChatSelectedChapters,
     selectedVideo,
     setSelectedVideo,
   } = useChatStore();
+
+  // Quiz store state
+  const {
+    currentQuiz,
+    setCurrentQuiz,
+    persistedQuizId,
+    setPersistedQuizId,
+    isGenerating,
+    setIsGenerating,
+    generationProgress,
+    setGenerationProgress,
+    isValidating,
+    setIsValidating,
+    addValidationResult,
+    clearValidationResults,
+    resetQuiz,
+    selectedChapters: quizSelectedChapters,
+    setSelectedChapters: setQuizSelectedChapters,
+    setAnswer,
+    clearAnswers,
+  } = useQuizStore();
+
+  // Use appropriate state based on mode
+  const selectedChapters = currentMode === 'quiz' ? quizSelectedChapters : chatSelectedChapters;
+  const setSelectedChapters = currentMode === 'quiz' ? setQuizSelectedChapters : setChatSelectedChapters;
 
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   const [videoLoading, setVideoLoading] = useState<boolean>(false);
   const [videoError, setVideoError] = useState<string | null>(null);
   const videoPlayerRef = useRef<any>(null);
   const [embedStartTime, setEmbedStartTime] = useState<number | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
   // Responsive layout: side-by-side on desktop (>= 1024px), stacked on mobile
   const isDesktop = useBreakpointValue({ base: false, lg: true }, { ssr: false });
 
-  // Quiz state
-  const [quizProgress, setQuizProgress] = useState<number>(0);
-  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  // Quiz configuration (local state for UI controls)
   const [quizQuestionType, setQuizQuestionType] = useState<string>('mcq');
   const [quizNumQuestions, setQuizNumQuestions] = useState<number>(5);
+
+  // Track previous mode to detect changes
+  const prevModeRef = useRef<TaskType>(currentMode);
+
+  // Clear messages when switching between different chat tasks (text_summary, qa, video_summary)
+  useEffect(() => {
+    const prevMode = prevModeRef.current;
+
+    // Skip on initial mount
+    if (prevMode === currentMode) {
+      return;
+    }
+
+    // Define chat-based tasks (tasks that share the message display)
+    const chatTasks: TaskType[] = ['text_summary', 'qa', 'video_summary'];
+
+    // If switching between different chat tasks, clear messages
+    const switchingBetweenChatTasks =
+      chatTasks.includes(prevMode) &&
+      chatTasks.includes(currentMode) &&
+      prevMode !== currentMode;
+
+    if (switchingBetweenChatTasks) {
+      setMessages([]);
+      resetStreamingContent();
+      setCurrentSession(null);
+    }
+
+    // If switching to quiz mode, clear quiz state
+    if (currentMode === 'quiz' && prevMode !== 'quiz') {
+      resetQuiz();
+    }
+
+    // Update ref for next comparison
+    prevModeRef.current = currentMode;
+  }, [currentMode, setMessages, resetStreamingContent, setCurrentSession, resetQuiz]);
+
+  // Restore session/quiz on mount (from persisted state)
+  useEffect(() => {
+    if (!isInitialLoad) return;
+
+    const restoreSession = async () => {
+      try {
+        if (currentMode === 'quiz' && persistedQuizId) {
+          // Restore quiz state
+          try {
+            const quizData = await quizAPI.getQuiz(persistedQuizId);
+
+            // Restore quiz
+            const quiz: Quiz = {
+              id: persistedQuizId,
+              user_id: 'default_user',
+              topic: undefined,
+              chapters: undefined,
+              question_type: 'mixed',
+              num_questions: quizData.questions.length,
+              created_at: new Date().toISOString(),
+              questions: quizData.questions,
+            };
+
+            setCurrentQuiz(quiz);
+
+            // Fetch and restore previous attempts
+            const attempts = await quizAPI.getQuizAttempts(persistedQuizId);
+
+            if (attempts.length > 0) {
+              // Create maps for lookup
+              const questionIdToIndex = new Map<number, number>();
+              const questionIdToType = new Map<number, string>();
+              const questionIdToCorrectAnswer = new Map<number, string>();
+              const questionIdToExplanation = new Map<number, string>();
+
+              quizData.questions.forEach((q: any) => {
+                questionIdToIndex.set(q.id, q.question_index);
+                questionIdToType.set(q.id, q.question_type);
+                questionIdToCorrectAnswer.set(q.id, q.correct_answer);
+                questionIdToExplanation.set(q.id, q.explanation);
+              });
+
+              // Restore answers and validation results
+              attempts.forEach((attempt) => {
+                const questionIndex = questionIdToIndex.get(attempt.question_id);
+                const questionType = questionIdToType.get(attempt.question_id);
+                const correctAnswer = questionIdToCorrectAnswer.get(attempt.question_id);
+                const explanation = questionIdToExplanation.get(attempt.question_id);
+
+                if (questionIndex !== undefined && questionType) {
+                  // Restore answer
+                  setAnswer(questionIndex, attempt.user_answer);
+
+                  // Restore validation result with all required fields
+                  const validationResult: any = {
+                    question_index: questionIndex,
+                    question_type: questionType,
+                    user_answer: attempt.user_answer,
+                    is_correct: attempt.is_correct,
+                    correct_answer: correctAnswer,
+                    llm_score: attempt.llm_score,
+                    llm_feedback: attempt.llm_feedback,
+                    explanation: explanation,
+                  };
+                  addValidationResult(validationResult);
+                }
+              });
+            }
+          } catch (err) {
+            // Quiz not found or deleted - clear it
+            console.log('Quiz not found, clearing persisted state');
+            setPersistedQuizId(null);
+          }
+        } else if (currentMode === 'video_summary' && selectedVideo) {
+          // Video summary mode - video will auto-load via existing effect
+        } else if (currentSession?.id && (currentMode === 'text_summary' || currentMode === 'qa')) {
+          // Restore chat session messages
+          try {
+            const sessionMessages = await sessionsAPI.getSessionMessages(currentSession.id);
+            setMessages(sessionMessages);
+          } catch (err) {
+            // Session not found or deleted - clear it
+            console.log('Session not found, clearing persisted state');
+            setCurrentSession(null);
+            setMessages([]);
+          }
+        }
+      } catch (error: any) {
+        console.error('Failed to restore session:', error);
+      } finally {
+        setIsInitialLoad(false);
+      }
+    };
+
+    restoreSession();
+  }, []); // Only run on mount
 
   // Fetch video metadata when a video is selected
   useEffect(() => {
@@ -82,7 +242,7 @@ export const ChatContainer: React.FC = () => {
     let cancelled = false;
 
     const loadAndStreamSummary = async () => {
-      if (currentMode !== 'video_summary' || !selectedVideo || isStreaming) {
+      if (currentMode !== 'video_summary' || !selectedVideo || isStreaming || isInitialLoad) {
         return;
       }
 
@@ -117,7 +277,7 @@ export const ChatContainer: React.FC = () => {
 
     loadAndStreamSummary();
     return () => { cancelled = true; };
-  }, [selectedVideo, currentMode]); // Only trigger when video or mode changes
+  }, [selectedVideo, currentMode, isInitialLoad]); // Only trigger when video or mode changes
 
   // Helper to convert YouTube watch/share URLs to embed URLs
   const toYouTubeEmbed = (url: string): string | null => {
@@ -167,42 +327,73 @@ export const ChatContainer: React.FC = () => {
     onProgress: (progress) => {
       // Update quiz progress for quiz mode
       if (currentMode === 'quiz') {
-        setQuizProgress(progress);
+        setGenerationProgress(progress);
       }
     },
-    onDone: (content, sources, sessionId) => {
+    onValidation: (result) => {
+      // Handle incremental validation results for quiz
+      if (currentMode === 'quiz') {
+        addValidationResult(result);
+      }
+    },
+    onDone: async (content, sources, sessionId, quizId) => {
       // For quiz mode, parse and store the result
       if (currentMode === 'quiz') {
-        setQuizProgress(100);
+        setGenerationProgress(100);
 
-        // Parse the JSON content to extract questions
-        try {
-          const questions: QuizQuestion[] = JSON.parse(content);
-          if (Array.isArray(questions)) {
-            setQuizQuestions(questions);
-          } else {
-            setQuizQuestions([]);
+        // If we're validating, mark as done
+        if (isValidating) {
+          setIsValidating(false);
+          setIsGenerating(false);
+
+          toast({
+            title: 'Validation complete',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+          });
+        } else if (quizId) {
+          // Quiz generation complete - fetch full quiz from backend
+          try {
+            const quizData = await quizAPI.getQuiz(quizId);
+
+            // Create Quiz object
+            const quiz: Quiz = {
+              id: quizId,
+              user_id: 'default_user',
+              topic: undefined,
+              chapters: selectedChapters.length > 0 ? selectedChapters : undefined,
+              question_type: quizQuestionType as 'mcq' | 'open_ended' | 'mixed',
+              num_questions: quizData.questions.length,
+              created_at: new Date().toISOString(),
+              questions: quizData.questions,
+            };
+
+            setCurrentQuiz(quiz);
+            setIsGenerating(false);
+
+            // Invalidate query cache to refresh the sidebar with new quiz
+            queryClient.invalidateQueries({ queryKey: ['sessions', 'quiz'] });
+
+            toast({
+              title: 'Quiz generated successfully',
+              status: 'success',
+              duration: 2000,
+              isClosable: true,
+            });
+          } catch (error: any) {
+            console.error('Failed to fetch quiz:', error);
+            setIsGenerating(false);
+
+            toast({
+              title: 'Error loading quiz',
+              description: error.message,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
           }
-        } catch (e) {
-          console.error('Failed to parse quiz JSON:', e);
-          setQuizQuestions([]);
         }
-
-        // Update current session if we got a new session_id from backend
-        if (sessionId && (!currentSession || currentSession.id !== sessionId)) {
-          setCurrentSession({ id: sessionId } as ChatSession);
-        }
-
-        // Reset streaming state
-        resetStreamingContent();
-        setIsStreaming(false);
-
-        toast({
-          title: 'Quiz generated successfully',
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        });
       } else {
         // For other modes, add assistant message with sources
         const assistantMessage: ChatMessage = {
@@ -233,8 +424,10 @@ export const ChatContainer: React.FC = () => {
     },
     onError: (error) => {
       setIsStreaming(false);
+      setIsGenerating(false);
+      setIsValidating(false);
       resetStreamingContent();
-      setQuizProgress(0);
+      setGenerationProgress(0);
 
       toast({
         title: 'Error',
@@ -248,29 +441,100 @@ export const ChatContainer: React.FC = () => {
 
   // Session management
   const handleNewChat = useCallback(() => {
-    setCurrentSession(null);
-    setMessages([]);
-    resetStreamingContent();
-    setSelectedChapters([]);
-    setSelectedVideo(null);
-    setQuizProgress(0);
-    setQuizQuestions([]);
-  }, [setCurrentSession, setMessages, resetStreamingContent, setSelectedChapters, setSelectedVideo, setQuizProgress, setQuizQuestions]);
+    if (currentMode === 'quiz') {
+      // Reset quiz state
+      resetQuiz();
+    } else {
+      // Reset chat state
+      setCurrentSession(null);
+      setMessages([]);
+      resetStreamingContent();
+      setChatSelectedChapters([]);
+      setSelectedVideo(null);
+    }
+  }, [currentMode, resetQuiz, setCurrentSession, setMessages, resetStreamingContent, setChatSelectedChapters, setSelectedVideo]);
 
   const handleSelectSession = useCallback(async (sessionId: string) => {
     try {
-      const sessionMessages = await sessionsAPI.getSessionMessages(sessionId);
-      // Try to parse the content to see if it's a quiz JSON. If fails, fallback to original messages
-      try {
-        const parsed = JSON.parse(sessionMessages[0].content);
-        setQuizQuestions(parsed);
-        setMessages([]);
-        setMode('quiz');
-      } catch (e) {
+      if (currentMode === 'quiz') {
+        // Clear previous quiz state first
+        clearAnswers();
+        clearValidationResults();
+
+        // For quiz mode, fetch the quiz from backend
+        const quizData = await quizAPI.getQuiz(sessionId);
+
+        // Create Quiz object
+        const quiz: Quiz = {
+          id: sessionId,
+          user_id: 'default_user',
+          topic: undefined,
+          chapters: undefined,
+          question_type: 'mixed',
+          num_questions: quizData.questions.length,
+          created_at: new Date().toISOString(),
+          questions: quizData.questions,
+        };
+
+        setCurrentQuiz(quiz);
+
+        // Fetch and restore previous attempts if any
+        try {
+          const attempts = await quizAPI.getQuizAttempts(sessionId);
+
+          if (attempts.length > 0) {
+            // Create maps for lookup
+            const questionIdToIndex = new Map<number, number>();
+            const questionIdToType = new Map<number, string>();
+            const questionIdToCorrectAnswer = new Map<number, string>();
+            const questionIdToExplanation = new Map<number, string>();
+
+            quizData.questions.forEach((q: any) => {
+              questionIdToIndex.set(q.id, q.question_index);
+              questionIdToType.set(q.id, q.question_type);
+              questionIdToCorrectAnswer.set(q.id, q.correct_answer);
+              questionIdToExplanation.set(q.id, q.explanation);
+            });
+
+            // Restore answers and validation results
+            attempts.forEach((attempt) => {
+              const questionIndex = questionIdToIndex.get(attempt.question_id);
+              const questionType = questionIdToType.get(attempt.question_id);
+              const correctAnswer = questionIdToCorrectAnswer.get(attempt.question_id);
+              const explanation = questionIdToExplanation.get(attempt.question_id);
+
+              if (questionIndex !== undefined && questionType) {
+                // Restore answer
+                setAnswer(questionIndex, attempt.user_answer);
+
+                // Restore validation result with all required fields
+                const validationResult: any = {
+                  question_index: questionIndex,
+                  question_type: questionType,
+                  user_answer: attempt.user_answer,
+                  is_correct: attempt.is_correct,
+                  correct_answer: correctAnswer,
+                  llm_score: attempt.llm_score,
+                  llm_feedback: attempt.llm_feedback,
+                  explanation: explanation,
+                };
+                addValidationResult(validationResult);
+              }
+            });
+          }
+        } catch (err) {
+          // No attempts yet - that's fine
+          console.log('No attempts found for quiz');
+        }
+
+        resetStreamingContent();
+      } else {
+        // For chat modes, fetch messages
+        const sessionMessages = await sessionsAPI.getSessionMessages(sessionId);
         setMessages(sessionMessages);
+        setCurrentSession({ id: sessionId } as ChatSession);
+        resetStreamingContent();
       }
-      setCurrentSession({ id: sessionId } as ChatSession); // Simplified, full session from sessions list
-      resetStreamingContent();
     } catch (error: any) {
       toast({
         title: 'Failed to load session',
@@ -280,38 +544,58 @@ export const ChatContainer: React.FC = () => {
         isClosable: true,
       });
     }
-  }, [setMessages, setCurrentSession, resetStreamingContent, toast]);
+  }, [currentMode, setMessages, setCurrentSession, setCurrentQuiz, resetStreamingContent, clearAnswers, clearValidationResults, setAnswer, addValidationResult, toast]);
 
   const handleDeleteSession = useCallback(async (sessionId: string) => {
     try {
-      await sessionsAPI.deleteSession(sessionId);
-      if (currentSession?.id === sessionId) {
-        handleNewChat();
+      // Delete quiz or chat session based on current mode
+      if (currentMode === 'quiz') {
+        await quizAPI.deleteQuiz(sessionId);
+        if (currentQuiz?.id === sessionId) {
+          handleNewChat();
+        }
+        // Invalidate query cache to refresh the sidebar
+        queryClient.invalidateQueries({ queryKey: ['sessions', 'quiz'] });
+        toast({
+          title: 'Quiz deleted',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      } else {
+        await sessionsAPI.deleteSession(sessionId);
+        if (currentSession?.id === sessionId) {
+          handleNewChat();
+        }
+        // Invalidate query cache to refresh the sidebar
+        queryClient.invalidateQueries({ queryKey: ['sessions', currentMode] });
+        toast({
+          title: 'Session deleted',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
       }
-      toast({
-        title: 'Session deleted',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
     } catch (error: any) {
       toast({
-        title: 'Failed to delete session',
+        title: currentMode === 'quiz' ? 'Failed to delete quiz' : 'Failed to delete session',
         description: error.message,
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
-  }, [currentSession, handleNewChat, toast]);
+  }, [currentMode, currentSession, currentQuiz, handleNewChat, queryClient, toast]);
 
   // Handle send message
   const handleSend = useCallback(async (messageText: string) => {
-    // Skip adding user message for video_summary regenerate (special marker)
+    // Special markers
     const isVideoSummaryRegenerate = messageText === '__VIDEO_SUMMARY_REGENERATE__';
+    const isQuizMode = currentMode === 'quiz';
+    const isQuizGenerate = messageText === '__QUIZ_GENERATE__' || isQuizMode;
 
-    if (!isVideoSummaryRegenerate) {
-      // Add user message immediately for other modes
+    // Add user message for chat modes (not for video_summary regenerate or quiz)
+    if (!isVideoSummaryRegenerate && !isQuizGenerate) {
       const userMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'user',
@@ -322,13 +606,13 @@ export const ChatContainer: React.FC = () => {
     }
 
     // Start streaming
-    setIsStreaming(true);
-    resetStreamingContent();
-
-    // Reset quiz state for quiz mode
     if (currentMode === 'quiz') {
-      setQuizProgress(0);
-      setQuizQuestions([]);
+      resetQuiz(); // Clear previous quiz first
+      setIsGenerating(true); // Then set generating state
+      setGenerationProgress(0);
+    } else {
+      setIsStreaming(true);
+      resetStreamingContent();
     }
 
     try {
@@ -364,14 +648,13 @@ export const ChatContainer: React.FC = () => {
           regenerate: true, // User explicitly clicked "Regenerate" button
         };
       } else if (currentMode === 'quiz') {
-        url = quizAPI.getGenerateStreamURL()
+        url = quizAPI.getGenerateStreamURL();
         body = {
-          query: messageText,
+          query: messageText !== '__QUIZ_GENERATE__' ? messageText : undefined,
           chapters: selectedChapters.length > 0 ? selectedChapters : undefined,
-          video_ids: ["Chương 7_TqKBlC-zyKY", "Chương 8_S8__bXkLSbM"],
           question_type: quizQuestionType,
           num_questions: quizNumQuestions,
-          session_id: currentSession?.id,
+          // No session_id for quiz - uses dedicated quiz tables
         };
       } else {
         throw new Error(`Task ${currentMode} not implemented yet`);
@@ -382,6 +665,7 @@ export const ChatContainer: React.FC = () => {
 
     } catch (error: any) {
       setIsStreaming(false);
+      setIsGenerating(false);
       resetStreamingContent();
 
       toast({
@@ -401,17 +685,59 @@ export const ChatContainer: React.FC = () => {
     quizNumQuestions,
     addMessage,
     setIsStreaming,
+    setIsGenerating,
+    setGenerationProgress,
     resetStreamingContent,
+    resetQuiz,
     startStream,
     toast,
   ]);
+
+  // Handle submit quiz answers
+  const handleSubmitAnswers = useCallback(async () => {
+    if (!currentQuiz) return;
+
+    const { userAnswers } = useQuizStore.getState();
+
+    // Convert Map to array of answers
+    const answers = Array.from(userAnswers.entries()).map(([question_index, answer]) => ({
+      question_index,
+      answer,
+    }));
+
+    setIsValidating(true);
+    clearValidationResults();
+
+    try {
+      const url = quizAPI.getValidateStreamURL();
+      const body = {
+        quiz_id: currentQuiz.id,
+        answers,
+      };
+
+      // Start SSE stream for validation
+      await startStream(url, body);
+
+    } catch (error: any) {
+      setIsValidating(false);
+
+      toast({
+        title: 'Failed to validate answers',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [currentQuiz, setIsValidating, clearValidationResults, startStream, toast]);
 
   return (
     <HStack h="100vh" spacing={0} align="stretch">
       {/* Sidebar - Hide for video_summary mode since it doesn't use chat sessions */}
       {currentMode !== 'video_summary' && (
         <Sidebar
-          currentSessionId={currentSession?.id || null}
+          currentSessionId={currentMode === 'quiz' ? currentQuiz?.id || null : currentSession?.id || null}
+          taskType={currentMode}
           onNewChat={handleNewChat}
           onSelectSession={handleSelectSession}
           onDeleteSession={handleDeleteSession}
@@ -702,7 +1028,7 @@ export const ChatContainer: React.FC = () => {
             Tieplm AI Assistant - CS431 Deep Learning
           </Box>
 
-          {/* Messages Area */}
+          {/* Messages Area / Quiz Display */}
           {currentMode !== 'quiz' ? (
             <MessageList
               messages={messages}
@@ -710,48 +1036,14 @@ export const ChatContainer: React.FC = () => {
               streamingContent={streamingContent}
             />
           ) : (
-            <Box
-              flex={1}
-              w="full"
-              overflow="auto"
-              bg="gray.50"
-              borderTop="1px"
-              borderColor="gray.200"
-            >
-              <QuizDisplay questions={quizQuestions} />
-            </Box>
+            <QuizDisplay
+              quiz={currentQuiz}
+              isGenerating={isGenerating}
+              generationProgress={generationProgress}
+              isValidating={isValidating}
+              onSubmitAnswers={handleSubmitAnswers}
+            />
           )}
-
-          {/* Quiz Progress Bar */}
-          {currentMode === 'quiz' && isStreaming && quizProgress > 0 && (
-            <Box w="full" px={4} py={2} bg="white" borderTop="1px" borderColor="gray.200">
-              <Box fontSize="sm" mb={2} color="gray.600">
-                Generating quiz... {quizProgress}%
-              </Box>
-              <Box w="full" h="8px" bg="gray.200" borderRadius="md" overflow="hidden">
-                <Box
-                  h="full"
-                  bg="blue.500"
-                  transition="width 0.3s ease"
-                  style={{ width: `${quizProgress}%` }}
-                />
-              </Box>
-            </Box>
-          )}
-
-          {/* Quiz Result Display */}
-          {/* {currentMode === 'quiz' && quizQuestions.length > 0 && (
-            <Box
-              flex={1}
-              w="full"
-              overflow="auto"
-              bg="gray.50"
-              borderTop="1px"
-              borderColor="gray.200"
-            >
-              <QuizDisplay questions={quizQuestions} />
-            </Box>
-          )} */}
 
           {/* Input Area */}
           <ChatInput

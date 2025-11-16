@@ -1,5 +1,5 @@
 """SQLAlchemy database models."""
-from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, JSON, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -65,18 +65,75 @@ class ChatMessage(Base):
     session = relationship("ChatSession", back_populates="messages")
 
 
+class Quiz(Base):
+    """Quiz generation metadata."""
+    __tablename__ = "quizzes"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, default="default_user")
+    topic = Column(String)  # Optional topic/query
+    chapters = Column(JSON)  # Array of chapter filters
+    question_type = Column(String, nullable=False)  # mcq, open_ended, mixed
+    num_questions = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationship to questions
+    questions = relationship("QuizQuestion", back_populates="quiz", cascade="all, delete-orphan")
+
+
 class QuizQuestion(Base):
-    """Generated quiz questions."""
+    """Individual quiz questions."""
     __tablename__ = "quiz_questions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    video_id = Column(String, ForeignKey("videos.id"))
+    quiz_id = Column(String, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False)
+    question_index = Column(Integer, nullable=False)  # Order in quiz (0, 1, 2...)
     question = Column(Text, nullable=False)
-    question_type = Column(String)  # mcq or yes_no
-    options = Column(Text)  # JSON string
-    correct_answer = Column(String)
+    question_type = Column(String, nullable=False)  # mcq or open_ended
+
+    # MCQ fields
+    options = Column(JSON)  # {"A": "...", "B": "...", "C": "...", "D": "..."}
+    correct_answer = Column(String)  # "A", "B", "C", or "D"
+
+    # Open-ended fields
+    reference_answer = Column(Text)  # Reference answer for open-ended
+    key_points = Column(JSON)  # Array of key points for open-ended
+
+    # Common fields
+    explanation = Column(Text)
+    source_index = Column(Integer)
+    video_id = Column(String)
+    video_title = Column(String)
+    video_url = Column(String)
     timestamp = Column(Integer)  # in seconds
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationship to quiz
+    quiz = relationship("Quiz", back_populates="questions")
+    # Relationship to attempts
+    attempts = relationship("QuizAttempt", back_populates="question", cascade="all, delete-orphan")
+
+
+class QuizAttempt(Base):
+    """User answers and validation results."""
+    __tablename__ = "quiz_attempts"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    quiz_id = Column(String, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False)
+    question_id = Column(Integer, ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False)
+    user_answer = Column(Text, nullable=False)
+
+    # MCQ validation
+    is_correct = Column(Boolean)  # For MCQ
+
+    # Open-ended validation
+    llm_score = Column(Integer)  # 0-100 for open-ended
+    llm_feedback = Column(JSON)  # Full LLM feedback (score, feedback, covered_points, missing_points)
+
+    submitted_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationship to question
+    question = relationship("QuizQuestion", back_populates="attempts")
 
 
 class VideoSummary(Base):

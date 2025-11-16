@@ -163,6 +163,14 @@ export const VideoSummaryDisplay: React.FC<VideoSummaryDisplayProps> = ({
             </>
           )}
 
+          {/* Show loading indicator when streaming starts (before first token) */}
+          {isStreaming && !streamingContent && (
+            <Box display="flex" alignItems="center" gap={2}>
+              <Spinner size="sm" color="blue.500" />
+              <Text fontSize="sm" color="gray.600">Generating summary...</Text>
+            </Box>
+          )}
+
           {/* Show streaming content */}
           {isStreaming && streamingContent && (
             <Box>

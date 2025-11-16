@@ -3,10 +3,6 @@
  */
 import { useCallback } from 'react';
 
-interface VideoPlayerRef {
-  seekToTime?: (seconds: number) => void;
-}
-
 export const useVideoTimestamp = () => {
   const seekToTime = useCallback((videoRef: React.RefObject<any>, seconds: number) => {
     if (videoRef.current && videoRef.current.seekToTime) {

@@ -2,14 +2,16 @@
 import os
 import json
 import uuid
+import asyncio
 from typing import AsyncGenerator, Dict, Any, List, Optional
+from datetime import datetime
 
 from ...shared.rag.reranker import LocalReranker, get_local_reranker
 from ...shared.rag.retriever import RAGRetriever, get_rag_retriever
 
 from ...shared.llm.client import LLMClient, get_llm_client
 from ...shared.database.postgres import PostgresClient, get_postgres_client
-from ...shared.database.models import ChatSession, ChatMessage
+from ...shared.database.models import Quiz, QuizQuestion, QuizAttempt
 
 from .prompts import (
     QUIZ_SYSTEM_PROMPT,
@@ -25,12 +27,11 @@ class QuizService:
     Service for quiz generation from video transcripts.
 
     Pipeline:
-    1. Fetch video transcript from database
-    2. Build prompt with transcript content
-    3. Generate questions using LLM (MCQ or open-ended)
-    4. Parse and validate LLM response
-    5. Save questions to database
-    6. Return formatted quiz
+    1. Retrieve relevant chunks using RAG
+    2. Generate questions using LLM (MCQ or open-ended)
+    3. Parse and validate LLM response
+    4. Save questions to quizzes and quiz_questions tables
+    5. Return formatted quiz
     """
 
     def __init__(
@@ -57,39 +58,37 @@ class QuizService:
         self,
         video_ids: Optional[List[str]] = None,
         query: Optional[str] = None,
+        chapters: Optional[List[str]] = None,
         question_type: str = "mcq",
-        num_questions: Optional[int] = None,
-        session_id: Optional[str] = None
+        num_questions: Optional[int] = None
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """
-        Generate quiz questions from a list of videos.
+        Generate quiz questions from videos/chapters.
 
         Args:
             video_ids: List of video IDs to generate quiz from
+            query: Optional topic/query
+            chapters: List of chapters to filter by
             question_type: Type of questions - "mcq", "open_ended", or "mixed"
             num_questions: Number of questions to generate (default from env)
-            session_id: Optional existing session ID, otherwise creates new
 
-        Returns:
-            Dict containing:
-            - quiz_id: Unique quiz identifier (session_id)
-            - video_ids: List of source video IDs
-            - videos: List of video metadata
-            - questions: List of generated questions (each with video_url and video_id)
-            - question_type: Type of quiz
+        Yields:
+            SSE events with progress, questions, and quiz_id
         """
         num_questions = num_questions or self.default_num_questions
 
         # Handle video_ids - default to empty list if None
         if video_ids is None:
             video_ids = []
-        
+
         source_identifier = f"{len(video_ids)} video(s)" if len(video_ids) > 1 else (video_ids[0] if video_ids else "all videos")
 
-        # Step 0: Create or get session BEFORE generation
-        created_session_id = await self._create_session(
-            session_id=session_id,
-            query=f"{query if query else source_identifier} - {num_questions} {question_type} questions"
+        # Step 0: Create quiz record BEFORE generation
+        quiz_id = await self._create_quiz(
+            topic=query,
+            chapters=chapters,
+            question_type=question_type,
+            num_questions=num_questions
         )
 
         # Step 1: Retrieve relevant chunks
@@ -98,29 +97,30 @@ class QuizService:
             retrieved_chunks = await self.retriever.retrieve(
                 query=query,
                 top_k=self.retrieval_top_k,
+                chapter_filter=chapters,
                 use_bm25=True
             )
             print(f"✅ Retrieved {len(retrieved_chunks)} chunks")
-            
+
             if not retrieved_chunks:
-                # No results found
                 yield {
                     "type": "error",
                     "content": "Không tìm thấy thông tin liên quan trong cơ sở dữ liệu."
                 }
                 return
         else:
-            # If no query, retrieve chunks from selected videos
-            # For now, we'll use a generic query to retrieve from all videos
-            # In the future, we could add video_id filtering to the retriever
-            print(f"📚 Retrieving chunks from {len(video_ids)} video(s)...")
+            # If no query, use a generic query with chapter filtering
+            # For quiz generation, we want broad coverage of the chapters
+            generic_query = "deep learning neural networks machine learning"
+            print(f"📚 Retrieving chunks from chapters: {chapters}...")
             retrieved_chunks = await self.retriever.retrieve(
-                query=source_identifier,
+                query=generic_query,
                 top_k=self.retrieval_top_k,
+                chapter_filter=chapters,
                 use_bm25=True
             )
             print(f"✅ Retrieved {len(retrieved_chunks)} chunks")
-            
+
             if not retrieved_chunks:
                 yield {
                     "type": "error",
@@ -194,7 +194,7 @@ class QuizService:
             yield {
                 "type": "progress",
                 "progress": progress,
-                "session_id": created_session_id
+                "quiz_id": quiz_id
             }
 
         print("LLM response received for quiz generation.")
@@ -203,7 +203,7 @@ class QuizService:
         # Parse JSON response
         try:
             parsed = json.loads(accumulated_response)
-            
+
             # Handle mixed question type format
             if question_type == "mixed":
                 mcq_questions = parsed.get("mcq_questions", [])
@@ -226,7 +226,6 @@ class QuizService:
             print(f"Generated {len(all_questions)} questions")
 
             # Step 5: Enrich questions with video info from chunks
-            # This ensures consistency with Q&A and text_summary services
             all_questions = self._enrich_questions_with_video_info(
                 questions=all_questions,
                 chunks=reranked_chunks
@@ -236,24 +235,24 @@ class QuizService:
             yield {
                 "type": "progress",
                 "progress": 100,
-                "session_id": created_session_id
+                "quiz_id": quiz_id
             }
-
-            # Yield final raw response (the original JSON from LLM)
-            yield {
-                "type": "done",
-                "content": json.dumps(all_questions, ensure_ascii=False),  # Raw JSON response
-                "session_id": created_session_id
-            }
-
-            print(f"✅ Generated {len(all_questions)} questions")
-            print(f"Questions: {json.dumps(all_questions, ensure_ascii=False)}")
 
             # Step 6: Save questions to database
             await self._save_questions(
-                questions=all_questions,
-                session_id=created_session_id
+                quiz_id=quiz_id,
+                questions=all_questions
             )
+
+            # Yield final response with questions
+            yield {
+                "type": "done",
+                "content": json.dumps(all_questions, ensure_ascii=False),
+                "quiz_id": quiz_id
+            }
+
+            print(f"✅ Generated {len(all_questions)} questions for quiz {quiz_id}")
+
         except json.JSONDecodeError as e:
             print(f"❌ Failed to parse LLM response: {e}")
             print(f"Response: {accumulated_response[:200]}...")
@@ -262,38 +261,37 @@ class QuizService:
                 "content": "Failed to generate valid quiz questions"
             }
 
-
     async def validate_answers(
         self,
         quiz_id: str,
         answers: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    ) -> AsyncGenerator[Dict[str, Any], None]:
         """
-        Validate user answers for a quiz.
+        Validate user answers with parallel processing and incremental streaming.
 
         Args:
-            quiz_id: Quiz session ID
+            quiz_id: Quiz ID
             answers: List of user answers:
-                For MCQ: {"question_index": 0, "answer": "A"}
-                For open-ended: {"question_index": 0, "answer": "User's text answer"}
+                {"question_index": 0, "answer": "A"}
 
-        Returns:
-            Dict containing:
-            - total_questions: Total number of questions
-            - mcq_score: Score for MCQ questions (if any)
-            - open_ended_feedback: Feedback for open-ended questions (if any)
-            - overall_score: Overall percentage score
+        Yields:
+            Validation results incrementally as they complete
         """
-        # Step 1: Retrieve quiz questions from session
         print(f"📝 Validating answers for quiz {quiz_id}...")
+
+        # Step 1: Retrieve quiz questions
         questions = await self._get_quiz_questions(quiz_id)
 
         if not questions:
-            raise ValueError(f"No questions found for quiz {quiz_id}")
+            yield {
+                "type": "error",
+                "content": f"No questions found for quiz {quiz_id}"
+            }
+            return
 
         # Step 2: Separate MCQ and open-ended questions
-        mcq_results = []
-        open_ended_results = []
+        mcq_validations = []
+        open_ended_validations = []
 
         for answer_data in answers:
             q_idx = answer_data["question_index"]
@@ -304,71 +302,113 @@ class QuizService:
 
             question = questions[q_idx]
 
-            if question["type"] == "mcq":
-                # Validate MCQ answer
-                is_correct = user_answer == question["correct_answer"]
-                mcq_results.append({
-                    "question_index": q_idx,
-                    "question": question["question"],
-                    "user_answer": user_answer,
-                    "correct_answer": question["correct_answer"],
-                    "is_correct": is_correct,
-                    "explanation": question.get("explanation", ""),
-                    "timestamp": question.get("timestamp"),
-                    "video_id": question.get("video_id"),
-                    "video_title": question.get("video_title"),
-                    "video_url": question.get("video_url")
-                })
+            if question["question_type"] == "mcq":
+                mcq_validations.append((q_idx, question, user_answer))
+            elif question["question_type"] == "open_ended":
+                open_ended_validations.append((q_idx, question, user_answer))
 
-            elif question["type"] == "open_ended":
-                # Use LLM to evaluate open-ended answer
-                feedback = await self._evaluate_open_ended_answer(
-                    question=question["question"],
-                    reference_answer=question.get("reference_answer", ""),
-                    key_points=question.get("key_points", []),
-                    student_answer=user_answer
-                )
-                open_ended_results.append({
-                    "question_index": q_idx,
-                    "question": question["question"],
-                    "user_answer": user_answer,
-                    "feedback": feedback,
-                    "timestamp": question.get("timestamp"),
-                    "video_id": question.get("video_id"),
-                    "video_title": question.get("video_title"),
-                    "video_url": question.get("video_url")
-                })
+        # Step 3: Process MCQ validations instantly
+        print(f"✅ Validating {len(mcq_validations)} MCQ questions...")
+        for q_idx, question, user_answer in mcq_validations:
+            is_correct = user_answer == question["correct_answer"]
+            result = {
+                "question_index": q_idx,
+                "question_type": "mcq",
+                "question": question["question"],
+                "user_answer": user_answer,
+                "correct_answer": question["correct_answer"],
+                "is_correct": is_correct,
+                "explanation": question.get("explanation", ""),
+                "timestamp": question.get("timestamp"),
+                "video_id": question.get("video_id"),
+                "video_title": question.get("video_title"),
+                "video_url": question.get("video_url"),
+            }
 
-        # Step 3: Calculate scores
-        mcq_score = 0
-        if mcq_results:
-            correct_count = sum(1 for r in mcq_results if r["is_correct"])
-            mcq_score = (correct_count / len(mcq_results)) * 100
-
-        open_ended_avg_score = 0
-        if open_ended_results:
-            total_score = sum(r["feedback"]["score"] for r in open_ended_results)
-            open_ended_avg_score = total_score / len(open_ended_results)
-
-        # Overall score (weighted average)
-        total_questions = len(mcq_results) + len(open_ended_results)
-        if total_questions > 0:
-            overall_score = (
-                (len(mcq_results) * mcq_score + len(open_ended_results) * open_ended_avg_score)
-                / total_questions
+            # Save to database
+            await self._save_attempt(
+                quiz_id=quiz_id,
+                question_id=question["id"],
+                user_answer=user_answer,
+                is_correct=is_correct
             )
-        else:
-            overall_score = 0
 
-        print(f"✅ Validation complete: {overall_score:.1f}% overall")
+            # Stream result immediately
+            yield {
+                "type": "validation",
+                "result": result
+            }
+
+        # Step 4: Process open-ended validations in parallel
+        if open_ended_validations:
+            print(f"🤖 Validating {len(open_ended_validations)} open-ended questions in parallel...")
+
+            # Create tasks for parallel execution
+            tasks = []
+            for q_idx, question, user_answer in open_ended_validations:
+                task = self._validate_open_ended(
+                    quiz_id=quiz_id,
+                    question_id=question["id"],
+                    q_idx=q_idx,
+                    question=question,
+                    user_answer=user_answer
+                )
+                tasks.append(task)
+
+            # Process as they complete (stream incrementally)
+            for completed_task in asyncio.as_completed(tasks):
+                result = await completed_task
+                yield {
+                    "type": "validation",
+                    "result": result
+                }
+
+        # Step 5: Calculate and send final summary
+        total_questions = len(mcq_validations) + len(open_ended_validations)
+        yield {
+            "type": "done",
+            "total_questions": total_questions,
+            "quiz_id": quiz_id
+        }
+
+        print(f"✅ Validation complete for quiz {quiz_id}")
+
+    async def _validate_open_ended(
+        self,
+        quiz_id: str,
+        question_id: int,
+        q_idx: int,
+        question: Dict[str, Any],
+        user_answer: str
+    ) -> Dict[str, Any]:
+        """Validate a single open-ended question with LLM."""
+        feedback = await self._evaluate_open_ended_answer(
+            question=question["question"],
+            reference_answer=question.get("reference_answer", ""),
+            key_points=question.get("key_points", []),
+            student_answer=user_answer
+        )
+
+        # Save to database
+        await self._save_attempt(
+            quiz_id=quiz_id,
+            question_id=question_id,
+            user_answer=user_answer,
+            llm_score=feedback["score"],
+            llm_feedback=feedback
+        )
 
         return {
-            "total_questions": total_questions,
-            "mcq_results": mcq_results,
-            "mcq_score": mcq_score,
-            "open_ended_results": open_ended_results,
-            "open_ended_avg_score": open_ended_avg_score,
-            "overall_score": overall_score
+            "question_index": q_idx,
+            "question_type": "open_ended",
+            "question": question["question"],
+            "user_answer": user_answer,
+            "llm_score": feedback["score"],
+            "llm_feedback": feedback,
+            "timestamp": question.get("timestamp"),
+            "video_id": question.get("video_id"),
+            "video_title": question.get("video_title"),
+            "video_url": question.get("video_url"),
         }
 
     def _format_sources_for_prompt(self, chunks: List[Dict[str, Any]]) -> str:
@@ -380,84 +420,51 @@ class QuizService:
             start_time = metadata.get("start_time", 0)
             end_time = metadata.get("end_time", 0)
             text = metadata.get("text", "")
-            
+
             # Format timestamp
             start_min, start_sec = divmod(start_time, 60)
             end_min, end_sec = divmod(end_time, 60)
             timestamp = f"{start_min:02d}:{start_sec:02d}-{end_min:02d}:{end_sec:02d}"
-            
+
             formatted.append(
                 f"[{idx}] Video: {video_title} ({timestamp})\n{text}"
             )
-        
+
         return "\n\n".join(formatted)
-    
-    def _format_sources_for_response(self, chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Format sources for frontend response."""
-        sources = []
-        for idx, chunk in enumerate(chunks, start=1):
-            metadata = chunk.get("metadata", {})
-            sources.append({
-                "index": idx,
-                "video_id": metadata.get("video_id", ""),
-                "chapter": metadata.get("chapter", ""),
-                "video_title": metadata.get("video_title", ""),
-                "video_url": metadata.get("video_url", ""),
-                "start_time": metadata.get("start_time", 0),
-                "end_time": metadata.get("end_time", 0),
-                "text": metadata.get("text", ""),
-                "score": chunk.get("rerank_score", chunk.get("rrf_score", chunk.get("score", 0)))
-            })
-        return sources
 
     def _enrich_questions_with_video_info(
         self,
         questions: List[Dict[str, Any]],
         chunks: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
-        """
-        Enrich questions with video information from chunks using source_index.
-        
-        This method uses the source_index from each question to directly map to the
-        corresponding chunk and extract video_id, video_title, and video_url. This
-        ensures consistency with how Q&A and text_summary services handle video sources.
-        
-        Args:
-            questions: List of generated questions (should have source_index field)
-            chunks: List of RAG chunks with video metadata (indexed 0-based)
-            
-        Returns:
-            List of questions enriched with video information
-        """
+        """Enrich questions with video information from chunks using source_index."""
         if not chunks:
             return questions
-        
+
         for question in questions:
-            # Skip if video info already exists (LLM might have included it)
+            # Skip if video info already exists
             if question.get("video_id") and question.get("video_title") and question.get("video_url"):
                 continue
-            
+
             source_index = question.get("source_index")
             if source_index is None:
                 continue
-            
+
             # Convert 1-based index to 0-based array index
-            # source_index should be between 1 and len(chunks)
             if 1 <= source_index <= len(chunks):
                 chunk = chunks[source_index - 1]
                 metadata = chunk.get("metadata", {})
-                
+
                 # Extract video information from chunk
                 question["video_id"] = metadata.get("video_id", "")
                 question["video_title"] = metadata.get("video_title", "")
                 question["video_url"] = metadata.get("video_url", "")
-                
-                # Use chunk's start_time as timestamp (chunks already have this in metadata)
+
+                # Use chunk's start_time as timestamp
                 question["timestamp"] = metadata.get("start_time", 0)
             else:
-                # Invalid source_index - log warning but don't fail
                 print(f"⚠️ Warning: Invalid source_index {source_index} for question. Valid range: 1-{len(chunks)}")
-        
+
         return questions
 
     async def _evaluate_open_ended_answer(
@@ -495,67 +502,107 @@ class QuizService:
                 "missing_points": key_points
             }
 
-    async def _create_session(
+    async def _create_quiz(
         self,
-        session_id: Optional[str],
-        query: str
+        topic: Optional[str],
+        chapters: Optional[List[str]],
+        question_type: str,
+        num_questions: int
     ) -> str:
-        """
-        Create new session or validate existing one BEFORE streaming.
-        
-        Returns:
-            session_id (str): ID of created or validated session
-        """
+        """Create new quiz record."""
         with self.postgres.session_scope() as session:
-            # Create new session
-            new_session = ChatSession(
+            new_quiz = Quiz(
                 id=str(uuid.uuid4()),
-                task_type="quiz",
-                title=query[:100],  # Use first 100 chars of query as title
-                user_id="default_user"
+                user_id="default_user",
+                topic=topic,
+                chapters=chapters,
+                question_type=question_type,
+                num_questions=num_questions
             )
-            session.add(new_session)
+            session.add(new_quiz)
             session.commit()
-            return new_session.id
+            return new_quiz.id
 
     async def _save_questions(
         self,
-        questions: List[Dict[str, Any]],
-        session_id: str
+        quiz_id: str,
+        questions: List[Dict[str, Any]]
     ):
-        """Save generated questions to database."""
+        """Save generated questions to quiz_questions table."""
         with self.postgres.session_scope() as session:
-            # Save questions as a single assistant message with JSON content
-            questions_json = json.dumps(questions, ensure_ascii=False)
-
-            assistant_message = ChatMessage(
-                id=str(uuid.uuid4()),
-                session_id=session_id,
-                role="assistant",
-                content=questions_json,
-                sources=[]  # No sources for quiz generation
-            )
-            session.add(assistant_message)
+            for idx, q in enumerate(questions):
+                question_record = QuizQuestion(
+                    quiz_id=quiz_id,
+                    question_index=idx,
+                    question=q["question"],
+                    question_type=q["type"],
+                    # MCQ fields
+                    options=q.get("options"),
+                    correct_answer=q.get("correct_answer"),
+                    # Open-ended fields
+                    reference_answer=q.get("reference_answer"),
+                    key_points=q.get("key_points"),
+                    # Common fields
+                    explanation=q.get("explanation"),
+                    source_index=q.get("source_index"),
+                    video_id=q.get("video_id"),
+                    video_title=q.get("video_title"),
+                    video_url=q.get("video_url"),
+                    timestamp=q.get("timestamp")
+                )
+                session.add(question_record)
+            session.commit()
 
     async def _get_quiz_questions(self, quiz_id: str) -> List[Dict[str, Any]]:
-        """Retrieve quiz questions from session."""
+        """Retrieve quiz questions."""
         with self.postgres.session_scope() as session:
-            messages = session.query(ChatMessage).filter_by(
-                session_id=quiz_id,
-                role="assistant"
-            ).order_by(ChatMessage.created_at).all()
+            questions = session.query(QuizQuestion).filter_by(
+                quiz_id=quiz_id
+            ).order_by(QuizQuestion.question_index).all()
 
-            if not messages:
-                return []
+            result = []
+            for q in questions:
+                result.append({
+                    "id": q.id,
+                    "quiz_id": q.quiz_id,
+                    "question_index": q.question_index,
+                    "question": q.question,
+                    "question_type": q.question_type,  # Use question_type (not "type")
+                    "options": q.options,
+                    "correct_answer": q.correct_answer,
+                    "reference_answer": q.reference_answer,
+                    "key_points": q.key_points,
+                    "explanation": q.explanation,
+                    "source_index": q.source_index,
+                    "video_id": q.video_id,
+                    "video_title": q.video_title,
+                    "video_url": q.video_url,
+                    "timestamp": q.timestamp,
+                    "created_at": q.created_at.isoformat() if q.created_at else None
+                })
+            return result
 
-            # Get the latest assistant message (contains questions)
-            latest_message = messages[-1]
-
-            try:
-                questions = json.loads(latest_message.content)
-                return questions
-            except json.JSONDecodeError:
-                return []
+    async def _save_attempt(
+        self,
+        quiz_id: str,
+        question_id: int,
+        user_answer: str,
+        is_correct: Optional[bool] = None,
+        llm_score: Optional[int] = None,
+        llm_feedback: Optional[Dict[str, Any]] = None
+    ):
+        """Save user attempt to database."""
+        with self.postgres.session_scope() as session:
+            attempt = QuizAttempt(
+                quiz_id=quiz_id,
+                question_id=question_id,
+                user_answer=user_answer,
+                is_correct=is_correct,
+                llm_score=llm_score,
+                llm_feedback=llm_feedback
+            )
+            session.add(attempt)
+            session.commit()
 
 
 # Singleton instance
@@ -567,4 +614,3 @@ def get_quiz_service() -> QuizService:
     if _quiz_service is None:
         _quiz_service = QuizService()
     return _quiz_service
-
