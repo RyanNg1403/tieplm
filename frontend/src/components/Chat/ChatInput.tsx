@@ -20,6 +20,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, SettingsIcon, RepeatIcon } from '@chakra-ui/icons';
 import { TaskType } from '../../types';
@@ -27,6 +28,7 @@ import { chaptersAPI, videoSummaryAPI, type VideoInfo } from '../../services/api
 
 interface ChatInputProps {
   currentMode: TaskType;
+  colorScheme?: string;
   onModeChange: (mode: TaskType) => void;
   onSend: (message: string) => void;
   isStreaming: boolean;
@@ -50,6 +52,7 @@ const MODE_LABELS: Record<TaskType, string> = {
 
 export const ChatInput: React.FC<ChatInputProps> = ({
   currentMode,
+  colorScheme = 'blue',
   onModeChange,
   onSend,
   isStreaming,
@@ -125,8 +128,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     <HStack
       p={4}
       borderTop="1px"
-      borderColor="gray.200"
-      bg="white"
+      borderColor={useColorModeValue('gray.200', 'gray.700')}
+      bg={useColorModeValue('white', 'gray.800')}
       spacing={2}
     >
       {/* Mode Switcher */}
@@ -135,7 +138,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           as={Button}
           rightIcon={<ChevronDownIcon />}
           size="md"
-          minW="150px"
+          minW="180px"
         >
           {MODE_LABELS[currentMode]}
         </MenuButton>
@@ -159,7 +162,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             as={IconButton}
             icon={<SettingsIcon />}
             variant={selectedChapters.length > 0 ? 'solid' : 'outline'}
-            colorScheme={selectedChapters.length > 0 ? 'blue' : 'gray'}
+            colorScheme={selectedChapters.length > 0 ? colorScheme : 'gray'}
             size="md"
             aria-label="Filter chapters"
           />
@@ -262,7 +265,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       {/* Send/Regenerate/Generate Button */}
       <Button
         onClick={handleSend}
-        colorScheme={currentMode === 'video_summary' ? 'orange' : 'blue'}
+        colorScheme={colorScheme}
         size="md"
         isLoading={isStreaming}
         disabled={
@@ -273,6 +276,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             : !input.trim() || isStreaming
         }
         leftIcon={currentMode === 'video_summary' ? <RepeatIcon /> : undefined}
+        minW={currentMode === 'quiz' ? '140px' : undefined}
+        px={currentMode === 'quiz' ? 6 : undefined}
       >
         {currentMode === 'video_summary'
           ? 'Regenerate'

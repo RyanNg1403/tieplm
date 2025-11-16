@@ -10,6 +10,7 @@ import {
   Divider,
   Spinner,
   Center,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -20,6 +21,7 @@ import { ChatSession, TaskType } from '../../types';
 interface SidebarProps {
   currentSessionId: string | null;
   taskType?: TaskType; // Filter sessions by task type
+  colorScheme?: string; // Theme color for the task
   onNewChat: () => void;
   onSelectSession: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
@@ -28,6 +30,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({
   currentSessionId,
   taskType,
+  colorScheme = 'blue',
   onNewChat,
   onSelectSession,
   onDeleteSession,
@@ -114,17 +117,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <Box
       w="280px"
       h="100vh"
-      bg="gray.50"
+      bg={useColorModeValue('gray.50', 'gray.900')}
       borderRight="1px"
-      borderColor="gray.200"
+      borderColor={useColorModeValue('gray.200', 'gray.700')}
       display="flex"
       flexDirection="column"
     >
       {/* Header */}
-      <Box p={3} borderBottom="1px" borderColor="gray.200">
+      <Box p={3} borderBottom="1px" borderColor={useColorModeValue('gray.200', 'gray.700')}>
         <Button
           leftIcon={<AddIcon />}
-          colorScheme="blue"
+          colorScheme={colorScheme}
           size="sm"
           w="full"
           onClick={onNewChat}
@@ -141,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </Center>
         ) : sessions.length === 0 ? (
           <Center h="200px">
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
               No conversations yet
             </Text>
           </Center>
@@ -153,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Text
                   fontSize="xs"
                   fontWeight="bold"
-                  color="gray.500"
+                  color={useColorModeValue('gray.500', 'gray.400')}
                   mb={2}
                   px={2}
                 >
@@ -165,6 +168,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       key={session.id}
                       session={session}
                       isActive={session.id === currentSessionId}
+                      colorScheme={colorScheme}
                       onClick={() => onSelectSession(session.id)}
                       onDelete={(e) => handleDelete(e, session.id)}
                     />
@@ -180,7 +184,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Text
                   fontSize="xs"
                   fontWeight="bold"
-                  color="gray.500"
+                  color={useColorModeValue('gray.500', 'gray.400')}
                   mb={2}
                   px={2}
                   mt={2}
@@ -193,6 +197,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       key={session.id}
                       session={session}
                       isActive={session.id === currentSessionId}
+                      colorScheme={colorScheme}
                       onClick={() => onSelectSession(session.id)}
                       onDelete={(e) => handleDelete(e, session.id)}
                     />
@@ -209,7 +214,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Text
                   fontSize="xs"
                   fontWeight="bold"
-                  color="gray.500"
+                  color={useColorModeValue('gray.500', 'gray.400')}
                   mb={2}
                   px={2}
                   mt={2}
@@ -222,6 +227,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       key={session.id}
                       session={session}
                       isActive={session.id === currentSessionId}
+                      colorScheme={colorScheme}
                       onClick={() => onSelectSession(session.id)}
                       onDelete={(e) => handleDelete(e, session.id)}
                     />

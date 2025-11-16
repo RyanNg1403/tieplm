@@ -2,7 +2,7 @@
  * VideoSummaryDisplay component - displays video summary spanning full width
  */
 import React, { useEffect, useRef } from 'react';
-import { VStack, Box, Spinner, Text, Link, Button, HStack } from '@chakra-ui/react';
+import { VStack, Box, Spinner, Text, Link, Button, HStack, useColorModeValue } from '@chakra-ui/react';
 import ReactMarkdown from 'react-markdown';
 import { ChatMessage, SourceReference } from '../../types';
 import { SourcesModal } from './SourcesModal';
@@ -22,6 +22,12 @@ export const VideoSummaryDisplay: React.FC<VideoSummaryDisplayProps> = ({
 }) => {
   const contentEndRef = useRef<HTMLDivElement>(null);
   const [isSourcesModalOpen, setIsSourcesModalOpen] = React.useState(false);
+
+  // Color mode values
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const loadingTextColor = useColorModeValue('gray.600', 'gray.300');
+  const citationColor = useColorModeValue('blue.500', 'blue.300');
 
   // Auto-scroll to bottom when content changes
   useEffect(() => {
@@ -63,7 +69,7 @@ export const VideoSummaryDisplay: React.FC<VideoSummaryDisplayProps> = ({
       parts.push(
         <Link
           key={`citation-${match.index}`}
-          color="blue.500"
+          color={citationColor}
           fontWeight="bold"
           cursor="pointer"
           onClick={() => handleCitationClick(citationIndex, sources)}
@@ -136,7 +142,8 @@ export const VideoSummaryDisplay: React.FC<VideoSummaryDisplayProps> = ({
         overflowY="auto"
         overflowX="hidden"
         p={6}
-        bg="white"
+        bg={bgColor}
+        color={textColor}
       >
         <VStack spacing={4} align="stretch" w="full">
           {/* Display completed summary */}
@@ -167,7 +174,7 @@ export const VideoSummaryDisplay: React.FC<VideoSummaryDisplayProps> = ({
           {isStreaming && !streamingContent && (
             <Box display="flex" alignItems="center" gap={2}>
               <Spinner size="sm" color="blue.500" />
-              <Text fontSize="sm" color="gray.600">Generating summary...</Text>
+              <Text fontSize="sm" color={loadingTextColor}>Generating summary...</Text>
             </Box>
           )}
 

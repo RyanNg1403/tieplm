@@ -2,7 +2,7 @@
  * Message component with citation support
  */
 import React, { useState } from 'react';
-import { Box, Link, VStack, HStack, Button } from '@chakra-ui/react';
+import { Box, Link, VStack, HStack, Button, useColorModeValue } from '@chakra-ui/react';
 import ReactMarkdown from 'react-markdown';
 import { ChatMessage, SourceReference } from '../../types';
 import { SourcesModal } from './SourcesModal';
@@ -15,6 +15,10 @@ interface MessageProps {
 export const Message: React.FC<MessageProps> = ({ message, onSeekVideo }) => {
   const isUser = message.role === 'user';
   const [isSourcesModalOpen, setIsSourcesModalOpen] = useState(false);
+
+  // Color mode values
+  const assistantBg = useColorModeValue('gray.100', 'gray.700');
+  const assistantColor = useColorModeValue('black', 'white');
   
   // Handle citation clicks
   const handleCitationClick = (index: number, sources?: SourceReference[]) => {
@@ -92,7 +96,7 @@ export const Message: React.FC<MessageProps> = ({ message, onSeekVideo }) => {
       parts.push(
         <Link
           key={`citation-${match.index}`}
-          color="blue.500"
+          color={useColorModeValue('blue.500', 'blue.300')}
           fontWeight="bold"
           cursor="pointer"
           onClick={() => handleCitationClick(citationIndex, sources)}
@@ -124,8 +128,8 @@ export const Message: React.FC<MessageProps> = ({ message, onSeekVideo }) => {
       >
         <Box
           maxW="75%"
-          bg={isUser ? 'blue.500' : 'gray.100'}
-          color={isUser ? 'white' : 'black'}
+          bg={isUser ? 'blue.500' : assistantBg}
+          color={isUser ? 'white' : assistantColor}
           px={4}
           py={3}
           borderRadius="lg"

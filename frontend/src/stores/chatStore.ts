@@ -58,7 +58,27 @@ export const useChatStore = create<ChatStore>()(
       selectedVideo: null,
 
       // Actions
-      setMode: (mode) => set({ currentMode: mode }),
+      setMode: (mode) => set((state) => {
+        // Define chat-based tasks
+        const chatTasks: TaskType[] = ['text_summary', 'qa', 'video_summary'];
+
+        // If switching between different chat tasks, clear messages and session
+        const switchingBetweenChatTasks =
+          chatTasks.includes(state.currentMode) &&
+          chatTasks.includes(mode) &&
+          state.currentMode !== mode;
+
+        if (switchingBetweenChatTasks) {
+          return {
+            currentMode: mode,
+            messages: [],
+            streamingContent: '',
+            currentSession: null,
+          };
+        }
+
+        return { currentMode: mode };
+      }),
 
       setSessions: (sessions) => set({ sessions }),
 

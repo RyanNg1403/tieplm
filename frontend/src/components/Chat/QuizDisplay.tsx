@@ -20,6 +20,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 import { Quiz, QuizQuestion } from '../../types';
@@ -27,6 +28,7 @@ import { useQuizStore } from '../../stores';
 
 interface QuizDisplayProps {
   quiz: Quiz | null;
+  colorScheme?: string;
   isGenerating: boolean;
   generationProgress: number;
   isValidating: boolean;
@@ -35,6 +37,7 @@ interface QuizDisplayProps {
 
 export const QuizDisplay: React.FC<QuizDisplayProps> = ({
   quiz,
+  colorScheme = 'purple',
   isGenerating,
   generationProgress,
   isValidating,
@@ -113,15 +116,15 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
                   bg={
                     result
                       ? isCorrect
-                        ? 'green.50'
+                        ? useColorModeValue('green.50', 'green.900')
                         : isUserAnswer
-                        ? 'red.50'
-                        : 'white'
-                      : 'white'
+                        ? useColorModeValue('red.50', 'red.900')
+                        : useColorModeValue('white', 'gray.700')
+                      : useColorModeValue('white', 'gray.700')
                   }
                 >
                   <Radio value={key}>{key}</Radio>
-                  <Text flex={1}>{value}</Text>
+                  <Text flex={1} color={useColorModeValue('gray.800', 'gray.100')}>{value}</Text>
                   {result && isCorrect && (
                     <CheckCircleIcon color="green.500" />
                   )}
@@ -187,26 +190,26 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
               <AlertDescription>
                 {/* 1. Feedback */}
                 <Box mt={2}>
-                  <Text fontWeight="bold" fontSize="sm" mb={1}>Feedback:</Text>
-                  <Text fontSize="sm">{result.llm_feedback.feedback}</Text>
+                  <Text fontWeight="bold" fontSize="sm" mb={1} color={useColorModeValue('gray.800', 'gray.100')}>Feedback:</Text>
+                  <Text fontSize="sm" color={useColorModeValue('gray.700', 'gray.200')}>{result.llm_feedback.feedback}</Text>
                 </Box>
 
                 {/* 2. Reference Answer */}
                 {question.reference_answer && (
                   <Box mt={3}>
-                    <Text fontWeight="bold" fontSize="sm" mb={1}>Reference Answer:</Text>
-                    <Text fontSize="sm">{question.reference_answer}</Text>
+                    <Text fontWeight="bold" fontSize="sm" mb={1} color={useColorModeValue('gray.800', 'gray.100')}>Reference Answer:</Text>
+                    <Text fontSize="sm" color={useColorModeValue('gray.700', 'gray.200')}>{question.reference_answer}</Text>
                   </Box>
                 )}
 
                 {/* 3. Points to Cover */}
                 {question.key_points && question.key_points.length > 0 && (
                   <Box mt={3}>
-                    <Text fontWeight="bold" fontSize="sm" mb={1}>Points to Cover:</Text>
+                    <Text fontWeight="bold" fontSize="sm" mb={1} color={useColorModeValue('gray.800', 'gray.100')}>Points to Cover:</Text>
                     <VStack align="stretch" spacing={1} mt={1}>
                       {question.key_points.map((point, idx) => (
                         <HStack key={idx}>
-                          <Text fontSize="sm">• {point}</Text>
+                          <Text fontSize="sm" color={useColorModeValue('gray.700', 'gray.200')}>• {point}</Text>
                         </HStack>
                       ))}
                     </VStack>
@@ -215,7 +218,7 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
 
                 {/* 4. Covered Points */}
                 <Box mt={3}>
-                  <Text fontWeight="bold" fontSize="sm" color="green.600" mb={1}>
+                  <Text fontWeight="bold" fontSize="sm" color={useColorModeValue('green.600', 'green.400')} mb={1}>
                     Covered Points:
                   </Text>
                   {result.llm_feedback.covered_points.length > 0 ? (
@@ -223,18 +226,18 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
                       {result.llm_feedback.covered_points.map((point, idx) => (
                         <HStack key={idx}>
                           <CheckCircleIcon color="green.500" boxSize={3} />
-                          <Text fontSize="sm">{point}</Text>
+                          <Text fontSize="sm" color={useColorModeValue('gray.700', 'gray.200')}>{point}</Text>
                         </HStack>
                       ))}
                     </VStack>
                   ) : (
-                    <Text fontSize="sm" color="gray.600">None</Text>
+                    <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>None</Text>
                   )}
                 </Box>
 
                 {/* 5. Missing Points */}
                 <Box mt={3}>
-                  <Text fontWeight="bold" fontSize="sm" color="red.600" mb={1}>
+                  <Text fontWeight="bold" fontSize="sm" color={useColorModeValue('red.600', 'red.400')} mb={1}>
                     Missing Points:
                   </Text>
                   {result.llm_feedback.missing_points.length > 0 ? (
@@ -242,12 +245,12 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
                       {result.llm_feedback.missing_points.map((point, idx) => (
                         <HStack key={idx}>
                           <WarningIcon color="red.500" boxSize={3} />
-                          <Text fontSize="sm">{point}</Text>
+                          <Text fontSize="sm" color={useColorModeValue('gray.700', 'gray.200')}>{point}</Text>
                         </HStack>
                       ))}
                     </VStack>
                   ) : (
-                    <Text fontSize="sm" color="gray.600">None</Text>
+                    <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>None</Text>
                   )}
                 </Box>
               </AlertDescription>
@@ -266,9 +269,9 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
     const videoUrl = `${question.video_url}&t=${timestamp}s`;
 
     return (
-      <HStack spacing={2} fontSize="sm" color="gray.600">
+      <HStack spacing={2} fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
         <Text fontWeight="medium">Source:</Text>
-        <Link href={videoUrl} isExternal color="blue.500">
+        <Link href={videoUrl} isExternal color={useColorModeValue('blue.500', 'blue.300')}>
           {question.video_title}
         </Link>
         <Text>({Math.floor(timestamp / 60)}:{String(timestamp % 60).padStart(2, '0')})</Text>
@@ -299,7 +302,7 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
                 value={generationProgress}
                 w="300px"
                 borderRadius="md"
-                colorScheme="blue"
+                colorScheme={colorScheme}
               />
               <Text fontSize="sm" color="gray.600">
                 {generationProgress}%
@@ -340,26 +343,26 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
       overflowY="auto"
       overflowX="hidden"
       p={6}
-      bg="white"
+      bg={useColorModeValue('white', 'gray.800')}
     >
       <VStack spacing={6} align="stretch" maxW="800px" mx="auto">
         {/* Quiz Header */}
         <Box>
           <HStack justify="space-between" mb={2}>
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text fontSize="2xl" fontWeight="bold" color={useColorModeValue('gray.800', 'white')}>
               {quiz.topic || 'Quiz'}
             </Text>
-            <Badge colorScheme="blue" fontSize="md" px={3} py={1}>
+            <Badge colorScheme={colorScheme} fontSize="md" px={3} py={1}>
               {quiz.num_questions} Questions
             </Badge>
           </HStack>
           {quiz.chapters && quiz.chapters.length > 0 && (
             <HStack spacing={2}>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                 Chapters:
               </Text>
               {quiz.chapters.map((chapter) => (
-                <Badge key={chapter} colorScheme="purple">
+                <Badge key={chapter} colorScheme={colorScheme}>
                   {chapter}
                 </Badge>
               ))}
@@ -400,14 +403,14 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
               p={5}
               borderWidth="1px"
               borderRadius="lg"
-              borderColor="gray.200"
-              bg="gray.50"
+              borderColor={useColorModeValue('gray.200', 'gray.600')}
+              bg={useColorModeValue('gray.50', 'gray.700')}
             >
               <VStack align="stretch" spacing={4}>
                 {/* Question Header */}
                 <HStack justify="space-between">
                   <HStack spacing={2}>
-                    <Text fontSize="lg" fontWeight="semibold">
+                    <Text fontSize="lg" fontWeight="semibold" color={useColorModeValue('gray.800', 'white')}>
                       Question {idx + 1}
                     </Text>
                     {questionScore !== null && (
@@ -432,7 +435,7 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
                 </HStack>
 
                 {/* Question Text */}
-                <Text fontSize="md">{question.question}</Text>
+                <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.200')}>{question.question}</Text>
 
                 {/* Answer Input */}
                 {question.question_type === 'mcq'
@@ -449,7 +452,7 @@ export const QuizDisplay: React.FC<QuizDisplayProps> = ({
         {/* Submit Button */}
         {!validationComplete && (
           <Button
-            colorScheme="blue"
+            colorScheme={colorScheme}
             size="lg"
             onClick={onSubmitAnswers}
             isLoading={isValidating}

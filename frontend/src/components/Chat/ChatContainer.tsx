@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { HStack, VStack, Box, useToast, useBreakpointValue } from '@chakra-ui/react';
+import { HStack, VStack, Box, useToast, useBreakpointValue, Button, Text, useColorModeValue } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { MessageList } from './MessageList';
 import { VideoSummaryDisplay } from './VideoSummaryDisplay';
@@ -13,9 +15,14 @@ import { useQuizStore } from '../../stores/quizStore';
 import { useSSE } from '../../hooks/useSSE';
 import { textSummaryAPI, qaAPI, videoSummaryAPI, sessionsAPI, quizAPI } from '../../services/api';
 import type { VideoInfo } from '../../services/api';
-import { ChatMessage, ChatSession, Quiz } from '../../types';
+import { ChatMessage, ChatSession, Quiz, TaskType } from '../../types';
+import { getTaskColor } from '../../utils/taskColors';
+import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
-export const ChatContainer: React.FC = () => {
+interface ChatContainerProps {}
+
+export const ChatContainer: React.FC<ChatContainerProps> = () => {
+  const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
 
@@ -63,6 +70,9 @@ export const ChatContainer: React.FC = () => {
   // Use appropriate state based on mode
   const selectedChapters = currentMode === 'quiz' ? quizSelectedChapters : chatSelectedChapters;
   const setSelectedChapters = currentMode === 'quiz' ? setQuizSelectedChapters : setChatSelectedChapters;
+
+  // Get task-specific color scheme
+  const taskColor = getTaskColor(currentMode);
 
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   const [videoLoading, setVideoLoading] = useState<boolean>(false);
@@ -738,6 +748,7 @@ export const ChatContainer: React.FC = () => {
         <Sidebar
           currentSessionId={currentMode === 'quiz' ? currentQuiz?.id || null : currentSession?.id || null}
           taskType={currentMode}
+          colorScheme={taskColor}
           onNewChat={handleNewChat}
           onSelectSession={handleSelectSession}
           onDeleteSession={handleDeleteSession}
@@ -750,16 +761,38 @@ export const ChatContainer: React.FC = () => {
           {/* Header */}
           <Box
             w="full"
-            bg="white"
+            bg={useColorModeValue('white', 'gray.800')}
             borderBottom="1px"
-            borderColor="gray.200"
+            borderColor={useColorModeValue('gray.200', 'gray.700')}
             p={4}
-            textAlign="center"
-            fontWeight="bold"
-            fontSize="lg"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
             flexShrink={0}
+            position="relative"
           >
-            Video Summary & Chat
+            <Button
+              position="absolute"
+              left={4}
+              colorScheme={taskColor}
+              variant="solid"
+              onClick={() => navigate('/')}
+              size="md"
+              leftIcon={<ArrowBackIcon />}
+              fontWeight="semibold"
+              boxShadow="md"
+              _hover={{
+                transform: 'translateY(-2px)',
+                boxShadow: 'lg',
+              }}
+              transition="all 0.2s"
+            >
+              Home
+            </Button>
+            <ColorModeSwitcher position="absolute" />
+            <Text fontWeight="bold" fontSize="lg" textAlign="center">
+              Video Summary & Chat
+            </Text>
           </Box>
 
           {/* Main Content Area - Responsive Layout */}
@@ -854,7 +887,7 @@ export const ChatContainer: React.FC = () => {
                 <VStack
                   flex={1}
                   spacing={0}
-                  bg="gray.50"
+                  bg={useColorModeValue('gray.50', 'gray.900')}
                   align="stretch"
                   h="full"
                   overflow="hidden"
@@ -873,6 +906,7 @@ export const ChatContainer: React.FC = () => {
                   <Box flexShrink={0}>
                     <ChatInput
                       currentMode={currentMode}
+                      colorScheme={taskColor}
                       onModeChange={setMode}
                       onSend={handleSend}
                       isStreaming={isStreaming}
@@ -976,7 +1010,7 @@ export const ChatContainer: React.FC = () => {
                 <VStack
                   flex={1}
                   spacing={0}
-                  bg="gray.50"
+                  bg={useColorModeValue('gray.50', 'gray.900')}
                   align="stretch"
                   h="full"
                   overflow="hidden"
@@ -995,6 +1029,7 @@ export const ChatContainer: React.FC = () => {
                   <Box flexShrink={0}>
                     <ChatInput
                       currentMode={currentMode}
+                      colorScheme={taskColor}
                       onModeChange={setMode}
                       onSend={handleSend}
                       isStreaming={isStreaming}
@@ -1013,19 +1048,41 @@ export const ChatContainer: React.FC = () => {
 
       {/* Standard Layout (for text_summary, qa, etc.) */}
       {currentMode !== 'video_summary' && (
-        <VStack flex={1} spacing={0} bg="gray.50">
+        <VStack flex={1} spacing={0} bg={useColorModeValue('gray.50', 'gray.900')}>
           {/* Header */}
           <Box
             w="full"
-            bg="white"
+            bg={useColorModeValue('white', 'gray.800')}
             borderBottom="1px"
-            borderColor="gray.200"
+            borderColor={useColorModeValue('gray.200', 'gray.700')}
             p={4}
-            textAlign="center"
-            fontWeight="bold"
-            fontSize="lg"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            position="relative"
           >
-            Tieplm AI Assistant - CS431 Deep Learning
+            <Button
+              position="absolute"
+              left={4}
+              colorScheme={taskColor}
+              variant="solid"
+              onClick={() => navigate('/')}
+              size="md"
+              leftIcon={<ArrowBackIcon />}
+              fontWeight="semibold"
+              boxShadow="md"
+              _hover={{
+                transform: 'translateY(-2px)',
+                boxShadow: 'lg',
+              }}
+              transition="all 0.2s"
+            >
+              Home
+            </Button>
+            <ColorModeSwitcher position="absolute" />
+            <Text fontWeight="bold" fontSize="lg" textAlign="center">
+              TiepLM: One-for-all AI Assistant - CS431 Deep Learning
+            </Text>
           </Box>
 
           {/* Messages Area / Quiz Display */}
@@ -1038,6 +1095,7 @@ export const ChatContainer: React.FC = () => {
           ) : (
             <QuizDisplay
               quiz={currentQuiz}
+              colorScheme={taskColor}
               isGenerating={isGenerating}
               generationProgress={generationProgress}
               isValidating={isValidating}
@@ -1048,6 +1106,7 @@ export const ChatContainer: React.FC = () => {
           {/* Input Area */}
           <ChatInput
             currentMode={currentMode}
+            colorScheme={taskColor}
             onModeChange={setMode}
             onSend={handleSend}
             isStreaming={isStreaming}

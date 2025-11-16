@@ -2,7 +2,7 @@
  * MessageList component - scrollable list of messages
  */
 import React, { useEffect, useRef } from 'react';
-import { VStack, Box, Spinner, Text } from '@chakra-ui/react';
+import { VStack, Box, Spinner, Text, useColorModeValue } from '@chakra-ui/react';
 import { Message } from './Message';
 import { ChatMessage } from '../../types';
 
@@ -20,12 +20,16 @@ export const MessageList: React.FC<MessageListProps> = ({
   onSeekVideo,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
+  // Color mode values
+  const loadingBg = useColorModeValue('gray.100', 'gray.700');
+  const loadingTextColor = useColorModeValue('gray.600', 'gray.300');
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
-  
+
   return (
     <Box
       flex={1}
@@ -49,7 +53,7 @@ export const MessageList: React.FC<MessageListProps> = ({
         {isStreaming && !streamingContent && (
           <Box
             maxW="75%"
-            bg="gray.100"
+            bg={loadingBg}
             px={4}
             py={3}
             borderRadius="lg"
@@ -60,7 +64,7 @@ export const MessageList: React.FC<MessageListProps> = ({
             gap={2}
           >
             <Spinner size="sm" color="blue.500" />
-            <Text fontSize="sm" color="gray.600">Generating response...</Text>
+            <Text fontSize="sm" color={loadingTextColor}>Generating response...</Text>
           </Box>
         )}
 
@@ -68,7 +72,8 @@ export const MessageList: React.FC<MessageListProps> = ({
         {isStreaming && streamingContent && (
           <Box
             maxW="75%"
-            bg="gray.100"
+            bg={loadingBg}
+            color={useColorModeValue('black', 'white')}
             px={4}
             py={3}
             borderRadius="lg"

@@ -2,13 +2,14 @@
  * SessionItem - Individual session in sidebar
  */
 import React from 'react';
-import { Box, HStack, Text, IconButton } from '@chakra-ui/react';
+import { Box, HStack, Text, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { ChatSession } from '../../types';
 
 interface SessionItemProps {
   session: ChatSession;
   isActive: boolean;
+  colorScheme?: string;
   onClick: () => void;
   onDelete: (e: React.MouseEvent) => void;
 }
@@ -16,6 +17,7 @@ interface SessionItemProps {
 export const SessionItem: React.FC<SessionItemProps> = ({
   session,
   isActive,
+  colorScheme = 'blue',
   onClick,
   onDelete,
 }) => {
@@ -25,8 +27,8 @@ export const SessionItem: React.FC<SessionItemProps> = ({
       py={2}
       cursor="pointer"
       onClick={onClick}
-      bg={isActive ? 'blue.50' : 'transparent'}
-      _hover={{ bg: isActive ? 'blue.100' : 'gray.50' }}
+      bg={isActive ? `${colorScheme}.50` : 'transparent'}
+      _hover={{ bg: isActive ? `${colorScheme}.100` : useColorModeValue('gray.100', 'gray.800') }}
       borderRadius="md"
       spacing={2}
       justify="space-between"
@@ -34,9 +36,9 @@ export const SessionItem: React.FC<SessionItemProps> = ({
       <Box flex={1} overflow="hidden">
         <Text
           fontSize="sm"
-          fontWeight={isActive ? 'semibold' : 'normal'}
+          fontWeight={isActive ? 'bold' : 'medium'}
           noOfLines={2}
-          color={isActive ? 'blue.700' : 'gray.700'}
+          color={isActive ? `${colorScheme}.700` : useColorModeValue('gray.800', 'gray.200')}
         >
           {session.title || 'Untitled Session'}
         </Text>
