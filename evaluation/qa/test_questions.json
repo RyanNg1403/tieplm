@@ -1,0 +1,66 @@
+[
+  {
+    "chapter": "7",
+    "question": "Giải pháp thay thế hàm kích hoạt nào giúp ngăn ngừa hiện tượng Vanishing Gradient trong RNN?",
+    "options": "a) Thay Sigmoid bằng Softmax; b) Thay Tanh bằng Sigmoid; c) Thay Sigmoid hoặc Tanh bằng ReLU; d) Thay ReLU bằng Sigmoid",
+    "answer": "c) Thay Sigmoid hoặc Tanh bằng ReLU",
+    "video_urls": ["https://youtu.be/IKD0O35NOUI"],
+    "timestamps": ["00:26:00 - 00:27:00"]
+  },
+  {
+    "chapter": "7",
+    "question": "Kỹ thuật nào được sử dụng để chống lại hiện tượng Exploding Gradient (Đạo hàm bùng nổ)?",
+    "options": "a) Sử dụng hàm Tanh; b) Khởi tạo ma trận W bằng ma trận đơn vị; c) Sử dụng Clipping (chặt đạo hàm); d) Áp dụng Dropout",
+    "answer": "c) Sử dụng Clipping (chặt đạo hàm)",
+    "video_urls": ["https://youtu.be/IKD0O35NOUI"],
+    "timestamps": ["00:27:00 - 00:27:50"]
+  },
+  {
+    "chapter": "7",
+    "question": "Trong biến thể LSTM, cổng (gate) nào quyết định việc giữ lại hay quên đi thông tin của quá khứ (Ct−1​) trong Context Cell?",
+    "options": "a) Input Gate; b) Output Gate; c) Forget Gate; d) Context Gate",
+    "answer": "c) Forget Gate",
+    "video_urls": ["https://youtu.be/qJj_LY1r91U", "https://youtu.be/_Km_A2iRUds"],
+    "timestamps": ["00:29:10 - 00:29:40"]
+  },
+  {
+    "chapter": "7",
+    "question": "Mục đích chính của Bidirectional RNN (Bi-RNN) là gì?",
+    "options": "a) Giảm chi phí tính toán; b) Giải quyết vấn đề Vanishing Gradient; c) Giúp mô hình chỉ học đặc trưng cấp thấp; d) Tổng hợp thông tin ngữ cảnh từ cả hai phía (trái sang phải và phải sang trái)",
+    "answer": "d) Tổng hợp thông tin ngữ cảnh từ cả hai phía (trái sang phải và phải sang trái)",
+    "video_urls": ["https://youtu.be/_Cu7kGoRaE0"],
+    "timestamps": ["00:36:20 - 00:37:30"]
+  },
+  {
+    "chapter": "7",
+    "question": "RNN là viết tắt của thuật ngữ gì trong học sâu?",
+    "options": null,
+    "answer": "RNN là tên viết tắt của mạng Recurrent Neural Network.",
+    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
+    "timestamps": ["00:00:10 - 00:00:40"]
+  },
+  {
+    "chapter": "7",
+    "question": "Yếu tố nào là rất quan trọng cần phải chú ý trong dữ liệu dạng chuỗi?",
+    "options": null,
+    "answer": "Yếu tố trình tự xuất hiện của các giá trị đầu vào là rất quan trọng đối với dữ liệu dạng chuỗi.",
+    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
+    "timestamps": ["00:02:18 - 00:03:00"]
+  },
+  {
+    "chapter": "7",
+    "question": "Dữ liệu hình ảnh thường được biểu diễn phổ biến dưới dạng nào?",
+    "options": null,
+    "answer": "Dữ liệu hình ảnh được biểu diễn dưới dạng ma trận hai chiều (ảnh không màu) hoặc tensor ba chiều (ảnh màu).",
+    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
+    "timestamps": ["00:04:30 - 00:05:10"]
+  },
+  {
+    "chapter": "7",
+    "question": "Tính chất phụ thuộc của các phần tử trong dữ liệu dạng chuỗi được gọi là gì?",
+    "options": null,
+    "answer": "Các phần tử trong dữ liệu dạng chuỗi phụ thuộc lẫn nhau theo một chiều thời gian.",
+    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
+    "timestamps": ["00:06:50 - 00:07:40"]
+  }
+]
