@@ -131,6 +131,7 @@ class LLMClient:
             params["temperature"] = temperature or self.temperature
         
         response = await self.async_client.chat.completions.create(**params)
+        print(response)
         
         return response.choices[0].message.content
     

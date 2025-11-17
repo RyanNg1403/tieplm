@@ -83,3 +83,5 @@ tieplm_db_dump.sql*
 dist
 *.local
 .vite
+
+results/

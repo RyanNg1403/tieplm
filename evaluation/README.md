@@ -40,12 +40,17 @@ Each task folder contains:
   - 50 test questions covering all 8 chapters
   - Evaluation service with comprehensiveness-focused prompts
   - Runner script with batch evaluation and statistics
+- ✅ **Quiz QAG Evaluation**:
+  - Random chunk sampling → quiz question generation via quiz service
+  - QA service answers using provided context only (short-answer & MCQ modes)
+  - Short-answer metric: embedding cosine similarity
+  - MCQ metric: accuracy of selected option (A/B/C/D/IDK)
+  - Results saved under `evaluation/quiz/results/`
 
 ## ❌ TODO
 
 - ❌ Q&A evaluation
 - ❌ Video summary evaluation
-- ❌ Quiz evaluation
 
 ## 🚀 Usage
 
