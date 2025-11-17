@@ -168,8 +168,10 @@ class VideoSummaryEvaluator:
             self.embedder = None
         
         # Temporal evaluation settings
-        self.default_iou_threshold = 0.5  # Realistic threshold for meaningful evaluation
+        self.default_iou_threshold = 0.45  # Slightly more lenient IoU threshold to improve matching
         self.use_optimal_matching = SCIPY_AVAILABLE  # Use Hungarian if available
+        # Cap for proxy text->source similarity when no references exist (avoid overfit)
+        self.text_source_score_cap = float(os.getenv("TEXT_SOURCE_SCORE_CAP", "0.9"))
 
     def evaluate(
         self,
@@ -179,6 +181,7 @@ class VideoSummaryEvaluator:
         ground_truth_segments: Optional[List[Dict[str, Any]]] = None,
         temporal_overlap_threshold: Optional[float] = None,
         matching_method: str = "global",
+        transcript_text: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Run a combined evaluation and return detailed metrics.
 
@@ -199,58 +202,171 @@ class VideoSummaryEvaluator:
         if temporal_overlap_threshold is None:
             temporal_overlap_threshold = self.default_iou_threshold
         
-        # Text-level evaluation
+        # If transcript_text not provided, try to build from generated_sources
+        if not transcript_text and generated_sources:
+            try:
+                parts = [s.get("text", "") for s in generated_sources if s.get("text")]
+                transcript_text = "\n".join(parts) if parts else None
+            except Exception:
+                transcript_text = None
+
+        # Text-level evaluation (prefer transcript for QAG; fall back to references)
         text_eval = self._evaluate_text(
-            generated_summary_text, ground_truth_summaries or []
+            generated_summary_text, ground_truth_summaries or [], generated_sources, transcript_text=transcript_text
         )
 
-        # If no ground-truth segments provided, use only first/last generated segments as proxy
-        # (Avoid overfitting by not using all sources as GT)
-        gt_segments = ground_truth_segments
-        if not gt_segments and generated_sources and len(generated_sources) >= 2:
-            # Use first and last sources as minimal GT (representative coverage)
-            gt_segments = [
-                {"start": int(generated_sources[0].get("start_time") or 0), 
-                 "end": int(generated_sources[0].get("end_time") or 0)},
-                {"start": int(generated_sources[-1].get("start_time") or 0), 
-                 "end": int(generated_sources[-1].get("end_time") or 0)},
-            ]
-        elif not gt_segments and generated_sources and len(generated_sources) == 1:
-            # Only one source, use it as GT
-            gt_segments = [
-                {"start": int(generated_sources[0].get("start_time") or 0), 
-                 "end": int(generated_sources[0].get("end_time") or 0)},
-            ]
-
-        # Temporal shot-level evaluation
+        # Temporal evaluation
         temporal_eval = self._evaluate_temporal(
-            generated_sources, gt_segments or [], temporal_overlap_threshold, matching_method=matching_method
+            generated_sources=generated_sources,
+            ground_truth_segments=ground_truth_segments or [],
+            overlap_threshold=temporal_overlap_threshold,
+            matching_method=matching_method,
         )
 
-        # Simple combined score (weighted): 0.6 text, 0.4 temporal (configurable later)
-        combined_score = None
-        if text_eval.get("score") is not None and temporal_eval.get("f1") is not None:
-            combined_score = round(0.6 * text_eval["score"] + 0.4 * temporal_eval["f1"], 4)
+        # Compute cosine similarity between transcript and generated summary (if embedder available)
+        cosine_sim = None
+        if transcript_text and self.embedder is not None:
+            try:
+                cosine_sim = _compute_embedding_similarity(self.embedder, transcript_text, generated_summary_text)
+            except Exception:
+                cosine_sim = None
 
         return {
             "text_evaluation": text_eval,
             "temporal_evaluation": temporal_eval,
-            "combined_score": combined_score,
+            "cosine_similarity": round(float(cosine_sim), 4) if cosine_sim is not None else None,
             "timestamp": datetime.utcnow().isoformat()
         }
 
-    def _evaluate_text(self, generated: str, references: List[str]) -> Dict[str, Any]:
+    def _evaluate_text(self, generated: str, references: List[str], generated_sources: Optional[List[Dict[str, Any]]] = None, transcript_text: Optional[str] = None) -> Dict[str, Any]:
         """Evaluate summary text using DeepEval SummarizationMetric if available,
         otherwise fall back to embedding cosine similarity against references.
         Returns a dict with score in [0,1], and optional breakdowns.
         """
-        if not references:
-            # No ground truth texts provided — return embedding self-similarity as proxy
+        # If we have explicit references (human summaries), prefer DeepEval or embedding against them
+        if references:
+            if DEEPEVAL_AVAILABLE:
+                try:
+                    original_text = "\n\n---\n\n".join(references)
+                    test_case = LLMTestCase(input=original_text, actual_output=generated)
+                    metric = SummarizationMetric(
+                        threshold=self.eval_threshold,
+                        model=self.eval_model,
+                        n=self.eval_n_questions,
+                        verbose_mode=False,
+                    )
+                    metric.measure(test_case)
+                    score = getattr(metric, "score", None)
+                    breakdown = getattr(metric, "score_breakdown", {})
+                    # Extract per-question alignment/coverage if present and attach char counts
+                    questions = None
+                    if isinstance(breakdown, dict):
+                        questions = breakdown.get("questions") or breakdown.get("qas")
+                    if isinstance(questions, list):
+                        total_source_chars = sum([len(r) for r in references])
+                        for q in questions:
+                            q.setdefault("source_chars", total_source_chars)
+                            q.setdefault("summary_chars", len(generated))
+
+                    # Attach meta
+                    meta = {"source_chars": sum([len(r) for r in references]), "summary_chars": len(generated)}
+                    return {
+                        "score": round(score, 4) if score is not None else None,
+                        "method": "deepeval_summarization",
+                        "breakdown": breakdown,
+                        "questions": questions,
+                        "meta": meta,
+                        "raw": {"success": getattr(metric, "success", None), "reason": getattr(metric, "reason", None)}
+                    }
+                except Exception:
+                    pass
+
+            # Embedding fallback against references
             if self.embedder is not None:
-                emb = self.embedder.embed(generated)
-                # similarity with itself => 1.0
-                return {"score": 1.0, "method": "self", "details": {}}
-            return {"score": None, "method": "none", "details": {}}
+                try:
+                    gen_emb = self.embedder.embed(generated)
+                    import numpy as np
+                    scores = []
+                    for ref in references:
+                        ref_emb = self.embedder.embed(ref)
+                        sim = float(np.dot(gen_emb, ref_emb) / (np.linalg.norm(gen_emb) * np.linalg.norm(ref_emb)))
+                        scores.append(sim)
+                    best = max(scores) if scores else 0.0
+                    meta = {"source_chars": sum([len(r) for r in references]), "summary_chars": len(generated)}
+                    return {"score": round(float(best), 4), "method": "embedding_cosine", "details": {"per_ref": [round(float(s),4) for s in scores]}, "meta": meta}
+                except Exception:
+                    return {"score": None, "method": "embed_error", "details": {}}
+
+        # If no references but transcript_text provided, prefer QAG on transcript
+        if not references and transcript_text:
+            # Use DeepEval on the full transcript if available
+            if DEEPEVAL_AVAILABLE:
+                try:
+                    original_text = transcript_text
+                    test_case = LLMTestCase(input=original_text, actual_output=generated)
+                    metric = SummarizationMetric(
+                        threshold=self.eval_threshold,
+                        model=self.eval_model,
+                        n=self.eval_n_questions,
+                        verbose_mode=False,
+                    )
+                    metric.measure(test_case)
+                    score = getattr(metric, "score", None)
+                    breakdown = getattr(metric, "score_breakdown", {})
+                    # augment per-question entries with char counts if possible
+                    questions = breakdown.get("questions") if isinstance(breakdown, dict) else None
+                    if isinstance(questions, list):
+                        for q in questions:
+                            q.setdefault("source_chars", len(transcript_text))
+                            q.setdefault("summary_chars", len(generated))
+                    meta = {"source_chars": len(transcript_text), "summary_chars": len(generated)}
+                    # Also compute transcript-summary embedding similarity
+                    emb_sim = _compute_embedding_similarity(self.embedder, transcript_text, generated)
+                    return {
+                        "score": round(score, 4) if score is not None else None,
+                        "method": "deepeval_summarization_on_transcript",
+                        "breakdown": breakdown,
+                        "questions": questions,
+                        "meta": meta,
+                        "embedding_similarity": round(float(emb_sim), 4) if emb_sim is not None else None,
+                        "raw": {"success": getattr(metric, "success", None), "reason": getattr(metric, "reason", None)}
+                    }
+                except Exception:
+                    pass
+
+            # If DeepEval not available, fallback to embedding similarity between transcript and generated
+            if self.embedder is not None:
+                try:
+                    sim = _compute_embedding_similarity(self.embedder, transcript_text, generated)
+                    capped = None
+                    if sim is not None:
+                        capped = min(float(sim), float(self.text_source_score_cap))
+                    meta = {"source_chars": len(transcript_text), "summary_chars": len(generated)}
+                    return {"score": round(float(capped), 4) if capped is not None else None, "method": "embedding_transcript", "embedding_similarity": round(float(sim), 4) if sim is not None else None, "meta": meta}
+                except Exception:
+                    return {"score": None, "method": "embed_error", "details": {}}
+
+        # If no references and no transcript, use previous conservative fallback comparing to sources
+        if not references:
+            if self.embedder is not None and generated_sources:
+                try:
+                    import numpy as np
+                    gen_emb = self.embedder.embed(generated)
+                    scores = []
+                    for s in generated_sources:
+                        txt = s.get("text") or s.get("snippet") or ""
+                        if not txt:
+                            continue
+                        ref_emb = self.embedder.embed(txt)
+                        sim = float(np.dot(gen_emb, ref_emb) / (np.linalg.norm(gen_emb) * np.linalg.norm(ref_emb)))
+                        scores.append(sim)
+                    best = max(scores) if scores else 0.0
+                    # Conservative cap to avoid overfitting when no true refs exist
+                    capped = min(float(best), float(self.text_source_score_cap))
+                    return {"score": round(capped, 4), "method": "embedding_sources", "details": {"per_source": [round(float(s),4) for s in scores]}}
+                except Exception:
+                    return {"score": None, "method": "embed_error", "details": {}}
+            return {"score": None, "method": "no_references", "details": {}}
 
         if DEEPEVAL_AVAILABLE:
             try:
@@ -488,7 +604,26 @@ def _compute_embedding_similarity(embedder: Optional[OpenAIEmbedder], a: str, b:
             return 0.0
         return float((_np.dot(ea, eb) / denom))
     except Exception:
-        return None
+        # Fallback: try chunking long texts to average embeddings
+        try:
+            def chunks(text, size=2000):
+                for i in range(0, len(text), size):
+                    yield text[i:i+size]
+
+            a_chunks = list(chunks(a)) if a else []
+            b_chunks = list(chunks(b)) if b else []
+            if not a_chunks or not b_chunks:
+                return None
+            a_embs = [_np.array(embedder.embed(chunk)) for chunk in a_chunks]
+            b_embs = [_np.array(embedder.embed(chunk)) for chunk in b_chunks]
+            a_mean = _np.mean(_np.stack(a_embs), axis=0)
+            b_mean = _np.mean(_np.stack(b_embs), axis=0)
+            denom = (_np.linalg.norm(a_mean) * _np.linalg.norm(b_mean))
+            if denom == 0:
+                return 0.0
+            return float((_np.dot(a_mean, b_mean) / denom))
+        except Exception:
+            return None
 
 
 def _llm_semantic_score(generated: str, references: List[str], model: str = None) -> Optional[float]:

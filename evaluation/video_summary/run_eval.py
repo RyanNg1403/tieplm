@@ -8,10 +8,10 @@ Saves results under `evaluation/video_summary/results/run_<timestamp>/`.
 """
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 from datetime import datetime
+import numpy as np
 
 # Add project root to path so relative imports work
 project_root = Path(__file__).parent.parent.parent
@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=project_root / ".env")
 
-from eval_service import get_video_summary_evaluator
+from evaluation.video_summary.eval_service import get_video_summary_evaluator
 
 
 def main():
@@ -57,7 +57,7 @@ def main():
     evaluator = get_video_summary_evaluator()
 
     results = []
-    stats = {"total": 0, "success": 0, "f1_sum": 0.0, "recall_sum": 0.0, "precision_sum": 0.0}
+    stats = {"total": 0, "success": 0, "qag_sum": 0.0, "cosine_sum": 0.0, "alignment_sum": 0.0, "coverage_sum": 0.0, "temporal_f1_sum": 0.0}
     
     for i, item in enumerate(summaries, 1):
         vid = item.get('video_id') or f"unknown_{i}"
@@ -66,14 +66,51 @@ def main():
         gen_sources = item.get('sources', [])
 
         try:
+            # Build transcript_text from sources by concatenating their text fields
+            transcript_text = None
+            try:
+                parts = [s.get('text', '') for s in gen_sources if s.get('text')]
+                transcript_text = "\n".join(parts) if parts else None
+            except Exception:
+                transcript_text = None
+
             eval_result = evaluator.evaluate(
                 generated_summary_text=gen_text,
                 generated_sources=gen_sources,
                 ground_truth_summaries=item.get('ground_truth_summaries', []),
                 ground_truth_segments=item.get('ground_truth_segments', []),
                 temporal_overlap_threshold=args.overlap_threshold,
-                matching_method=args.matching_method
+                matching_method=args.matching_method,
+                transcript_text=transcript_text,
             )
+
+            # Track stats for QAG, cosine, alignment, and coverage
+            qag_score = None
+            avg_alignment = None
+            avg_coverage = None
+            temporal_f1 = None
+
+            if eval_result.get('text_evaluation'):
+                text_eval = eval_result['text_evaluation']
+                qag_score = text_eval.get('score')
+                
+                # Extract alignment and coverage from deepeval breakdown
+                questions = text_eval.get('questions', [])
+                if questions:
+                    alignments = [q['alignment'] for q in questions if 'alignment' in q]
+                    coverages = [q['coverage'] for q in questions if 'coverage' in q]
+                    if alignments:
+                        avg_alignment = np.mean(alignments)
+                        stats["alignment_sum"] += avg_alignment
+                    if coverages:
+                        avg_coverage = np.mean(coverages)
+                        stats["coverage_sum"] += avg_coverage
+
+            if eval_result.get('temporal_evaluation'):
+                temporal_f1 = eval_result['temporal_evaluation'].get('f1')
+
+
+            cosine = eval_result.get('cosine_similarity')
 
             entry = {
                 "video_id": vid,
@@ -82,23 +119,25 @@ def main():
                     "summary_chars": len(gen_text),
                     "sources_count": len(gen_sources)
                 },
-                "evaluation": eval_result
+                "evaluation": eval_result,
+                "scores": {
+                    "qag": qag_score,
+                    "cosine_similarity": cosine,
+                    "alignment": avg_alignment,
+                    "coverage": avg_coverage,
+                    "temporal_f1": temporal_f1
+                }
             }
-            
-            # Track stats
-            temporal = eval_result.get('temporal_evaluation', {})
-            f1 = temporal.get('f1')
-            recall = temporal.get('recall')
-            precision = temporal.get('precision')
-            
+
             stats["total"] += 1
-            if f1 is not None and f1 > 0:
-                stats["success"] += 1
-                stats["f1_sum"] += f1
-                stats["recall_sum"] += recall
-                stats["precision_sum"] += precision
-            
-            print(f"[{i:2d}/{len(summaries)}] {vid:40s} | P:{precision:5.3f} R:{recall:5.3f} F1:{f1:5.3f}")
+            if qag_score is not None:
+                stats["qag_sum"] += qag_score
+            if cosine is not None:
+                stats["cosine_sum"] += cosine
+            if temporal_f1 is not None:
+                stats["temporal_f1_sum"] += temporal_f1
+
+            print(f"[{i:2d}/{len(summaries)}] {vid:40s} | QAG:{(qag_score or 0):5.3f} COS:{(cosine or 0):5.3f} ALN:{(avg_alignment or 0):5.3f} COV:{(avg_coverage or 0):5.3f} F1:{(temporal_f1 or 0):5.3f}")
 
         except Exception as e:
             print(f"[{i:2d}/{len(summaries)}] {vid:40s} | ❌ {str(e)[:50]}")
@@ -125,80 +164,21 @@ def main():
 
     # Summary
     print(f"\n{'='*80}")
-    if stats["success"] > 0:
-        avg_f1 = stats["f1_sum"] / stats["success"]
-        avg_recall = stats["recall_sum"] / stats["success"]
-        avg_precision = stats["precision_sum"] / stats["success"]
-        print(f"✅ {stats['success']} summaries with F1 > 0")
-        print(f"   Average F1: {avg_f1:.4f}")
-        print(f"   Average Precision: {avg_precision:.4f}")
-        print(f"   Average Recall: {avg_recall:.4f}")
-    else:
-        print("⚠️  No summaries with F1 > 0")
+    total = stats["total"] if stats["total"] > 0 else 1
+    avg_qag = stats["qag_sum"] / total
+    avg_cos = stats["cosine_sum"] / total
+    avg_aln = stats["alignment_sum"] / total
+    avg_cov = stats["coverage_sum"] / total
+    avg_f1 = stats["temporal_f1_sum"] / total
+    
+    print(f"✅ Evaluated {stats['total']} summaries")
+    print(f"   Average QAG: {avg_qag:.4f}")
+    print(f"   Average Cosine: {avg_cos:.4f}")
+    print(f"   Average Alignment: {avg_aln:.4f}")
+    print(f"   Average Coverage: {avg_cov:.4f}")
+    print(f"   Average Temporal F1: {avg_f1:.4f}")
     print(f"Results saved to: {run_dir}")
     print(f"{'='*80}")
-
-    with open(ingestion_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    summaries = data.get('summaries', [])
-    if args.limit:
-        summaries = summaries[: args.limit]
-
-    print(f"Found {len(summaries)} generated summaries to evaluate")
-
-    # Prepare results dir
-    results_base = script_dir / args.results_dir
-    run_timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-    run_dir = results_base / f"run_{run_timestamp}"
-    run_dir.mkdir(parents=True, exist_ok=True)
-
-    evaluator = get_video_summary_evaluator()
-
-    results = []
-    for i, item in enumerate(summaries, 1):
-        vid = item.get('video_id') or f"unknown_{i}"
-        print(f"\n[{i}/{len(summaries)}] Evaluating video: {vid}")
-
-        gen_text = item.get('summary', '')
-        gen_sources = item.get('sources', [])
-
-        try:
-            eval_result = evaluator.evaluate(
-                generated_summary_text=gen_text,
-                generated_sources=gen_sources,
-                ground_truth_summaries=item.get('ground_truth_summaries', []),
-                ground_truth_segments=item.get('ground_truth_segments', []),
-                temporal_overlap_threshold=args.overlap_threshold,
-                # internal param is named 'matching_method'
-                # evaluator will accept it to choose matching strategy
-                **{"matching_method": args.matching_method}
-            )
-
-            entry = {
-                "video_id": vid,
-                "generation": {
-                    "summary": gen_text,
-                    "summary_chars": len(gen_text),
-                    "sources_count": len(gen_sources)
-                },
-                "evaluation": eval_result
-            }
-
-        except Exception as e:
-            entry = {
-                "video_id": vid,
-                "error": str(e)
-            }
-
-        results.append(entry)
-
-        # Save incremental results
-        out_file = run_dir / "evaluations.json"
-        with open(out_file, 'w', encoding='utf-8') as f:
-            json.dump({"run_id": f"run_{run_timestamp}", "results": results}, f, indent=2, ensure_ascii=False)
-
-    print(f"\nEvaluation finished. Results saved to: {run_dir}")
 
 
 if __name__ == '__main__':
