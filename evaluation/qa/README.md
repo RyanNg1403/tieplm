@@ -1,31 +1,34 @@
 # Q&A Evaluation
 
-Evaluation framework for the Q&A task using 4 key metrics.
+Evaluation framework for the Q&A task using 3 simplified metrics.
 
 ## 📊 Evaluation Metrics
 
-### 1. **Answer Correctness** (0-1, higher is better)
-- **Embedding Similarity**: Cosine similarity between generated and ground truth answers
-- **LLM Score**: GPT-5-mini evaluation of semantic correctness
-- **Combined Score**: Weighted average (40% embedding + 60% LLM)
+### 1. **Exact Match** (cho MCQ, 0-1, higher is better)
+- **Predicted Choice**: Lựa chọn (a/b/c/d) được AI trả lời
+- **Ground Truth Choice**: Đáp án đúng từ ground truth
+- **Score**: 1.0 nếu khớp, 0.0 nếu sai
 
-### 2. **Citation Accuracy** (0-1, higher is better)
-- **Has Citations**: Presence of [1], [2], [3] citations
-- **Valid Citations**: Citations match actual sources
-- **Citation Coverage**: Percentage of sources cited
-- **Accuracy Score**: Ratio of valid to total citations
+### 2. **Answer Correctness** (cho cả MCQ và tự luận, 0-1, higher is better)
+- **Cosine Similarity**: Cosine similarity giữa embeddings của generated answer và ground truth
+- **LLM Score**: GPT-5-mini đánh giá semantic correctness (có thêm câu hỏi gốc để hiểu context)
+- **Combined Score**: Weighted average (40% cosine + 60% LLM)
 
-### 3. **Source Relevance** (F1-score, 0-1, higher is better)
-- **Video Match**: Retrieved sources match ground truth videos
-- **Timestamp Overlap**: Retrieved chunks overlap with ground truth timestamps
-- **Precision**: Relevant sources / Total retrieved
-- **Recall**: Retrieved relevant / Total ground truth
-- **F1 Score**: Harmonic mean of precision and recall
+### 3. **Citation Accuracy** (0-1, higher is better)
+- **Ground Truth in Retrieved**: Kiểm tra xem ground truth source có nằm trong 10 chunks retrieved không
+- **Score**: 1.0 nếu có, 0.0 nếu không
+- **Chi tiết**: Mỗi câu hỏi chỉ có 1 source, RAG retrieve 10 chunks
 
-### 4. **Hallucination Rate** (0-1, lower is better)
-- **LLM-based Detection**: GPT-5-mini checks for fabricated information
-- **Grounding Check**: Verifies all claims exist in sources
-- **Hallucination Examples**: Specific instances of hallucination
+---
+
+## 🔄 Thay đổi so với version cũ
+
+**ĐƠN GIẢN HÓA:**
+1. **MCQ**: Thêm metric Exact Match để so sánh trực tiếp A/B/C/D
+2. **Answer Correctness**: Thêm câu hỏi gốc vào prompt LLM, lưu riêng cosine + LLM score
+3. **Citation Accuracy**: Đơn giản hóa - chỉ kiểm tra ground truth source có trong retrieved chunks không
+4. **Loại bỏ**: Source Relevance (F1 phức tạp) và Hallucination Rate (LLM đã đánh giá ở Answer Correctness)
+5. **Prompt riêng cho eval**: Ngắn gọn, không dài dòng như prompt cho users
 
 ---
 

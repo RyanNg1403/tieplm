@@ -1,66 +1,90 @@
 [
   {
-    "chapter": "7",
-    "question": "Giải pháp thay thế hàm kích hoạt nào giúp ngăn ngừa hiện tượng Vanishing Gradient trong RNN?",
-    "options": "a) Thay Sigmoid bằng Softmax; b) Thay Tanh bằng Sigmoid; c) Thay Sigmoid hoặc Tanh bằng ReLU; d) Thay ReLU bằng Sigmoid",
-    "answer": "c) Thay Sigmoid hoặc Tanh bằng ReLU",
-    "video_urls": ["https://youtu.be/IKD0O35NOUI"],
-    "timestamps": ["00:26:00 - 00:27:00"]
+    "chapter": "8",
+    "question": "Quá trình lan truyền tuần tự trong Seq2Seq gây ra vấn đề gì đối với thông tin của những từ đầu tiên?",
+    "options": "a) Thông tin được củng cố; b) Thông tin bị loãng/mất sau nhiều lần biến đổi; c) Thông tin bị lặp lại; d) Thông tin bị mã hóa nhị phân",
+    "answer": "b) Thông tin bị loãng/mất sau nhiều lần biến đổi",
+    "video_urls": ["https://youtu.be/ROIgZ5tyDFo"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "Kỹ thuật nào được sử dụng để chống lại hiện tượng Exploding Gradient (Đạo hàm bùng nổ)?",
-    "options": "a) Sử dụng hàm Tanh; b) Khởi tạo ma trận W bằng ma trận đơn vị; c) Sử dụng Clipping (chặt đạo hàm); d) Áp dụng Dropout",
-    "answer": "c) Sử dụng Clipping (chặt đạo hàm)",
-    "video_urls": ["https://youtu.be/IKD0O35NOUI"],
-    "timestamps": ["00:27:00 - 00:27:50"]
+    "chapter": "8",
+    "question": "Mục tiêu của việc tính Attention Score là gì?",
+    "options": "a) Tạo ra một vector input mới; b) Tính toán xem tại thời điểm decode, mô hình nên \"để tâm\" đến từ nào trong câu nguồn; c) Ánh xạ Query và Value về cùng không gian; d) Giảm số chiều của Value",
+    "answer": "b) Tính toán xem tại thời điểm decode, mô hình nên \"để tâm\" đến từ nào trong câu nguồn",
+    "video_urls": ["https://youtu.be/ROIgZ5tyDFo"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "Trong biến thể LSTM, cổng (gate) nào quyết định việc giữ lại hay quên đi thông tin của quá khứ (Ct−1​) trong Context Cell?",
-    "options": "a) Input Gate; b) Output Gate; c) Forget Gate; d) Context Gate",
-    "answer": "c) Forget Gate",
-    "video_urls": ["https://youtu.be/qJj_LY1r91U", "https://youtu.be/_Km_A2iRUds"],
-    "timestamps": ["00:29:10 - 00:29:40"]
+    "chapter": "8",
+    "question": "Hàm nào được sử dụng để chuẩn hóa Attention Score (R) về không gian xác suất (Attention Distribution α)?",
+    "options": "a) ReLU; b) Sigmoid; c) Tanh; d) Softmax",
+    "answer": "d) Softmax",
+    "video_urls": ["https://youtu.be/S8__bXkLSbM"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "Mục đích chính của Bidirectional RNN (Bi-RNN) là gì?",
-    "options": "a) Giảm chi phí tính toán; b) Giải quyết vấn đề Vanishing Gradient; c) Giúp mô hình chỉ học đặc trưng cấp thấp; d) Tổng hợp thông tin ngữ cảnh từ cả hai phía (trái sang phải và phải sang trái)",
-    "answer": "d) Tổng hợp thông tin ngữ cảnh từ cả hai phía (trái sang phải và phải sang trái)",
-    "video_urls": ["https://youtu.be/_Cu7kGoRaE0"],
-    "timestamps": ["00:36:20 - 00:37:30"]
+    "chapter": "8",
+    "question": "Cơ chế Attention giải quyết vấn đề Vanishing Gradient bằng cách tạo ra các đường tắt (skip connections) tương tự như kiến trúc mạng CNN nào?",
+    "options": "a) LeNet; b) AlexNet; c) ResNet; d) VGGNet",
+    "answer": "c) ResNet",
+    "video_urls": ["https://youtu.be/S8__bXkLSbM"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "RNN là viết tắt của thuật ngữ gì trong học sâu?",
+    "chapter": "8",
+    "question": "Trong cơ chế Attention, trạng thái ẩn của Encoder (Si​) được gọi chung là gì?",
+    "options": "a) Query (Q); b) Key (K); c) Value (V); d) Context (C)",
+    "answer": "c) Value (V)",
+    "video_urls": ["https://youtu.be/my3qRjVJ7VM"],
+    "timestamps": ["00:00:00 - 00:10:00"]
+  },
+  {
+    "chapter": "8",
+    "question": "Vai trò của Encoder trong kiến trúc Seq2Seq là gì?",
     "options": null,
-    "answer": "RNN là tên viết tắt của mạng Recurrent Neural Network.",
-    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
-    "timestamps": ["00:00:10 - 00:00:40"]
+    "answer": "Đọc và hiểu thông tin input đầu vào",
+    "video_urls": ["https://youtu.be/4EdX3Ga9YoM"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "Yếu tố nào là rất quan trọng cần phải chú ý trong dữ liệu dạng chuỗi?",
+    "chapter": "8",
+    "question": "Trong kiến trúc Seq2Seq, Decoder đóng vai trò giống như loại mô hình nào khi tạo ra câu văn đích?",
     "options": null,
-    "answer": "Yếu tố trình tự xuất hiện của các giá trị đầu vào là rất quan trọng đối với dữ liệu dạng chuỗi.",
-    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
-    "timestamps": ["00:02:18 - 00:03:00"]
+    "answer": "Mô hình ngôn ngữ (Language Model)",
+    "video_urls": ["https://youtu.be/4EdX3Ga9YoM"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "Dữ liệu hình ảnh thường được biểu diễn phổ biến dưới dạng nào?",
+    "chapter": "8",
+    "question": "Kể tên một bài toán (ngoài dịch máy) có thể được giải quyết bằng mô hình Seq2Seq vì có Input và Output đều là dạng chuỗi.",
     "options": null,
-    "answer": "Dữ liệu hình ảnh được biểu diễn dưới dạng ma trận hai chiều (ảnh không màu) hoặc tensor ba chiều (ảnh màu).",
-    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
-    "timestamps": ["00:04:30 - 00:05:10"]
+    "answer": "Tóm tắt văn bản (Summarization) HOẶC Hội thoại (Chatbot/Dialog) HOẶC Tạo mã nguồn (Code Generation)",
+    "video_urls": ["https://youtu.be/4EdX3Ga9YoM"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   },
   {
-    "chapter": "7",
-    "question": "Tính chất phụ thuộc của các phần tử trong dữ liệu dạng chuỗi được gọi là gì?",
+    "chapter": "8",
+    "question": "Khi huấn luyện NMT, thuật toán nào được thực hiện để cập nhật các ma trận trọng số (U, V, W) dựa trên hàm Loss tổng hợp?",
     "options": null,
-    "answer": "Các phần tử trong dữ liệu dạng chuỗi phụ thuộc lẫn nhau theo một chiều thời gian.",
-    "video_urls": ["https://youtu.be/_KvZN8-SyvQ"],
-    "timestamps": ["00:06:50 - 00:07:40"]
+    "answer": "Thuật toán lan truyền ngược (Backpropagation)",
+    "video_urls": ["https://youtu.be/--JpgsDEL40"],
+    "timestamps": ["00:00:00 - 00:10:00"]
+  },
+  {
+    "chapter": "8",
+    "question": "Độ đo nào được sử dụng phổ biến hiện nay để đánh giá độ chính xác của mô hình dịch máy?",
+    "options": null,
+    "answer": "BLEU (Bilingual Evaluation Understudy)",
+    "video_urls": ["https://youtu.be/--JpgsDEL40"],
+    "timestamps": ["00:00:00 - 00:10:00"]
+  },
+  {
+    "chapter": "8",
+    "question": "Cơ chế Attention giải quyết được vấn đề nào của Seq2Seq truyền thống, liên quan đến việc dồn nén thông tin?",
+    "options": null,
+    "answer": "Vấn đề điểm nghẽn (Bottleneck) thông tin",
+    "video_urls": ["https://youtu.be/ROIgZ5tyDFo"],
+    "timestamps": ["00:00:00 - 00:10:00"]
   }
 ]
