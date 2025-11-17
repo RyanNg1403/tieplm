@@ -137,18 +137,19 @@ class QAEvaluationService:
         # Step 3: Calculate metrics
         print(f"  📊 Calculating metrics...")
         metrics = {}
-        
+
         # Metric 1: Exact Match (chỉ cho MCQ)
         if question_type == "mcq":
             metrics["exact_match"] = self._calculate_exact_match(
                 generated_answer, ground_truth_answer
             )
-        
-        # Metric 2: Answer Correctness (cho cả MCQ và tự luận)
-        metrics["answer_correctness"] = await self._calculate_answer_correctness(
-            question, generated_answer, ground_truth_answer
-        )
-        
+
+        # Metric 2: Answer Correctness (chỉ cho short_answer, không cho MCQ)
+        if question_type == "short_answer":
+            metrics["answer_correctness"] = await self._calculate_answer_correctness(
+                question, generated_answer, ground_truth_answer
+            )
+
         # Metric 3: Citation Accuracy (đơn giản - kiểm tra ground truth source có trong retrieved không)
         metrics["citation_accuracy"] = self._calculate_citation_accuracy_simple(
             generated_sources, ground_truth_videos, ground_truth_timestamps

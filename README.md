@@ -218,3 +218,7 @@ Framework for measuring performance across all four AI tasks.
 - [`backend/README.md`](./backend/README.md) - Backend module guide
 - [`frontend/README.md`](./frontend/README.md) - Frontend module guide
 - API Docs (when running): http://localhost:8000/docs
+
+## Progress Log
+
+- **2025-11-17**: Regenerated PostgreSQL dump (`tieplm_db_dump.sql`) and Qdrant snapshot (`qdrant_snapshot.snapshot`) for sharing with the team.

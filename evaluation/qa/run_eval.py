@@ -185,17 +185,18 @@ def calculate_summary_statistics(results: List[Dict[str, Any]]) -> Dict[str, Any
     exact_match_scores = []
     answer_correctness_scores = []
     citation_accuracy_scores = []
-    
+
     for result in valid_results:
         metrics = result["metrics"]
-        
+
         # Exact Match (chỉ có cho MCQ)
         if "exact_match" in metrics:
             exact_match_scores.append(metrics["exact_match"]["score"])
-        
-        # Answer Correctness
-        answer_correctness_scores.append(metrics["answer_correctness"]["combined_score"])
-        
+
+        # Answer Correctness (chỉ có cho short_answer)
+        if "answer_correctness" in metrics:
+            answer_correctness_scores.append(metrics["answer_correctness"]["combined_score"])
+
         # Citation Accuracy
         citation_accuracy_scores.append(metrics["citation_accuracy"]["score"])
     
@@ -216,11 +217,13 @@ def calculate_summary_statistics(results: List[Dict[str, Any]]) -> Dict[str, Any
         
         chapter_stats[chapter]["count"] += 1
         metrics = result["metrics"]
-        
+
         if "exact_match" in metrics:
             chapter_stats[chapter]["exact_match"].append(metrics["exact_match"]["score"])
-        
-        chapter_stats[chapter]["answer_correctness"].append(metrics["answer_correctness"]["combined_score"])
+
+        if "answer_correctness" in metrics:
+            chapter_stats[chapter]["answer_correctness"].append(metrics["answer_correctness"]["combined_score"])
+
         chapter_stats[chapter]["citation_accuracy"].append(metrics["citation_accuracy"]["score"])
     
     # Average by chapter
@@ -228,11 +231,12 @@ def calculate_summary_statistics(results: List[Dict[str, Any]]) -> Dict[str, Any
     for chapter, stats in chapter_stats.items():
         chapter_averages[chapter] = {
             "count": stats["count"],
-            "answer_correctness": round(avg(stats["answer_correctness"]), 4),
             "citation_accuracy": round(avg(stats["citation_accuracy"]), 4)
         }
         if stats["exact_match"]:
             chapter_averages[chapter]["exact_match"] = round(avg(stats["exact_match"]), 4)
+        if stats["answer_correctness"]:
+            chapter_averages[chapter]["answer_correctness"] = round(avg(stats["answer_correctness"]), 4)
     
     return {
         "total_questions": len(results),
@@ -240,7 +244,7 @@ def calculate_summary_statistics(results: List[Dict[str, Any]]) -> Dict[str, Any
         "failed_evaluations": len(results) - len(valid_results),
         "average_metrics": {
             "exact_match": round(avg(exact_match_scores), 4) if exact_match_scores else None,
-            "answer_correctness": round(avg(answer_correctness_scores), 4),
+            "answer_correctness": round(avg(answer_correctness_scores), 4) if answer_correctness_scores else None,
             "citation_accuracy": round(avg(citation_accuracy_scores), 4)
         },
         "by_chapter": chapter_averages,
