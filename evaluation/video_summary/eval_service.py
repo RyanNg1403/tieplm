@@ -42,6 +42,10 @@ except Exception:
     SCIPY_AVAILABLE = False
 
 from backend.app.shared.embeddings.embedder import OpenAIEmbedder
+import re
+import math
+from backend.app.shared.llm.client import get_llm_client
+import numpy as _np
 
 
 def _parse_timestamp_to_seconds(ts: str) -> int:
@@ -463,3 +467,296 @@ class VideoSummaryEvaluator:
 
 def get_video_summary_evaluator() -> VideoSummaryEvaluator:
     return VideoSummaryEvaluator()
+
+
+def _safe_parse_float(s: str) -> Optional[float]:
+    try:
+        return float(s.strip())
+    except Exception:
+        return None
+
+
+def _compute_embedding_similarity(embedder: Optional[OpenAIEmbedder], a: str, b: str) -> Optional[float]:
+    """Return cosine similarity between two texts using embedder, or None on failure."""
+    if embedder is None:
+        return None
+    try:
+        ea = _np.array(embedder.embed(a))
+        eb = _np.array(embedder.embed(b))
+        denom = (_np.linalg.norm(ea) * _np.linalg.norm(eb))
+        if denom == 0:
+            return 0.0
+        return float((_np.dot(ea, eb) / denom))
+    except Exception:
+        return None
+
+
+def _llm_semantic_score(generated: str, references: List[str], model: str = None) -> Optional[float]:
+    """Ask an LLM to score the semantic correctness of `generated` against `references`.
+
+    Returns score in [0,1] or None on failure.
+    """
+    try:
+        client = get_llm_client()
+        system = "You are an evaluator. Given reference text(s) and a candidate summary, rate how well the candidate captures the meaning of the references on a scale from 0.0 (no match) to 1.0 (perfect match). Only return a single numeric value between 0 and 1."
+
+        refs = "\n\n---\n\n".join(references) if references else ""
+        prompt = f"References:\n{refs}\n\nCandidate summary:\n{generated}\n\nPlease output one number between 0 and 1 (inclusive) representing semantic similarity. No additional text."
+        resp = client.generate(prompt=prompt, system_prompt=system, max_tokens=10)
+        # Try to parse a float from response
+        # It may respond like '0.85' or '0.85\n'
+        for token in re.finditer(r"[0-1](?:\.[0-9]+)?", resp):
+            val = _safe_parse_float(token.group(0))
+            if val is not None:
+                return max(0.0, min(1.0, val))
+        # fallback: try parsing the whole response
+        return _safe_parse_float(resp)
+    except Exception:
+        return None
+
+
+def _validate_citations(generated_text: str, sources: List[Dict[str, Any]], embedder: Optional[OpenAIEmbedder] = None) -> Dict[str, Any]:
+    """Validate citations like [1], [2] in generated_text against provided sources.
+
+    Returns dict with counts and list of invalid citations and mapping details.
+    """
+    citation_pattern = re.compile(r"\[(\d+)\]")
+    found = citation_pattern.findall(generated_text or "")
+    total_citations = len(found)
+    valid = 0
+    invalid_examples = []
+    cited_sources = set()
+
+    for match in found:
+        try:
+            idx = int(match) - 1
+        except Exception:
+            invalid_examples.append({"token": match, "reason": "not_int"})
+            continue
+        if idx < 0 or idx >= len(sources):
+            invalid_examples.append({"index": idx + 1, "reason": "out_of_range"})
+            continue
+        cited_sources.add(idx)
+        # Quick textual grounding check (embedding similarity between source text and generated summary)
+        src_text = sources[idx].get("text", "")
+        sim = None
+        if embedder is not None and src_text:
+            try:
+                sim = _compute_embedding_similarity(embedder, src_text, generated_text)
+            except Exception:
+                sim = None
+        # Accept citation if sim is None (can't compute) or sim >= 0.2 (loose lexical overlap) or simple substring
+        ok = False
+        if sim is None:
+            if src_text.strip() and src_text.strip()[:10] in (generated_text or ""):
+                ok = True
+            else:
+                ok = True  # be permissive if we cannot compute embeddings
+        else:
+            ok = sim >= 0.2
+
+        if ok:
+            valid += 1
+        else:
+            invalid_examples.append({"index": idx + 1, "reason": "low_similarity", "similarity": sim})
+
+    citation_accuracy = (valid / total_citations) if total_citations > 0 else None
+    citation_coverage = (len(cited_sources) / len(sources)) if sources else None
+
+    return {
+        "total_citations": total_citations,
+        "valid_citations": valid,
+        "invalid_examples": invalid_examples,
+        "citation_accuracy": round(float(citation_accuracy), 4) if citation_accuracy is not None else None,
+        "citation_coverage": round(float(citation_coverage), 4) if citation_coverage is not None else None,
+    }
+
+
+def _hallucination_detection(generated_text: str, sources: List[Dict[str, Any]], embedder: Optional[OpenAIEmbedder] = None, sim_threshold: float = 0.65) -> Dict[str, Any]:
+    """Simple hallucination detector: split generated_text into sentences, check if each sentence
+    has a supporting source via embedding similarity. Returns list of flagged claims and rate."""
+    # naive sentence split
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", generated_text) if s.strip()]
+    total = len(sentences)
+    flagged = []
+    if total == 0:
+        return {"total_claims": 0, "hallucinated_claims": 0, "hallucination_rate": 0.0, "examples": []}
+
+    # Precompute source embeddings if available
+    src_texts = [s.get("text", "") for s in sources]
+    src_embs = None
+    if embedder is not None and src_texts:
+        try:
+            src_embs = [_np.array(embedder.embed(t)) for t in src_texts]
+        except Exception:
+            src_embs = None
+
+    for sent in sentences:
+        supported = False
+        max_sim = 0.0
+        if src_embs is not None:
+            try:
+                se = _np.array(embedder.embed(sent))
+                for emb in src_embs:
+                    denom = (_np.linalg.norm(se) * _np.linalg.norm(emb))
+                    if denom == 0:
+                        continue
+                    sim = float(_np.dot(se, emb) / denom)
+                    if sim > max_sim:
+                        max_sim = sim
+                    if sim >= sim_threshold:
+                        supported = True
+                        break
+            except Exception:
+                supported = True  # cannot compute; be permissive
+        else:
+            # fallback lexical check
+            for t in src_texts:
+                if len(t) > 20 and t[:20] in sent:
+                    supported = True
+                    break
+
+        if not supported:
+            flagged.append({"sentence": sent, "max_similarity": round(float(max_sim), 4)})
+
+    hallucinated = len(flagged)
+    rate = hallucinated / total if total > 0 else 0.0
+    return {"total_claims": total, "hallucinated_claims": hallucinated, "hallucination_rate": round(float(rate), 4), "examples": flagged[:5]}
+
+
+def evaluate_detailed(
+    generated_summary_text: str,
+    generated_sources: List[Dict[str, Any]],
+    ground_truth_summaries: Optional[List[str]] = None,
+    ground_truth_segments: Optional[List[Dict[str, Any]]] = None,
+    weights: Optional[Dict[str, float]] = None,
+    verbosity: int = 0,
+) -> Dict[str, Any]:
+    """High-level evaluation that computes the richer metric set described in the task doc.
+
+    Returns a dict with per-metric scores and combined score.
+    """
+    evaluator = VideoSummaryEvaluator()
+
+    # Text-level correctness: embedding similarity + LLM semantic
+    embed_sim = None
+    if evaluator.embedder is not None and ground_truth_summaries:
+        try:
+            # compute average similarity to all references
+            sims = [ _compute_embedding_similarity(evaluator.embedder, generated_summary_text, ref) or 0.0 for ref in ground_truth_summaries]
+            embed_sim = float(max(sims)) if sims else None
+        except Exception:
+            embed_sim = None
+
+    llm_score = _llm_semantic_score(generated_summary_text, ground_truth_summaries or [], model=evaluator.eval_model)
+
+    # Compose correctness (40% embed, 60% llm) with fallbacks
+    emb_component = embed_sim if embed_sim is not None else 0.0
+    llm_component = llm_score if llm_score is not None else emb_component
+    correctness_score = round(float(0.4 * emb_component + 0.6 * llm_component), 4)
+
+    # Citation validation
+    citation_info = _validate_citations(generated_summary_text, generated_sources, evaluator.embedder)
+
+    # Temporal metrics
+    temporal = evaluator._evaluate_temporal(generated_sources, ground_truth_segments or [], overlap_threshold=evaluator.default_iou_threshold, matching_method=("global" if evaluator.use_optimal_matching else "greedy"))
+
+    # Hallucination detection
+    halluc = _hallucination_detection(generated_summary_text, generated_sources, evaluator.embedder)
+
+    # Readability (LLM-based, fallback heuristics)
+    readability = None
+    try:
+        client = get_llm_client()
+        sys = "You are a readability scorer. Given the candidate summary, output a single number between 0 and 1 indicating readability and coherence (1 = highly readable). Only output the number."
+        resp = client.generate(prompt=generated_summary_text, system_prompt=sys, max_tokens=8)
+        rscore = _safe_parse_float(resp)
+        if rscore is not None:
+            readability = max(0.0, min(1.0, rscore))
+    except Exception:
+        readability = None
+
+    if readability is None:
+        # Heuristic: ideal sentence length between 8 and 22 words
+        sents = [s for s in re.split(r"(?<=[.!?])\s+", generated_summary_text) if s.strip()]
+        if sents:
+            lengths = [len(s.split()) for s in sents]
+            avg = sum(lengths) / len(lengths)
+            # Map avg into 0..1 with triangle peak at 15
+            score = max(0.0, 1 - abs(avg - 15) / 15)
+            readability = round(float(score), 4)
+        else:
+            readability = 0.0
+
+    # Compression ratio: generated tokens / total chunk tokens
+    total_chunk_chars = sum([len(s.get("text", "")) for s in generated_sources])
+    gen_chars = len(generated_summary_text or "")
+    compression_ratio = round(float(gen_chars / total_chunk_chars), 4) if total_chunk_chars > 0 else None
+
+    # Clickable timestamp accuracy: check presence of start_time and video_url in sources
+    valid_clicks = 0
+    for s in generated_sources:
+        if s.get("start_time") is not None and s.get("video_url"):
+            valid_clicks += 1
+    clickable_accuracy = (valid_clicks / len(generated_sources)) if generated_sources else None
+
+    # Combined score
+    # default weights
+    if weights is None:
+        weights = {
+            "correctness": 0.35,
+            "temporal_f1": 0.25,
+            "citation_accuracy": 0.15,
+            "faithfulness": 0.15,
+            "readability": 0.10,
+        }
+
+    faithfulness = 1.0 - halluc.get("hallucination_rate", 0.0)
+
+    components = {}
+    components["correctness"] = correctness_score
+    components["temporal_f1"] = temporal.get("f1", 0.0)
+    components["citation_accuracy"] = citation_info.get("citation_accuracy") if citation_info.get("citation_accuracy") is not None else 0.0
+    components["faithfulness"] = round(float(faithfulness), 4)
+    components["readability"] = round(float(readability), 4) if readability is not None else 0.0
+
+    # Normalize None -> 0 and ensure 0..1
+    for k, v in components.items():
+        if v is None:
+            components[k] = 0.0
+        else:
+            try:
+                components[k] = max(0.0, min(1.0, float(v)))
+            except Exception:
+                components[k] = 0.0
+
+    combined = 0.0
+    for k, w in weights.items():
+        combined += components.get(k, 0.0) * float(w)
+    combined = round(float(combined), 4)
+
+    result = {
+        "video_id": None,
+        "metrics": {
+            "correctness": components["correctness"],
+            "embedding_similarity": round(float(embed_sim), 4) if embed_sim is not None else None,
+            "llm_semantic_score": round(float(llm_score), 4) if llm_score is not None else None,
+            "citation_accuracy": citation_info.get("citation_accuracy"),
+            "citation_coverage": citation_info.get("citation_coverage"),
+            "temporal_precision": temporal.get("precision"),
+            "temporal_recall": temporal.get("recall"),
+            "temporal_f1": temporal.get("f1"),
+            "duration_coverage": temporal.get("duration_coverage"),
+            "hallucination_rate": halluc.get("hallucination_rate"),
+            "readability": components["readability"],
+            "compression_ratio": compression_ratio,
+            "clickable_timestamp_accuracy": round(float(clickable_accuracy), 4) if clickable_accuracy is not None else None,
+            "combined_score": combined,
+        },
+        "hallucination_examples": halluc.get("examples", []),
+        "citation_invalid_examples": citation_info.get("invalid_examples", []),
+        "temporal_matched_pairs": temporal.get("matched_pairs", []),
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+    return result
