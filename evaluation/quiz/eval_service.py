@@ -62,7 +62,7 @@ class QuizQAGEvaluator:
         self.postgres = postgres or get_postgres_client()
         self.embedder = OpenAIEmbedder()
 
-        self.max_generation_tokens = int(os.getenv("EVAL_QUIZ_MAX_TOKENS", "1200"))
+        self.max_generation_tokens = int(os.getenv("EVAL_QUIZ_MAX_TOKENS", "2000"))
         self.max_chunk_chars = int(os.getenv("EVAL_QUIZ_MAX_CHARS", "1800"))
 
     async def evaluate_case(
@@ -255,7 +255,7 @@ class QuizQAGEvaluator:
         answer = await self.qa_service.llm.generate_async(
             prompt=prompt,
             system_prompt=QUIZ_EVAL_QA_SYSTEM_PROMPT,
-            max_tokens=600,
+            max_tokens=self.max_generation_tokens,
         )
 
         return answer.strip()
@@ -280,7 +280,7 @@ class QuizQAGEvaluator:
         answer = await self.qa_service.llm.generate_async(
             prompt=prompt,
             system_prompt=QUIZ_EVAL_QA_SYSTEM_PROMPT,
-            max_tokens=50,
+            max_tokens=self.max_generation_tokens,
         )
 
         return self._normalize_option(answer)
