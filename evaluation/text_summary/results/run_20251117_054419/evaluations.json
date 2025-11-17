@@ -2,8 +2,8 @@
   "run_info": {
     "run_id": "run_20251117_054419",
     "timestamp": "20251117_054419",
-    "total_questions": 29,
-    "successful_evaluations": 29,
+    "total_questions": 50,
+    "successful_evaluations": 50,
     "failed_evaluations": 0,
     "evaluation_model": "gpt-5-mini",
     "threshold": 0.5,
@@ -11,20 +11,20 @@
   },
   "statistics": {
     "overall": {
-      "mean": 0.7455216977845796,
-      "min": 0.5,
+      "mean": 0.700934981913586,
+      "min": 0.25,
       "max": 1.0,
-      "median": 0.7894736842105263,
-      "std": 0.143276652244126
+      "median": 0.7368421052631579,
+      "std": 0.16137754808671573
     },
     "coverage": {
-      "mean": 0.8413793103448277,
-      "min": 0.5,
+      "mean": 0.784,
+      "min": 0.4,
       "max": 1.0
     },
     "alignment": {
-      "mean": 0.8030985334648635,
-      "min": 0.5,
+      "mean": 0.7851764737085104,
+      "min": 0.25,
       "max": 1.0
     }
   },
@@ -376,6 +376,258 @@
       "summary_chars": 3130,
       "original_text_chars": 9327,
       "evaluation_time_seconds": 94.53929100000002
+    },
+    {
+      "question_id": "sum_030",
+      "query": "Convolution Operation (Tích Chập)",
+      "score": 0.6818181818181818,
+      "coverage_score": 0.8,
+      "alignment_score": 0.6818181818181818,
+      "success": true,
+      "reason": "The score is 0.68 because the summary preserves the core concepts (kernels, ReLU, skip connections, learned filters) but introduces several implementation details not stated in the original (describing convolution as a sliding-window multiply-add, claiming learning/updates occur via backpropagation, asserting ReLU’s derivative is 1 for positives, and that initial filters learn edges and deeper layers learn complex features). It also omits explicit confirmations the original could answer (that Softmax produces a probability distribution and that ReLU sets negatives to zero). No direct contradictions are present, so the summary is generally accurate but overstated in implementation specifics and incomplete on a few basic function behaviors.",
+      "summary_chars": 2902,
+      "original_text_chars": 9204,
+      "evaluation_time_seconds": 101.24412799999999
+    },
+    {
+      "question_id": "sum_031",
+      "query": "Filter/Kernel in CNNs",
+      "score": 0.7,
+      "coverage_score": 0.7,
+      "alignment_score": 0.8125,
+      "success": true,
+      "reason": "The score is 0.70 because the summary contains no direct contradictions but introduces several unverified or extra claims (it emphasizes that FC bias is stored separately while implying filter weights use the same parameter array, mentions a ‘build’ call not present in the original, and treats the ~100,000 parameter count ambiguously with respect to biases). It also omits details present in the original (use of sigmoid for some layers, FC sizes 120 and 84, and mentions of RNN/LSTM). These added ambiguities and omissions reduce fidelity but much of the core content remains correct, justifying a moderate score.",
+      "summary_chars": 2112,
+      "original_text_chars": 6675,
+      "evaluation_time_seconds": 102.830565
+    },
+    {
+      "question_id": "sum_032",
+      "query": "Feature Maps (Tensor Output)",
+      "score": 0.782608695652174,
+      "coverage_score": 0.9,
+      "alignment_score": 0.782608695652174,
+      "success": true,
+      "reason": "The score is 0.78 because the summary is mostly faithful (no direct contradictions) but introduces several specific claims not present in the original — e.g., a kernel/stride formula for spatial reduction, an explicit statement that atrous convolution \"increases receptive field without reducing spatial resolution,\" that residual connections transmit gradients/are the mechanism enabling very deep networks, that feature maps are the basis for classification/object detection/segmentation, and that deconvolution/dilated conv are used to \"recover or expand receptive fields\" and that skip connections definitively \"aid training\" — all of which the source did not state. It also omits an answerable detail the original contains (whether the example uses a 3‑channel RGB input). These unsupported additions and the omission reduce faithfulness, but the summary remains largely accurate, justifying the moderately high score.",
+      "summary_chars": 3220,
+      "original_text_chars": 9669,
+      "evaluation_time_seconds": 101.471338
+    },
+    {
+      "question_id": "sum_033",
+      "query": "Pooling Layer (Max Pooling/Average Pooling)",
+      "score": 0.8,
+      "coverage_score": 0.8,
+      "alignment_score": 0.8260869565217391,
+      "success": true,
+      "reason": "The score is 0.80 because the summary is largely faithful but contains important inaccuracies and omissions: it incorrectly attributes parameter-count and overfitting reduction to pooling rather than to weight-sharing in convolutional layers (contradiction), and it adds unmentioned claims about pooling being repeatedly applied across layers and about AveragePooling2D/stride defaults (extra information). It also omits stating that filters share weights to reduce parameters and that CNN inputs can be RGB or grayscale (points the original could answer but the summary left out).",
+      "summary_chars": 2084,
+      "original_text_chars": 8091,
+      "evaluation_time_seconds": 92.504354
+    },
+    {
+      "question_id": "sum_034",
+      "query": "ReLU Activation Function",
+      "score": 0.4,
+      "coverage_score": 0.4,
+      "alignment_score": 0.7142857142857143,
+      "success": false,
+      "reason": "The score is 0.40 because the summary omits and distorts key details from the original: it introduces unsupported claims (a video reference and a specific course exercise), overstates ReLU behavior at z=0, and inaccurately frames historical usage and training-speed reasons for sigmoid/tanh vs. ReLU. It also fails to preserve many concrete facts the original contained (CNN layer types, flattening before fully connected layers, pooling reducing spatial size, use of softmax for multiclass output, ADAM optimizer, and an example with 10 output classes), so fidelity and completeness are low.",
+      "summary_chars": 1636,
+      "original_text_chars": 8339,
+      "evaluation_time_seconds": 95.982957
+    },
+    {
+      "question_id": "sum_035",
+      "query": "Sigmoid/Tanh Activation Functions",
+      "score": 0.6,
+      "coverage_score": 0.6,
+      "alignment_score": 0.6666666666666666,
+      "success": true,
+      "reason": "The score is 0.60 because the summary captures core points (use of sigmoid/tanh, tanh range, activations applied elementwise) but weakens fidelity by adding unsupported details (claims tanh was used in the logistic-regression example, states sigmoid’s numeric range [0,1] and zero-centered rationale for tanh, and implies tanh was explicitly described as elementwise) and by omitting several specific, answerable details from the original (LeNet pooling, input feature dimensionality, number of output labels, and optimizer choice), making it partially accurate but incomplete.",
+      "summary_chars": 1944,
+      "original_text_chars": 8437,
+      "evaluation_time_seconds": 100.61188
+    },
+    {
+      "question_id": "sum_036",
+      "query": "Fully Connected (Dense) Layer",
+      "score": 0.7,
+      "coverage_score": 0.7,
+      "alignment_score": 1.0,
+      "success": true,
+      "reason": "The score is 0.70 because the summary is generally accurate and contains no contradictions or extraneous information, but it omits key implementation details present in the original: whether an RNN and LSTM are implemented, mention of Embedding and Dense layers, and the use of red and blue points in the logistic regression example—these omissions reduce completeness.",
+      "summary_chars": 2720,
+      "original_text_chars": 7959,
+      "evaluation_time_seconds": 99.28224399999999
+    },
+    {
+      "question_id": "sum_037",
+      "query": "Weight Sharing in CNNs",
+      "score": 0.8,
+      "coverage_score": 0.8,
+      "alignment_score": 1.0,
+      "success": true,
+      "reason": "The score is 0.80 because the summary is generally accurate (no contradictions or added facts) but omits specific verifiable technical details present in the original: it does not state whether a pooling layer (average pooling) is mentioned and whether the linear regression reported theta values matching 7.7 and 2.9, reducing completeness.",
+      "summary_chars": 2316,
+      "original_text_chars": 7836,
+      "evaluation_time_seconds": 58.748861
+    },
+    {
+      "question_id": "sum_038",
+      "query": "Local Connectivity in CNNs",
+      "score": 0.5,
+      "coverage_score": 0.5,
+      "alignment_score": 1.0,
+      "success": true,
+      "reason": "The score is 0.50 because the summary captures general topics but omits important implementation details and leaves several concrete questions unanswered: whether bias is stored in a separate array; whether fully‑connected layer parameters include bias; whether RNN/LSTM architectures are discussed; whether logistic regression uses a single output node with a sigmoid; and whether the linear regression implementation prints theta0 and theta1. There are no direct contradictions or extra invented facts, but these omissions reduce the summary's fidelity.",
+      "summary_chars": 2528,
+      "original_text_chars": 6768,
+      "evaluation_time_seconds": 72.604321
+    },
+    {
+      "question_id": "sum_039",
+      "query": "Overfitting Mitigation",
+      "score": 0.6666666666666666,
+      "coverage_score": 1.0,
+      "alignment_score": 0.6666666666666666,
+      "success": true,
+      "reason": "The score is 0.67 because the summary correctly highlights many core techniques (augmentation, architectural changes, skip connections, normalization, activations) but also introduces multiple unsupported or overgeneralized claims: it includes a document title not present in the original; asserts generated augmented variants ‘preserve labels’ (not stated); generalizes the activation-change recommendation beyond the original sigmoid→ReLU example to tanh; extrapolates a reported 50× TPU speedup to GPUs and to enabling more experiments; adds an unmentioned downside that excessive parameter reduction can harm representational power; claims the need for task-specific augmentation design (not stated); and states that residual connections/layer normalization add structural or computational overhead (not mentioned). Despite these extra assertions, the summary captures the main techniques, which justifies a moderate score.",
+      "summary_chars": 3107,
+      "original_text_chars": 8772,
+      "evaluation_time_seconds": 114.31166899999998
+    },
+    {
+      "question_id": "sum_040",
+      "query": "Data Augmentation",
+      "score": 0.25,
+      "coverage_score": 0.4,
+      "alignment_score": 0.25,
+      "success": false,
+      "reason": "The score is 0.25 because, while the summary makes no direct contradictions, it adds many unsupported inferences beyond the original (e.g., defining data augmentation as creating many labeled variants, asserting labels are preserved, claiming increased size/diversity and better generalization, stating multiple independent transformations per image, claiming augmentation avoids new labels, and linking augmentation explicitly to specific datasets or to simultaneous use with ReLU/TPU). It also fails to preserve several factual details the original did include or could answer (TPU speedup for AlexNet, ReLU reducing vanishing gradients, when to freeze vs fine-tune pretrained layers, logistic regression input dimensionality, and RNN parallelism limits), so the summary is incomplete and overconfident.",
+      "summary_chars": 1474,
+      "original_text_chars": 9303,
+      "evaluation_time_seconds": 100.756206
+    },
+    {
+      "question_id": "sum_041",
+      "query": "ResNet Architecture",
+      "score": 0.875,
+      "coverage_score": 1.0,
+      "alignment_score": 0.875,
+      "success": true,
+      "reason": "The score is 0.88 because the summary correctly captures ResNet’s main points (residual modules enable training deeper networks and usefulness as pretrained backbones) but introduces moderate inaccuracies: it overgeneralizes experimental results by implying deeper models (e.g., 20, 32, 44, 56, 110) uniformly achieved lower error when the original notes a 20-layer network had lower error than some deeper variants, and it asserts that residual modules consistently improve performance for “tens to hundreds” of layers (including very deep, hundreds-of-layers gains) without direct evidence in the original. These errors are significant but limited, so the summary is mostly faithful with some overclaims.",
+      "summary_chars": 2475,
+      "original_text_chars": 10527,
+      "evaluation_time_seconds": 87.16528
+    },
+    {
+      "question_id": "sum_042",
+      "query": "MobileNet Architecture",
+      "score": 0.8,
+      "coverage_score": 0.8,
+      "alignment_score": 0.8,
+      "success": true,
+      "reason": "The score is 0.80 because the summary correctly conveys core results (≈9× parameter/computation reduction, less overfitting, faster mobile computation) but adds unsupported inferences and omits some specific original facts. It incorrectly or prematurely attributes improved gradient flow/vanishing-gradient benefits to MobileNet (the original only discusses derivative increases and convolutional derivatives in a more general lecture context) and labels MobileNet as 'famous' despite the text only giving a citation count. The summary also fails to mention verifiable points the original does state (e.g., AlexNet’s replacement of sigmoid with ReLU and that pooling reduces computation/parameter count). These extra claims and omissions reduce fidelity, though most main findings remain accurate.",
+      "summary_chars": 1630,
+      "original_text_chars": 5543,
+      "evaluation_time_seconds": 95.262102
+    },
+    {
+      "question_id": "sum_043",
+      "query": "Depthwise Separable Convolution",
+      "score": 0.5,
+      "coverage_score": 0.5,
+      "alignment_score": 1.0,
+      "success": true,
+      "reason": "The score is 0.50 because the summary is broadly accurate (no contradictions or added information), but it omits several concrete technical details present in the original: it does not state that convolution is described as a linear transformation used to extract image features, that feature maps are flattened before being passed to fully connected layers, that the Softmax layer converts the final vector into a probability distribution with values in [0,1] that sum to one, that using ReLU helps reduce the vanishing gradient problem, or that setting padding='same' keeps input and output spatial sizes equal — these omissions materially reduce the summary's usefulness.",
+      "summary_chars": 2422,
+      "original_text_chars": 9375,
+      "evaluation_time_seconds": 69.574842
+    },
+    {
+      "question_id": "sum_044",
+      "query": "CNN Visualization Techniques",
+      "score": 0.47368421052631576,
+      "coverage_score": 0.7,
+      "alignment_score": 0.47368421052631576,
+      "success": false,
+      "reason": "The score is 0.47 because the summary adds many unsupported specifics that reduce faithfulness (e.g., it explicitly names ReLU though the original only said ‘activation’, asserts image-retrieval applications, claims early-layer filters are edge/color detectors and deeper layers represent abstract concepts, states visualization demonstrates scale invariance, and presents visualization as a debugging/transfer-evaluation tool and as improving face-recognition losses), while omitting a few concrete facts the original did state (that an input image can have depth 3/color channels, that pooling reduces feature/map size, and that the Softmax outputs probabilities summing to one). The summary still conveys the high-level purpose of visualizing CNN feature maps, but the extra unsupported claims justify the below‑average score.",
+      "summary_chars": 2637,
+      "original_text_chars": 9028,
+      "evaluation_time_seconds": 106.09128500000001
+    },
+    {
+      "question_id": "sum_045",
+      "query": "Object Detection (YOLO/R-CNN)",
+      "score": 0.88,
+      "coverage_score": 1.0,
+      "alignment_score": 0.88,
+      "success": true,
+      "reason": "The score is 0.88 because the summary is largely faithful with no contradictions but includes extra, specific technical details not stated in the original (explicit two-stage internals like RPN + classifier/bbox regression, per-grid-cell outputs such as confidence and class distributions, and an expanded applications list including tracking). These are plausible extensions rather than outright errors, so the summary is accurate overall but slightly over-informative.",
+      "summary_chars": 2818,
+      "original_text_chars": 9027,
+      "evaluation_time_seconds": 95.148528
+    },
+    {
+      "question_id": "sum_046",
+      "query": "Semantic Segmentation (U-Net)",
+      "score": 0.68,
+      "coverage_score": 0.8,
+      "alignment_score": 0.68,
+      "success": true,
+      "reason": "The score is 0.68 because the summary largely reflects the original but introduces several unsupported additions and omits some directly answerable points. Extra claims include ‘face segmentation’, that the encoder specifically uses convolution+pooling to reduce resolution and the decoder explicitly up-samples back to original resolution, concrete examples like faces/types of vehicles for segmentation, a specific definition of instance segmentation as distinguishing multiple same‑class objects at the pixel level, assertions that semantic/instance segmentation are necessarily more complex or accurate, the suggestion that U‑Net is typically used instead of raw feature‑map thresholding, and that U‑Net variants are currently a popular choice — none of which the original text explicitly stated. The summary also fails to state two facts the original did: that CNNs are used for classification tasks such as face recognition and that Word2Vec represents each word as a vector corresponding to a row in matrix W. There are no direct contradictions.",
+      "summary_chars": 2785,
+      "original_text_chars": 7471,
+      "evaluation_time_seconds": 98.715788
+    },
+    {
+      "question_id": "sum_047",
+      "query": "Gradient Descent Optimization",
+      "score": 0.7368421052631579,
+      "coverage_score": 0.8,
+      "alignment_score": 0.7368421052631579,
+      "success": true,
+      "reason": "The score is 0.74 because the summary is largely faithful but has a notable contradiction and several unsupported additions. It incorrectly states GD updates θ to “decrease the gradient” instead of using the negative gradient to decrease the loss. It also introduces extra claims not in the original (calling GD ‘effective/popular’; asserting concrete failure modes for too-large/too-small learning rates; naming and even giving the cross-entropy formula and recommending it for logistic regression; and overstating links between initialization/loss choice and particular failure modes). Finally, the summary omits answers to two specific points the original can address: that θ in networks are the weights and whether L1 has a larger slope (hence larger derivative) than L2. These issues explain a moderately high but imperfect score.",
+      "summary_chars": 2536,
+      "original_text_chars": 9307,
+      "evaluation_time_seconds": 91.89219699999998
+    },
+    {
+      "question_id": "sum_048",
+      "query": "Adam Optimizer",
+      "score": 0.6,
+      "coverage_score": 0.6,
+      "alignment_score": 0.7142857142857143,
+      "success": true,
+      "reason": "The score is 0.60 because the summary is largely consistent with the source (no direct contradictions) but adds several unsupported details about Adam—claiming it averages gradients, uses per-parameter learning-rate adjustments/dynamic learning rates, is generally faster, and helps escape poor minima—which the original text did not state. The summary also omitted concrete implementation details the source did provide (answers about output neurons=10 for 10 classes, using sigmoid for binary classification, packaging model into cell.model, and retrieving a layer's weights via get weight), reducing fidelity.",
+      "summary_chars": 1774,
+      "original_text_chars": 8589,
+      "evaluation_time_seconds": 107.203255
+    },
+    {
+      "question_id": "sum_049",
+      "query": "Binary Cross Entropy Loss",
+      "score": 0.4,
+      "coverage_score": 0.4,
+      "alignment_score": 0.7894736842105263,
+      "success": false,
+      "reason": "The score is 0.40 because the summary introduces unsupported claims (e.g., that BCE updates faster than MSE and that a 0.9 momentum recommendation applies to SGD) which are not stated in the original, while omitting several factual details the original does provide (optimizer was Adam; embedding length 300; dictionary size ≈900k; ANN hidden size 64; the RNN/LSTM example was fit for 3 epochs; reported loss ≈0.7 and accuracy ≈51–52%). There are no direct contradictions and the summary is generally coherent, but the added/unverified assertions and missing concrete facts justify the low score.",
+      "summary_chars": 2064,
+      "original_text_chars": 7740,
+      "evaluation_time_seconds": 100.764027
+    },
+    {
+      "question_id": "sum_050",
+      "query": "Categorical Cross Entropy Loss",
+      "score": 0.6,
+      "coverage_score": 0.6,
+      "alignment_score": 0.6190476190476191,
+      "success": true,
+      "reason": "The score is 0.60 because the summary adds several specific technical claims that are not present in the original (e.g., giving the negative-log form -Σ y·log p, defining p_{n,i} as softmax probabilities, asserting softmax outputs sum to 1, and noting numerically-stable combined softmax+CCE implementations), which reduces fidelity. The summary also fails to report concrete example details the original does provide (momentum=0.9, RNN/LSTM hidden size=64, a sigmoid single-output for binary classification, and explicit calls to cell.model.fit), so it omits verifiable details. There are no direct contradictions between the texts, but the extra unsupported specifics and omitted example parameters justify a moderate score.",
+      "summary_chars": 2158,
+      "original_text_chars": 7394,
+      "evaluation_time_seconds": 79.08929
     }
   ]
 }

@@ -28,7 +28,6 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 try:
-    from deepeval import evaluate
     from deepeval.test_case import LLMTestCase
     from deepeval.metrics import SummarizationMetric
     DEEPEVAL_AVAILABLE = True
@@ -498,87 +497,6 @@ class VideoSummaryEvaluator:
             "matched_pairs": [(int(g), int(t), float(iou)) for g, t, iou in matched_pairs],
         }
 
-        # Build IoU matrix (list of tuples for global matching)
-        pairs: List[Tuple[int, int, float]] = []  # (gi, ti, iou)
-        for gi, g in enumerate(gen_segs):
-            for ti, t in enumerate(gt_segs):
-                inter = _segment_intersection(g, t)
-                union = _segment_union(g, t)
-                iou = float(inter) / union if union > 0 else 0.0
-                pairs.append((gi, ti, iou))
-
-        matched_pairs: List[Tuple[int, int, float]] = []
-        matched_gt = set()
-        matched_gen = set()
-
-        if matching_method == "global":
-            # Global greedy: sort all pairs by IoU desc, match highest first (each GT/gen used once)
-            pairs_sorted = sorted(pairs, key=lambda x: x[2], reverse=True)
-            for gi, ti, iou in pairs_sorted:
-                if iou < overlap_threshold:
-                    break
-                if ti in matched_gt or gi in matched_gen:
-                    continue
-                matched_gt.add(ti)
-                matched_gen.add(gi)
-                matched_pairs.append((gi, ti, iou))
-        else:
-            # Per-generated greedy (original): for each generated, pick best unmatched GT
-            # Build quick lookup rows
-            rows = {}
-            for gi, ti, iou in pairs:
-                rows.setdefault(gi, []).append((ti, iou))
-
-            for gi, entries in rows.items():
-                best_ti = None
-                best_iou = 0.0
-                for ti, iou in entries:
-                    if ti in matched_gt:
-                        continue
-                    if iou >= overlap_threshold and iou > best_iou:
-                        best_iou = iou
-                        best_ti = ti
-                if best_ti is not None:
-                    matched_gt.add(best_ti)
-                    matched_pairs.append((gi, best_ti, best_iou))
-
-        matched = len(matched_pairs)
-        generated_count = len(gen_segs)
-        gt_count = len(gt_segs)
-
-        precision = matched / generated_count if generated_count > 0 else 0.0
-        recall = matched / gt_count if gt_count > 0 else 0.0
-        f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-
-        # Duration coverage: fraction of ground-truth total duration covered by any generated segment
-        total_gt_duration = sum([t[1] - t[0] for t in gt_segs]) if gt_segs else 0
-        covered_duration = 0
-        for t in gt_segs:
-            # find any generated that intersects
-            for g in gen_segs:
-                covered_duration += _segment_intersection(g, t)
-        # clamp
-        covered_duration = min(covered_duration, total_gt_duration)
-        duration_coverage = (covered_duration / total_gt_duration) if total_gt_duration > 0 else None
-
-        # mean IoU for matched pairs
-        mean_iou = None
-        if matched_pairs:
-            mean_iou = sum([p[2] for p in matched_pairs]) / len(matched_pairs)
-
-        return {
-            "precision": round(float(precision), 4),
-            "recall": round(float(recall), 4),
-            "f1": round(float(f1), 4),
-            "matched": matched,
-            "generated_count": generated_count,
-            "ground_truth_count": gt_count,
-            "duration_coverage": round(float(duration_coverage), 4) if duration_coverage is not None else None,
-            "mean_iou": round(float(mean_iou), 4) if mean_iou is not None else None,
-            "matched_pairs": matched_pairs,
-            "matching_method": matching_method,
-            "overlap_threshold": overlap_threshold,
-        }
 
 
 def get_video_summary_evaluator() -> VideoSummaryEvaluator:

@@ -87,6 +87,49 @@ def create_alignment_coverage_chart(evaluations: Dict, output_path: Path):
     print(f"✓ Created alignment & coverage chart: {output_path}")
 
 
+def create_overall_scores_chart(evaluations: Dict, output_path: Path):
+    """Create chart showing overall scores for all questions."""
+    scores = evaluations['scores']
+    question_ids = [s['question_id'] for s in scores]
+    overall_scores = [s['score'] for s in scores]
+
+    # Calculate average
+    avg_overall = evaluations['statistics']['overall']['mean']
+
+    # Create figure
+    fig, ax = plt.subplots(figsize=(16, 6))
+    x = np.arange(len(question_ids))
+
+    # Create bars
+    bars = ax.bar(x, overall_scores, alpha=0.8, color='#e67e22', edgecolor='#d35400', linewidth=0.5)
+
+    # Add average line
+    ax.axhline(y=avg_overall, color='#d35400', linestyle='--', linewidth=2,
+               label=f'Average Overall: {avg_overall:.3f}')
+
+    # Customize chart
+    ax.set_xlabel('Question ID', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Overall Score', fontsize=12, fontweight='bold')
+    ax.set_title('Overall Scores for All Questions', fontsize=14, fontweight='bold', pad=20)
+    ax.set_xticks(x)
+    ax.set_xticklabels(question_ids, rotation=45, ha='right', fontsize=8)
+    ax.legend(loc='upper right', fontsize=10)
+    ax.grid(axis='y', alpha=0.3, linestyle=':')
+    ax.set_ylim(0, 1.05)
+
+    # Add value labels on bars (only for scores below 0.5)
+    for i, (bar, score) in enumerate(zip(bars, overall_scores)):
+        if score < 0.5:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height + 0.02,
+                   f'{score:.2f}', ha='center', va='bottom', fontsize=7)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"✓ Created overall scores chart: {output_path}")
+
+
 def create_compression_ratio_chart(evaluations: Dict, output_path: Path):
     """Create chart showing compression ratios for all questions."""
     scores = evaluations['scores']
@@ -149,18 +192,25 @@ def generate_visualizations(run_folder: Path):
     vis_folder = run_folder / "visualizations"
     vis_folder.mkdir(exist_ok=True)
 
-    # 1. Alignment & Coverage Chart
+    # 1. Overall Scores Chart
+    print("Creating overall scores chart...")
+    create_overall_scores_chart(
+        evaluations,
+        vis_folder / "1_overall_scores.png"
+    )
+
+    # 2. Alignment & Coverage Chart
     print("Creating alignment & coverage chart...")
     create_alignment_coverage_chart(
         evaluations,
-        vis_folder / "1_alignment_coverage_scores.png"
+        vis_folder / "2_alignment_coverage_scores.png"
     )
 
-    # 2. Compression Ratio Chart
+    # 3. Compression Ratio Chart
     print("Creating compression ratio chart...")
     create_compression_ratio_chart(
         evaluations,
-        vis_folder / "2_compression_ratios.png"
+        vis_folder / "3_compression_ratios.png"
     )
 
     # Create summary statistics file
@@ -169,6 +219,13 @@ def generate_visualizations(run_folder: Path):
         "run_id": evaluations['run_info']['run_id'],
         "timestamp": evaluations['run_info']['timestamp'],
         "total_questions": evaluations['run_info']['total_questions'],
+        "overall": {
+            "mean": evaluations['statistics']['overall']['mean'],
+            "min": evaluations['statistics']['overall']['min'],
+            "max": evaluations['statistics']['overall']['max'],
+            "median": evaluations['statistics']['overall']['median'],
+            "std": evaluations['statistics']['overall']['std'],
+        },
         "alignment": {
             "mean": evaluations['statistics']['alignment']['mean'],
             "min": evaluations['statistics']['alignment']['min'],
@@ -200,6 +257,9 @@ def generate_visualizations(run_folder: Path):
 
     # Print summary
     print("Summary Statistics:")
+    print(f"  Overall Score      : {summary_stats['overall']['mean']:.3f} "
+          f"(min: {summary_stats['overall']['min']:.3f}, max: {summary_stats['overall']['max']:.3f}, "
+          f"median: {summary_stats['overall']['median']:.3f}, std: {summary_stats['overall']['std']:.3f})")
     print(f"  Alignment Score    : {summary_stats['alignment']['mean']:.3f} "
           f"(min: {summary_stats['alignment']['min']:.3f}, max: {summary_stats['alignment']['max']:.3f})")
     print(f"  Coverage Score     : {summary_stats['coverage']['mean']:.3f} "
