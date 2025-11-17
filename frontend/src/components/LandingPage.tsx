@@ -145,7 +145,7 @@ export const LandingPage: React.FC = () => {
               maxW="2xl"
               mx="auto"
             >
-              An AI assistant which makes you feel like <strong>Ph.D. Vinh-Tiep Nguyen</strong> is always there for you in CS431.
+              An AI assistant which makes you feel like <strong>Ph.D. Vinh-Tiep Nguyen</strong> is always there for you.
             </Text>
             <Text
               fontSize="md"
