@@ -22,7 +22,6 @@ env_path = project_root / ".env"
 if not os.getenv("OPENAI_API_KEY"):
     load_dotenv(dotenv_path=env_path)
 
-from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
 from deepeval.metrics import SummarizationMetric
 

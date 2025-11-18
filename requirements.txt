@@ -48,4 +48,5 @@ pyyaml
 httpx
 tqdm
 pandas
+matplotlib
 

@@ -4,15 +4,16 @@ Evaluation framework for the Q&A task using 3 simplified metrics.
 
 ## 📊 Evaluation Metrics
 
-### 1. **Exact Match** (cho MCQ, 0-1, higher is better)
+### 1. **Exact Match** (chỉ cho MCQ, 0-1, higher is better)
 - **Predicted Choice**: Lựa chọn (a/b/c/d) được AI trả lời
 - **Ground Truth Choice**: Đáp án đúng từ ground truth
 - **Score**: 1.0 nếu khớp, 0.0 nếu sai
 
-### 2. **Answer Correctness** (cho cả MCQ và tự luận, 0-1, higher is better)
+### 2. **Answer Correctness** (chỉ cho tự luận, 0-1, higher is better)
 - **Cosine Similarity**: Cosine similarity giữa embeddings của generated answer và ground truth
 - **LLM Score**: GPT-5-mini đánh giá semantic correctness (có thêm câu hỏi gốc để hiểu context)
 - **Combined Score**: Weighted average (40% cosine + 60% LLM)
+- **Lưu ý**: Metric này KHÔNG áp dụng cho MCQ vì câu trả lời chỉ là A/B/C/D
 
 ### 3. **Citation Accuracy** (0-1, higher is better)
 - **Ground Truth in Retrieved**: Kiểm tra xem ground truth source có nằm trong 10 chunks retrieved không
