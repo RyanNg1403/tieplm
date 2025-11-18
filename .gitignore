@@ -84,6 +84,6 @@ dist
 *.local
 .vite
 
-results/
+# results/
 # Results
 evaluation/qa/test_questions.json

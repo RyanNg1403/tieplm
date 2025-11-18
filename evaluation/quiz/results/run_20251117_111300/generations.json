@@ -1,0 +1,1261 @@
+{
+  "run_info": {
+    "run_id": "run_20251117_111300",
+    "timestamp": "20251117_111300",
+    "total_cases": 50,
+    "model": "gpt-5-nano",
+    "question_type": "mcq"
+  },
+  "cases": [
+    {
+      "case_id": "quiz_eval_001",
+      "timestamp": "2025-11-17T11:13:09.899465",
+      "chunk": {
+        "chunk_id": 1716,
+        "video_id": "Chương 7_qJj_LY1r91U",
+        "video_title": "[CS431 - Chương 8] Part 1_1： Một số biến thể của RNN： LSTM",
+        "video_url": "https://youtu.be/qJj_LY1r91U",
+        "chapter": "Chương 7",
+        "start_time": 498,
+        "end_time": 522,
+        "text": "Chương 7, Part: Vấn đề của RNN chuẩn - Giải thích vì sao mạng RNN dùng hàm tanh dễ dẫn đến mất thông tin dọc chuỗi: mọi input đều bị nạp vào trạng thái ẩn (no filtering), khiến thông tin đầu chuỗi bị “pha loãng” và gây vanishing gradient, trong khi thông tin giữa/ cuối chuỗi bị dồn đặc. Tiếp theo sẽ trình bày cách cải thiện (LSTM).\n\nHoặc là những cái từ gần cuối Thì thông tin rất là dày đặc Và đầy đủ Và Đó là vì cái Mô đun là hàm tanh này nè Gặp bất cứ cái Thông tin nào Của cái ST Khi chúng ta đưa vào Thì cũng đẩy vào bên trong cái ST Tức là thông tin nào nó cũng sẽ Sử dụng cái ST này hết Nó không có cái tính chất gọi là Chắc lọc thông tin"
+      },
+      "question": "Tại sao RNN chuẩn sử dụng hàm tanh dễ dẫn đến mất thông tin dọc chuỗi (vanishing gradient)?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì hàm tanh không có cơ chế lọc nên mọi input đều được nạp vào trạng thái ẩn, làm pha loãng thông tin đầu chuỗi và gây vanishing gradient",
+        "B": "Vì hàm tanh làm tăng kích thước trạng thái ẩn theo thời gian, dẫn đến quá tải bộ nhớ",
+        "C": "Vì hàm tanh luôn gây ra exploding gradient khi chuỗi dài",
+        "D": "Vì hàm tanh loại bỏ hoàn toàn thông tin cũ ở mỗi bước thời gian"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_002",
+      "timestamp": "2025-11-17T11:13:26.913057",
+      "chunk": {
+        "chunk_id": 2208,
+        "video_id": "Chương 6_O57P9YHZOE0",
+        "video_title": "[CS431 - Chương 6] Part 3： Biểu diễn từ bằng Vector",
+        "video_url": "https://youtu.be/O57P9YHZOE0",
+        "chapter": "Chương 6",
+        "start_time": 449,
+        "end_time": 512,
+        "text": "Chương 6, Part: Biểu diễn từ bằng vector — Giải thích khái niệm word vector/word embedding (còn gọi là word representation/word embedding) và trực quan hóa không gian embedding. Minh họa bằng các ví dụ: từ có ngữ cảnh thay thế được (ví dụ “pink”, “white”, “blue”) sẽ nằm gần nhau; “hotel” và “motel” tương tự có nhiều thành phần giống nhau nhưng cũng khác biệt ở một số chiều, nên chỉ tương đồng tương đối. Liên hệ với các giá trị phần tử của vector (dương/âm) để giải thích mức độ tương đồng ngữ cảnh.\n\nRồi đây là 0.2 Rồi đây là con số âm Thì đây cũng là con số âm Như vậy là hai vector này có cái tính tương đồng tương đối là cao Xét về cái cách biểu diễn Theo nguồn cảnh này Và một vector nó còn một cái tên gọi khác Trong các thuật ngữ tiếng Anh Đó chính là Work Abandoning hoặc là Work Representation Thì nếu như sau này chúng ta Xem các cái tài liệu Thì chúng ta thấy là khi nói về Work Vector Hoặc là khi nói về Work Abandoning Hoặc là khi nói về Work Representation Thì tất cả đều có chung một cái ý nghĩa Đó chính là làm sao có thể biểu diễn Một cái từ dưới dạng một cái vector Và để trực quan hóa Cái không gian Abandoning Ở đây chúng ta đang sử dụng đến cái khái niệm ở đây ha Sử dụng cái cách dùng từ ở đây ha Để trực quan hóa một cái từ Trong một cái không gian Abandoning Thì chúng ta sẽ có cái ví dụ này là Ví dụ như sau Ví dụ như các cái từ Pink, White, Blue Thì đây là những cái từ Mà đều Có cái vai trò ngưỡng cảnh giống nhau"
+      },
+      "question": "Tại sao các từ như \"pink\", \"white\", \"blue\" thường nằm gần nhau trong không gian embedding?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì chúng có cùng số ký tự",
+        "B": "Vì chúng có vai trò ngữ cảnh tương tự và xuất hiện trong các ngữ cảnh giống nhau",
+        "C": "Vì chúng cùng bắt đầu bằng chữ cái in hoa",
+        "D": "Vì chúng được ánh xạ vào cùng một vector duy nhất"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_003",
+      "timestamp": "2025-11-17T11:13:44.415711",
+      "chunk": {
+        "chunk_id": 1579,
+        "video_id": "Chương 6_WAiLM7OFU9A",
+        "video_title": "[CS431 - Chương 6] Part 5_1： Hướng dẫn lập trình với Word2Vec",
+        "video_url": "https://youtu.be/WAiLM7OFU9A",
+        "chapter": "Chương 6",
+        "start_time": 0,
+        "end_time": 63,
+        "text": "Chương 6, Part 1: Giới thiệu Word2Vec/Word2Pack - Trình bày mục tiêu: biểu diễn từ và tính độ tương đồng, khai thác quan hệ ngữ nghĩa. Hướng dẫn sử dụng thư viện Gensim (cài đặt pip/conda, import) và lưu ý phải tải mô hình đã huấn luyện từ nguồn bên ngoài.\n\nTrong bài hướng dẫn này thì chúng ta sẽ cùng tìm hiểu về phương pháp biểu diễn từ với mô hình Word2Pack. Ở đây thì chúng ta sẽ có 2 phần. Phần đầu tiên đó là biểu diễn từ và tính toán sự tương đồng giữa 2 từ với nhau. Tiếp theo đó là chúng ta sẽ cùng khai thác một số quan hệ về mặt ngữ nghĩa mà mô hình biểu diễn từ như là Word2Pack có khả năng thực hiện được. Đối với phần về biểu diễn từ và tính toán sự tương đồng giữa các từ với nhau thì chúng ta sẽ sử dụng thư viện GenSim. Nếu như chúng ta sử dụng Google Colab thì mặc nhìn là Google Colab đã cài trước thư viện GenSim rồi. Vì đó thì chúng ta không cần phải cài đặt lại. Nếu như chúng ta sử dụng trên máy tính cá nhân của mình thì mình sẽ phải cài bằng 1 trong 2 cách sau. Một là chúng ta có thể sử dụng lệnh Pip Install GenSim. Hai là chúng ta có thể sử dụng lệnh Pip Install GenSim. Hai đó là chúng ta nếu sử dụng mini-Conda thì chúng ta sẽ dùng lệnh Conda Install-C, ARA-Conda, GenSim."
+      },
+      "question": "Mục tiêu chính của việc sử dụng Word2Vec/Word2Pack trong bài hướng dẫn này là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Tăng tốc độ huấn luyện mô hình ngôn ngữ",
+        "B": "Biểu diễn từ dưới dạng vector, tính độ tương đồng giữa các từ và khai thác quan hệ ngữ nghĩa",
+        "C": "Giảm kích thước bộ từ vựng bằng cách loại bỏ từ hiếm",
+        "D": "Chuẩn hoá văn bản đầu vào bằng kỹ thuật stemming và lemmatization"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_004",
+      "timestamp": "2025-11-17T11:13:54.047918",
+      "chunk": {
+        "chunk_id": 1404,
+        "video_id": "Chương 2_m8uqtMEg8-E",
+        "video_title": "[CS431 - Chương 2] Part 2a_1： Mô hình hồi quy tuyến tính (Linear Regression)",
+        "video_url": "https://youtu.be/m8uqtMEg8-E",
+        "chapter": "Chương 2",
+        "start_time": 2,
+        "end_time": 62,
+        "text": "Chương 2, Part 1: Mô hình hồi quy tuyến tính (Linear Regression) - Giới thiệu tổng quan thiết kế mô hình ML: chọn hàm dự đoán, hàm mất mát, tìm tham số (theta) qua gradient descent. Trường hợp xét: khi y có quan hệ tuyến tính với x (đồng biến hoặc nghịch biến) dùng hàm dự đoán tuyến tính y = a x + b (ghi lại bằng ký hiệu theta).\n\nmô hình tiếp theo chúng ta sẽ tìm hiểu đó chính là mô hình hồi quy tiến tính hay là linear regression thì chúng ta sẽ nhắc lại cái mô hình máy học tổng quát với cái dữ kiện đầu vào x giá trị dự đoán y cả và chúng ta mong muốn sắp xỉ biến đệ giá trị thật thì chúng ta có 3 cái công việc cần phải làm khi thiết kế một cái mô hình đầu tiên đó là thiết kế cái hàm dự đoán hai đó là chúng ta sẽ thiết kế cái hàm độ lỗi và ba đó là đi tìm tham số theta sao cho cái hàm độ lỗi này thành x và công việc này thì đã giải được bằng tập toán gradient descent thế thì ở đây chúng ta có một cái nhấn mạnh đó là tùy vào cái tính chất của cái cặp dữ liệu xy để chúng ta thiết kế hai cái hàm này thế thì chúng ta sẽ xem xét đến cái tình huống đầu tiên đó là giá trị đầu ra y nó có một cái mối quan hệ tuyến tính với cái giá trị đầu vào x thì thế nào gọi là tuyến tính tuyến tính có nghĩa là khi x tăng y S hoặc là khi x thay đổi x tăng"
+      },
+      "question": "Theo video, ba công việc chính khi thiết kế mô hình hồi quy tuyến tính là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Chọn hàm dự đoán, thiết kế hàm mất mát, tìm tham số theta (ví dụ bằng gradient descent)",
+        "B": "Chuẩn hóa dữ liệu, tăng cường dữ liệu, kiểm tra chéo (cross-validation)",
+        "C": "Lựa chọn kiến trúc mạng, chọn hàm kích hoạt, tối ưu hóa siêu tham số",
+        "D": "Thu thập dữ liệu, triển khai mô hình, giám sát sau khi đưa vào sản xuất"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_005",
+      "timestamp": "2025-11-17T11:14:07.978364",
+      "chunk": {
+        "chunk_id": 2310,
+        "video_id": "Chương 7_IKD0O35NOUI",
+        "video_title": "[CS431 - Chương 7] Part 3_2： Một số vấn đề của mạng RNN",
+        "video_url": "https://youtu.be/IKD0O35NOUI",
+        "chapter": "Chương 7",
+        "start_time": 450,
+        "end_time": 511,
+        "text": "Chương 7, Part: Một số vấn đề của RNN (vanishing gradients) — Giải thích nguyên nhân vanishing do hàm kích hoạt (sigmoid/tanh) và giá trị nhỏ khi nhân dãy đạo hàm; giới thiệu giải pháp chuyển sang ReLU (max(0,x)) vì đạo hàm =1 khi x>0 giúp ngăn tiêu biến gradient. Tiếp theo sẽ bàn đến khắc phục liên quan tới ma trận trọng số W (khởi tạo, ma trận đơn vị).\n\nNó cũng là những cái con số Có giá trị tuyệt đối Mấy hôm một Như vậy thì sigmoid và tanh Không giúp cho mình Giảm bớt cái hiện tượng vanishing này Mà chúng ta sẽ sử dụng Cái hàm Là hàm relu Tại vì sao Hàm relu Là Có cái công thức như sao Là bằng max Của không Và x Như vậy thì Hàm relu Nó sẽ có cái đạo hàm Nó sẽ có cái đạo hàm Với x mà lớn hơn không Thì đạo hàm của nó sẽ là bằng một Đạo hàm của nó sẽ là bằng một Như vậy nó sẽ ngăn Nó sẽ giúp cho mình ngăn ngừa Nó sẽ giúp cho mình ngăn ngừa Cái đạo hàm của mình Đạo hàm Fn Fn trừ một Nó sẽ ngăn cho cái đạo hàm của mình Bị tiêu biến dần Cái radian Thì Đây cũng là một cái lý do Tại sao Từ năm 2012 Sau cái Cuộc thi MNS Thì tất cả các cái Tất cả gần như tất cả các cái mô hình học sâu Đều chuyển từ sigmoid"
+      },
+      "question": "Tại sao chuyển sang hàm kích hoạt ReLU giúp giảm hiện tượng vanishing gradients trong mạng RNN/Deep NN?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì đạo hàm của ReLU bằng 1 khi x > 0 nên trong quá trình backpropagation gradient không bị co nhỏ qua nhiều lớp",
+        "B": "Vì ReLU có giá trị đầu ra bị giới hạn trong khoảng [-1, 1] nên giữ gradient ổn định",
+        "C": "Vì ReLU là một hàm bão hòa giống sigmoid/tanh nên tránh được vanishing gradient",
+        "D": "Vì ReLU giảm số lượng tham số của mạng nên làm giảm tiêu biến gradient"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_006",
+      "timestamp": "2025-11-17T11:14:21.079437",
+      "chunk": {
+        "chunk_id": 2044,
+        "video_id": "Chương 4_KoBIBuqGb9A",
+        "video_title": "[CS431 - Chương 4] Part 1_2： Ôn tập kiến trúc mạng CNN và một số biến thể phổ biến hiện nay",
+        "video_url": "https://youtu.be/KoBIBuqGb9A",
+        "chapter": "Chương 4",
+        "start_time": 549,
+        "end_time": 610,
+        "text": "Chương 4: Ôn tập CNN — Giải thích ý tưởng của VGG: thay một kernel 5x5 bằng hai convolution 3x3 liên tiếp. Phân tích receptive field: một điểm trên feature map cuối cùng chịu ảnh hưởng vùng 5x5 trên input thông qua hai lớp 3x3 liên tiếp, nên về mặt tổng hợp thông tin hai cách tương đương. Liên hệ với phần trước về thay 5x5 bằng hai 3x3.\n\nvới một cái kernel kích thước là 3x3 với một cái kernel kích thước là 3x3 rồi sau đó chúng ta sẽ tạo ra một cái tấm ảnh rồi sau đó chúng ta sẽ tạo ra một cái tấm ảnh để tạo ra một cái tấm ảnh khác để tạo ra một cái tấm ảnh khác   thì bây giờ chúng ta sẽ xem cái điểm đặc trưng ở trên cái feature map cuối cùng ở đây thì cái điểm đặc trưng này nó được tạo bởi một cái vùng có kích thước là 3x3 của cái feature map này và cái vùng 3x3 này thì nó được tạo ra bởi cái vùng 5x5 5x5  và cái vùng 3x3 này ví dụ như cái điểm này thì nó được tạo ra bởi cái vùng này cái điểm này thì được tạo ra bởi cái vùng này rồi cái điểm này thì được tạo ra bởi cái vùng này như vậy thì cái feature map"
+      },
+      "question": "Theo phân tích receptive field trong video, hai lớp convolution liên tiếp với kernel 3×3 sẽ có receptive field tương đương với kernel kích thước nào trên input?",
+      "question_type": "mcq",
+      "options": {
+        "A": "3×3",
+        "B": "5×5",
+        "C": "7×7",
+        "D": "9×9"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_007",
+      "timestamp": "2025-11-17T11:14:46.680710",
+      "chunk": {
+        "chunk_id": 1641,
+        "video_id": "Chương 3_KeNRQw9j_ps",
+        "video_title": "[CS431 - Chương 3] Part 3_1： Cài đặt mạng CNN",
+        "video_url": "https://youtu.be/KeNRQw9j_ps",
+        "chapter": "Chương 3",
+        "start_time": 299,
+        "end_time": 365,
+        "text": "Chương 3, Video “Cài đặt mạng CNN” (299.1–365.8s): Tiếp tục tiền xử lý dữ liệu (chuẩn hóa ảnh từ [0,255] về [0,1] và chuyển nhãn sang one-hot). Sau đó chuyển sang cài đặt mô hình CNN: định nghĩa các phương thức như constructor, build, train, load_gateway, v.v.; nhắc phải cấu hình input_dim, số filter (ví dụ 6,16) và kích thước lớp fully connected (120,84). Lưu ý quá trình train tốn thời gian nếu bỏ sót bước/cấu hình.\n\ntừ 0 đến 255 thì chúng ta sẽ đưa về cái miền giá trị là từ 0 cho đến 1 để giúp cho cái quá trình huấn luyện nó được nhanh hơn và đồng thời là cái giá trị i của mình cũng sẽ được chuyển đổi từ cái dạng nhãn và các chỉ số từ 0 cho đến 9 chúng ta sẽ đưa nó về cái dạng one hot encoding cái dạng one hot encoding thì one hot encoding nó nghĩa là gì là ví dụ số 0 thì chúng ta sẽ đưa một cái vector trong đó có duy nhất một cái phần tử bật lên là 1 và tất cả các cái phần tử còn lại sẽ để là số 0 và tương tự như vậy cho số 2 đi thì nó sẽ bật lên là 0 ở đây là 0 ở đây là 0 và nó sẽ bật lên ở đây và tất cả các cái phần tử còn lại sẽ để là số 0 thì đây là cái dạng one hot encoding rồi bước tiếp theo đó là chúng ta sẽ tiến hành cài đặt cái thực toán huấn luyện hay cụ thể đó là cài đặt cái mô hình thì cái mạng cnn ở đây chúng ta sẽ có các cái phương thức như là build rồi trend rồi constructor v.v"
+      },
+      "question": "Tại sao trong tiền xử lý dữ liệu thường đưa giá trị pixel từ [0,255] về [0,1] trước khi huấn luyện mạng CNN?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Để giảm kích thước bộ dữ liệu trên ổ đĩa",
+        "B": "Giúp quá trình huấn luyện nhanh hơn và ổn định hơn do giá trị chuẩn hóa nhỏ hơn",
+        "C": "Bắt buộc để chuyển nhãn sang dạng one-hot encoding",
+        "D": "Để tăng số lượng lớp trong mạng CNN"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_008",
+      "timestamp": "2025-11-17T11:15:00.727304",
+      "chunk": {
+        "chunk_id": 1982,
+        "video_id": "Chương 9_iMfkIHkU6NM",
+        "video_title": "[CS431 - Chương 10] Part 7： Một số ứng dụng của kiến trúc mạng Transformer",
+        "video_url": "https://youtu.be/iMfkIHkU6NM",
+        "chapter": "Chương 9",
+        "start_time": 750,
+        "end_time": 808,
+        "text": "Chương 9, Part: Prompting với Transformer — Trình bày phương pháp cho mô hình học từ ngữ cảnh bằng cách đưa cặp input–output (ví dụ câu báo chí → sentiment: positive/neutral/negative). Giải thích các kiểu prompting: zero-shot (không cho mẫu), one-shot (1 mẫu), few-shot (vài mẫu). Đề cập kết hợp FileTool/adapter và instruction tuning (tinh chỉnh mô hình bằng hướng dẫn) để cải thiện khả năng tổng quát hóa. Tiếp đoạn trước về ví dụ cặp mẫu sentiment.\n\nThe company anticipated Is operating profit Is operating profit to improve Thì chúng ta sẽ để dấu xuyệt xuyệt Để chống Thì mô hình nó sẽ tự biết là Ở trên đây là positive, ở trên đây là neutral Ở đây là negative Thì tự nó sẽ điền vô chỗ chống này là Positive hay negative hay neutral Nó sẽ tự biết mối quan hệ giữa Cái cặp input output này Mô hình nó sẽ tự học theo cái ngữ cảnh Đây là 3 cái context để giúp cho mình Đưa ra cái phán đoán tại cái vị trí Output cho cái sample mới này Tương tự như vậy cho cái bài toán Là phân loại văn mãn Chúng ta sẽ cho ở trước Đây là chủ đề về finance, chủ đề về sports Chủ đề về tech Thì bên đây nó sẽ từ cái Cái input này nó sẽ đưa ra Cái phán đoán output của mình Thì đây là phương pháp prompting Và chúng ta sẽ có một số Thuật ngữ trong cái phương pháp này Đó là zero Zero sort prompting"
+      },
+      "question": "Trong phương pháp prompting với Transformer, khác biệt chính giữa zero-shot và few-shot prompting là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Zero-shot không cung cấp mẫu input–output nào, còn few-shot cung cấp vài cặp mẫu để mô hình học ngữ cảnh",
+        "B": "Zero-shot yêu cầu phải tinh chỉnh mô hình (instruction tuning), còn few-shot thì không",
+        "C": "Zero-shot chỉ dùng một mẫu duy nhất, còn few-shot không sử dụng mẫu nào",
+        "D": "Zero-shot luôn sử dụng FileTool/adapter, còn few-shot không dùng"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_009",
+      "timestamp": "2025-11-17T11:15:13.927838",
+      "chunk": {
+        "chunk_id": 1953,
+        "video_id": "Chương 3_SKcHedTJIL0",
+        "video_title": "[CS431 - Chương 3] Part 2_1： Một số thành phần của mạng CNN",
+        "video_url": "https://youtu.be/SKcHedTJIL0",
+        "chapter": "Chương 3",
+        "start_time": 1097,
+        "end_time": 1123,
+        "text": "Chương 3, Part: Activation trong CNN — Giải thích lý do dùng ReLU thay cho sigmoid: ReLU giảm hiện tượng vanishing gradient (đạo hàm tiêu biến) giúp quá trình huấn luyện mạng sâu nhanh và ổn định hơn. Liên quan tới phần trước về cần activation phi tuyến ngay sau phép convolution.\n\nvới cái việc sử dụng tầm Activation là relu thì nó đã giúp cho mình giảm cái hiện tượng vanishing radian tức là tiêu biến cái đạo hàm đạo hàm của mình mà trong quá trình cập nhật mà nó càng lúc càng nhỏ thì dẫn đến cái bước cập nhật của mình nó sẽ càng chậm thì Activation mà dùng hàm relu thì cái đạo hàm của mình nó sẽ bình tĩnh vì không có bị cái hiện tượng này và không bị cái hiện tượng này thì nó sẽ hỗn luyện và nhanh hơn"
+      },
+      "question": "Tại sao ReLU thường được chọn làm hàm kích hoạt trong CNN thay vì sigmoid?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì ReLU giảm hiện tượng vanishing gradient, giúp huấn luyện mạng sâu nhanh và ổn định hơn",
+        "B": "Vì ReLU ngăn chặn overfitting bằng cách tắt ngẫu nhiên các neuron",
+        "C": "Vì ReLU làm cho mô hình trở nên tuyến tính, giúp đơn giản hóa học",
+        "D": "Vì ReLU làm tăng số lượng tham số để cải thiện biểu diễn"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_010",
+      "timestamp": "2025-11-17T11:15:23.954678",
+      "chunk": {
+        "chunk_id": 2162,
+        "video_id": "Chương 2_jl9v7IDMTsk",
+        "video_title": "[CS431 - Chương 2] Part 3b_1： Cài đặt mô hình logistic regression",
+        "video_url": "https://youtu.be/jl9v7IDMTsk",
+        "chapter": "Chương 2",
+        "start_time": 798,
+        "end_time": 856,
+        "text": "Chương 2, Video: Cài đặt Logistic Regression — Giải thích hiện tượng loss giảm trên tập train nhưng cao hơn trên validation (overfitting). Thảo luận về tiến trình training theo epoch (num_epoch) và so sánh training loss vs validation loss do dữ liệu validation mới hơn, không lặp lại như train. Liên quan tới việc điều chỉnh và theo dõi quá trình fit/model.\n\nrồi bây giờ mọi người thấy là below đang từ 3 giảm xuống còn 2 giảm xuống còn 1 giảm xuống còn 0 bẻ mây tức là nó đang đi theo đúng hướng như mình mong muốn rồi thì chút nữa chúng ta sẽ ờm và lưu ý là chúng ta sẽ thấy là có 2 is thrown vềここ là 6 đại lượng là loss của thằng trend và validation loss thì cái loss của tập trend nó sẽ thường nó sẽ thấp hơn trong trường hợp này nó còn thấp hơn cả cái validation loss thì cũng đúng thôi tại vì nó sẽ có cái hiện tượng gọi là overfitting và loss cho tập trend thì thường nó sẽ thấp hơn so với validate validate thường cái dữ liệu của mình nó sẽ mới hơn nó sẽ không có lặp lại trên cái tập trend do đó thì loss của thằng validation sẽ cao hơn so với loss của tập trend"
+      },
+      "question": "Nếu trong quá trình huấn luyện training loss giảm liên tục nhưng validation loss vẫn cao hơn và không giảm tương ứng, nguyên nhân hợp lý nhất là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Mô hình bị overfitting vào tập huấn luyện",
+        "B": "Mô hình bị underfitting do thiếu biểu diễn",
+        "C": "Dữ liệu validation bị rò rỉ từ tập huấn luyện",
+        "D": "Kích thước batch quá nhỏ làm mất ổn định gradient"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_011",
+      "timestamp": "2025-11-17T11:15:34.061160",
+      "chunk": {
+        "chunk_id": 1744,
+        "video_id": "Chương 6_utOha-d0prc",
+        "video_title": "[CS431 - Chương 6] Part 2： Hướng tiếp cận Deep learning cho các bài toán NLP",
+        "video_url": "https://youtu.be/utOha-d0prc",
+        "chapter": "Chương 6",
+        "start_time": 249,
+        "end_time": 310,
+        "text": "Chương 6, Part: Vai trò của Deep Learning trong NLP — So sánh approaches cổ điển vs học sâu: trước đây hệ thống dựa trên rules và feature do chuyên gia thiết kế; classic ML cần hand-crafted features (ví dụ filter/weight do con người thiết kế cho ảnh). Deep Learning/Representation Learning cho phép học tự động trọng số và đại diện từ dữ liệu (ví dụ LSTM, embeddings), loại bỏ nhiều thiết kế thủ công và cải thiện hiệu suất. Liên hệ với phần trước về tốc độ tính toán (CPU vs GPU) và cải tiến mô hình/thuật toán.\n\nthành tựu của các cái mạng học sâu hiện nay là đã giúp cho Deep Learning phát triển một cách vượt mập. Rồi, và sơ đồ ở bên đây thì chúng ta có thể thấy là trước đây các cái hệ thống của mình nó sẽ dựa trên rule hoặc là những cái hệ thống và gọi là kinh điển thì nó đều phải có những cái gọi là hand design program tức là các cái chương trình này sẽ do những cái chi thức của các cái chuyên gia thi kế, thi kế ra. Và ở cái mức độ là classic machine learning thì nó sẽ có các cái feature, có cái công cụ để mapping, các cái feature và thậm chí là các cái chuyên gia họ sẽ phải thiết kế các cái đặc trưng này. Ví dụ khi chúng ta làm việc trên hình ảnh thì chúng ta biết là mối quan hệ giữa các cái pixel với các cái nguồn đơn chậm chúng ta sẽ thiết kế các cái phép biến đổi là filter và trọng số của các filter sẽ là do"
+      },
+      "question": "Điểm khác biệt chính của Deep Learning/Representation Learning so với các approach cổ điển trong NLP là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Yêu cầu thiết kế các đặc trưng (features) thủ công bởi chuyên gia",
+        "B": "Tự động học trọng số và các đại diện (embeddings) từ dữ liệu, giảm thiết kế thủ công",
+        "C": "Hoạt động chủ yếu dựa trên các quy tắc do con người viết và không cần huấn luyện",
+        "D": "Chỉ mang lại lợi ích về tốc độ tính toán mà không cải thiện hiệu suất mô hình"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_012",
+      "timestamp": "2025-11-17T11:15:47.508622",
+      "chunk": {
+        "chunk_id": 2264,
+        "video_id": "Chương 8_--JpgsDEL40",
+        "video_title": "[CS431 - Chương 9] Part 1_2： Giới thiệu bài toán Dịch máy",
+        "video_url": "https://youtu.be/--JpgsDEL40",
+        "chapter": "Chương 8",
+        "start_time": 499,
+        "end_time": 558,
+        "text": "Chương 8, Giới thiệu dịch máy: Giải thích BLEU là chỉ số đánh giá phổ biến nhưng không hoàn hảo — nó đo tương đồng n-gram giữa bản dịch máy và bản dịch chuyên gia, cho phép so sánh tương đối giữa phương pháp nhưng có thể cho score thấp dù bản dịch hợp lý (vì đa dạng cách dịch, lỗi ngôn ngữ, bias từ bản tham chiếu). Ví dụ minh họa cách khớp n-gram (n=1..4) giữa bản dịch máy và người để tính precision trung bình điều hòa (BLEU).\n\ntuy nhiên cho tới điểm hiện tại thì blur là một trong những cái độ đo đánh giá mà tin cậy nó không hoàn hảo nhưng mà nó vẫn có khả năng thể hiện được cái sự đối sánh tương đối giữa các cái phương pháp dịch máy với nhau nó thể hiện được cái sự so sánh tương đối ví dụ như phương pháp này tốt hơn phương pháp kia thì cái blur này nó sẽ tốt hơn cái blur kia tuy nhiên tuy nhiên nếu mà cái giá trị blur đó nó có thể hiện được là cái bản dịch này là thật sự đúng không  là tốt hay không thì nó chưa thể hiện được nhưng nó có thể giúp cho chúng ta so được là phương pháp này nó có tốt hơn phương pháp kia hay không rồi và cái nguyên nhân cho cái việc là score thấp đó chính là có ít số lượng cái nram trùng với lại cái bản dịch của chuyên gia thì nếu như chúng ta đưa ra một cái bản dịch mà nó không so khớp được nó không khớp từ nào với lại các chuyên gia thì nó sẽ có cái score thấp"
+      },
+      "question": "Điều nào sau đây mô tả chính xác tính chất của chỉ số BLEU trong đánh giá dịch máy?",
+      "question_type": "mcq",
+      "options": {
+        "A": "BLEU đo chất lượng dịch bằng cách đánh giá tương đồng ngữ nghĩa, do đó luôn phản ánh đúng chất lượng tuyệt đối của bản dịch.",
+        "B": "BLEU tính toán độ trùng khớp n-gram giữa bản dịch máy và bản tham chiếu, hữu ích để so sánh tương đối giữa các phương pháp nhưng có thể cho điểm thấp dù bản dịch hợp lý do đa dạng cách diễn đạt và bias từ bản tham chiếu.",
+        "C": "BLEU chủ yếu đánh giá tốc độ dịch và độ phức tạp tính toán của mô hình dịch máy.",
+        "D": "BLEU tăng khi bản dịch sử dụng từ đồng nghĩa không xuất hiện trong bản tham chiếu, nên nó ưu tiên tính sáng tạo của bản dịch."
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_013",
+      "timestamp": "2025-11-17T11:15:59.173692",
+      "chunk": {
+        "chunk_id": 1491,
+        "video_id": "Chương 5_RVFApjx4KKI",
+        "video_title": "[CS431 - Chương 5] Part 1-2： Ứng dụng trong bài toán phân loại và bài toán truy vấn ảnh",
+        "video_url": "https://youtu.be/RVFApjx4KKI",
+        "chapter": "Chương 5",
+        "start_time": 148,
+        "end_time": 212,
+        "text": "Chương 5, Part: Ứng dụng phân loại và truy vấn ảnh — Giải thích bài toán phân loại phân lớp tinh (fine-grained classification). Nêu ví dụ: nhận dạng các giống hoa (Pascal/Flowers dataset) và phân biệt nhiều giống trong cùng loài; bài toán phân loại xe với Stanford Cars dataset; mở rộng sang bài toán nhận diện khuôn mặt (face recognition) là phân loại tinh để phân biệt các cá thể trong cùng một loại. Liên quan đến phần trước về kiến trúc CNN (ReLU, pooling, fully connected, softmax).\n\nnhưng mà bây giờ trong các cái loại hoa thì nó có rất nhiều những cái loại hoa mà thuộc các cái chi các cái nhánh trong giới sinh vật hoa lài, hoa hỏe, hoa hồng rồi thậm chí là trong hoa hồng nó cũng có rất nhiều cái giống hoa hồng hoa cúc nó cũng có rất nhiều cái giống hoa cúc thì ở đây chính là five grand object classification và trong cái hình ở đây thì chúng ta có rất nhiều cái dấu hoa hồng  chúng ta có nó thuộc cái bộ data set đó là passport flower data set tương tự như vậy cho cái bài toán phân loại xe thì có rất nhiều cái loại xe khác nhau và thậm chí là trong cùng một cái hãng xe thì chúng ta sẽ có rất nhiều cái dòng xe hạng A, hạng B, hạng C, v.v rồi ứng với từng cái hạng thì nó cũng sẽ có các cái đời xe thế thì ở đây chúng ta sẽ có một cái bộ data set đó là Stanford Car Data Set để thu thập và phân loại các cái loại xe các cái dòng xe từ xưa đến nay rồi ngoài ra thì nó cũng có một cái bài toán"
+      },
+      "question": "Đặc điểm chính của bài toán 'fine-grained classification' (phân loại phân lớp tinh) là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Phân loại các đối tượng thuộc các lớp hoàn toàn khác nhau (ví dụ: chó vs mèo)",
+        "B": "Phân biệt các giống hoặc dòng rất giống nhau trong cùng một loại (ví dụ: các giống hoa, các dòng xe, cá nhân trong nhận diện khuôn mặt)",
+        "C": "Xác định vị trí chính xác của đối tượng trong ảnh (object localization)",
+        "D": "Giảm kích thước mô hình để tăng tốc suy luận trên thiết bị nhúng"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_014",
+      "timestamp": "2025-11-17T11:16:10.034323",
+      "chunk": {
+        "chunk_id": 2200,
+        "video_id": "Chương 6_O57P9YHZOE0",
+        "video_title": "[CS431 - Chương 6] Part 3： Biểu diễn từ bằng Vector",
+        "video_url": "https://youtu.be/O57P9YHZOE0",
+        "chapter": "Chương 6",
+        "start_time": 50,
+        "end_time": 110,
+        "text": "Chương 6, Part (Vector hóa từ): Giới thiệu các cách biểu diễn từ bằng vector. Nêu one-hot vector (vị trí từ trong từ điển =1, còn lại =0), khả năng biểu diễn cho câu/đoạn (backward) và khái niệm ngữ cảnh: từ mang nghĩa phụ thuộc bối cảnh (ví dụ “ông già” thay đổi nghĩa theo cuộc trò chuyện). Tiếp theo sẽ giải thích chi tiết One-Hot representation.\n\nTức là một từ của mình trong tập từ điển nó xuất hiện ở vị trí nào Thì tương ứng là trong cái vector Cái vector của mình, cái vị trí đó sẽ bật lên là 1 và những phần của từ còn lại sẽ bật là 0 Chút nữa chúng ta sẽ nói rõ hơn cái ví dụ này Cái thứ hai đó là chúng ta có thể sử dụng cái mô hình backward Tức là cái vector của mình nó có thể biểu diễn cho một câu hoặc là một đoạn văn Rồi và thứ ba tiếp theo đó chính là chúng ta có thể biểu diễn từ bằng ngưỡng cảnh Tức là một từ nếu như đứng một mình nó Thì nó sẽ không có được ý nghĩa trọng mẹ Mà chúng ta phải đối chiếu nó trong cái ngưỡng cảnh xung quanh Ví dụ như cái từ ông già hồi nãy đó Trong cái từ tiếng Việt Cái từ ông già này nếu mà mình để một nghĩa thông thường Thì mình sẽ hiểu đó là một người lớn tuổi Nhưng mà nếu như mình đang nói về hai người bạn thân với nhau Đang trao đổi về chuyện gia đình"
+      },
+      "question": "Một hạn chế chính của biểu diễn one-hot cho từ được nêu trong video là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Chỉ biểu diễn vị trí từ trong từ điển (1 ở vị trí đó, còn lại 0) nên không phản ánh ngữ nghĩa hoặc mối quan hệ giữa các từ",
+        "B": "Cho phép biểu diễn đầy đủ ngữ cảnh của từ trong câu",
+        "C": "Tự động giảm số chiều của biểu diễn từ",
+        "D": "Là một mô hình backward để biểu diễn cả câu và đoạn văn"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_015",
+      "timestamp": "2025-11-17T11:16:27.477790",
+      "chunk": {
+        "chunk_id": 2078,
+        "video_id": "Chương 2_aXB_C9IAyMg",
+        "video_title": "[CS431 - Chương 2] Part 5a： Mạng neural Network (Neural Network)",
+        "video_url": "https://youtu.be/aXB_C9IAyMg",
+        "chapter": "Chương 2",
+        "start_time": 599,
+        "end_time": 662,
+        "text": "Chương 2, Part: Mạng Neural Network — Giải thích hàm loss cross-entropy kết hợp với softmax cho đầu ra mạng: ŷ = softmax(θ·x), loss là trung bình cross-entropy giữa ŷ và y trên toàn bộ mẫu. Diễn giải công thức vector hóa, nhắc cách ghép các thành phần softmax/sigmoid trong biểu diễn mạng, và kết luận đây là hàm lỗi cho neural network trước khi chuyển sang kiến trúc phức tạp hơn (CNN, RNN).\n\nchúng ta lưu ý là ở đây cái công thức này là công thức của softmax nhưng mà công thức này đúng ra nó phải là cái công thức ở bên tay trái vì công thức này nó quá lớn nên ở đây chúng ta có thể viết lại công thức ở đây là mình dùng nhầm của softmax công thức này nếu đúng nó phải là y ngã trong đó y ngã y ngã nó chính là bằng cái công thức này nếu mà đưa cái công thức đó qua đây thì nó rất là dài do đó mình viết gọn lại là y ngã của rồi tính softmax của y ngã và sự là nguyên cái này nó sẽ là cái softmax luôn nguyên cái này là softmax luôn như vậy là y ngã và y cross entropy của y ngã và y rồi công thức này mình sẽ viết lại là trung bình cộng của cross entropy của y ngã và y trong đó y ngã thì nó sẽ là bằng softmax mình chép công thức ở slide trước qua softmax của theta thứ l"
+      },
+      "question": "Trong mô hình với đầu ra ŷ = softmax(θ·x) và hàm lỗi là trung bình cross-entropy giữa ŷ và y, vai trò chính của softmax là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Chuyển các logits thành phân phối xác suất hợp lệ (giá trị không âm và tổng bằng 1)",
+        "B": "Giảm hiện tượng overfitting bằng cách thêm nhiễu vào đầu ra",
+        "C": "Biến đổi đầu vào thành không gian có thứ tự tuyến tính",
+        "D": "Chuẩn hóa kích thước của vector tham số θ"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_016",
+      "timestamp": "2025-11-17T11:16:40.347102",
+      "chunk": {
+        "chunk_id": 1897,
+        "video_id": "Chương 2_DGNdZGdwihs",
+        "video_title": "[CS431 - Chương 2] Part 5b_1： Cài đặt mạng neural network",
+        "video_url": "https://youtu.be/DGNdZGdwihs",
+        "chapter": "Chương 2",
+        "start_time": 49,
+        "end_time": 113,
+        "text": "Chương 2, Video: Cài đặt mạng neural network (49.4s–113.0s) — Minh họa mạng đơn giản gồm: lớp input, một Hidden Layer và một node output duy nhất vì dữ liệu có hai phân lớp (hình tròn vs tam giác). Dùng hàm sigmoid cho output (giá trị 0–1) thay vì softmax, giữ lại Y và Y_balance, và sẽ dùng binary cross-entropy làm hàm mất mát. Kế tiếp sẽ cài đặt ví dụ tạo dữ liệu vòng tròn bằng scikit-learn (make_circles).\n\nThì ở đây nó chỉ cần có một lớp ẩn thôi Ở đây là một Hidden Layer Cái mạng Neural Network đúng của chúng ta thì nó có thể có một, hai hoặc là rất nhiều cái Hidden Layer Nhưng mà trong trường hợp này thì chúng ta chỉ cần minh họa với một Hidden Layer Cái thứ hai đó là cái tập điểm này của mình là chỉ có hai thành phần Do đó thì ở đây chúng ta sẽ có duy nhất một cái node output cuối cùng Thì ở đây là chúng ta sẽ có một cái lớp input Và ở đây là chúng ta sẽ có một cái lớp output cuối cùng thì ở đây là chúng ta sẽ có một cái lớp input Một cái Hidden Layer và một cái output Và cái Output này Thì do là cái giá trị của mình nó chỉ có một phân lớp À xíu gọi nó có hai phân lớp Nên ở đây chúng ta không có sử dụng hàm Summask Mà chúng ta sẽ sử dụng một cái hàm sigmoid Tại vì sigmoid nó sẽ đưa cái miền giá trị của mình về cái đoạn từ 0 đến 1 Và lúc này thì cái giá trị Y và Ybalance này thì mình phải giữ lại ở trên này"
+      },
+      "question": "Vì sao trong ví dụ này mạng chỉ cần một node output và sử dụng hàm sigmoid thay vì softmax?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì bài toán chỉ có hai phân lớp, nên một node với sigmoid cho xác suất trong khoảng 0–1 phù hợp cho phân lớp nhị phân",
+        "B": "Vì softmax không hoạt động với dữ liệu tạo bằng make_circles",
+        "C": "Vì sigmoid luôn cho độ chính xác cao hơn softmax cho mọi bài toán",
+        "D": "Vì chỉ có một node output giúp giảm số lượng tham số mà không ảnh hưởng tới lựa chọn hàm kích hoạt"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_017",
+      "timestamp": "2025-11-17T11:16:55.914478",
+      "chunk": {
+        "chunk_id": 1451,
+        "video_id": "Chương 6_30kCjQ0BdUc",
+        "video_title": "[CS431 - Chương 6] Part 1： Giới thiệu lĩnh vực xử lý ngôn ngữ tự nhiên (NLP)",
+        "video_url": "https://youtu.be/30kCjQ0BdUc",
+        "chapter": "Chương 6",
+        "start_time": 499,
+        "end_time": 560,
+        "text": "Chương 6, Part: Giới thiệu NLP – Vấn đề ngữ nghĩa và ngữ cảnh trong ngôn ngữ tự nhiên. Giảng viên nêu các thách thức: thành ngữ (ví dụ “ra ngô ra khoai” không theo nghĩa đen), ngôn ngữ mạng/từ ngữ sáng tạo (chèn tiếng Anh, dùng số thay chữ, biến thể chính tả), và nhu cầu hiểu ngữ cảnh thực tế cùng kiến thức chuyên môn để giải nghĩa chính xác. Liên hệ tới khó khăn khi xử lý dữ liệu mạng xã hội.\n\nKhi chúng ta phải làm việc với những cái ngôn ngữ mà không có Chủng Và xuất phát từ Cái mạng xã hội Tiếp theo Đó là vấn đề về Cái ngữ nghĩa của câu nó sẽ không liên quan trực tiếp Đến cái mặt chữ của nó Ví dụ như Ở đây chúng ta có một cái thành ngữ là ra ngô ra khoai Hở Ví dụ như là làm ra ngô ra khoai Thì Không có nghĩa là Chúng ta sẽ tạo ra Các Cái Trái ngô trái khoai Mà ở đây Ý của nó đó chính là Làm việc đến nơi đến chỗ đó Làm việc triệt để Làm việc cho ra thành quả Thì đó là cái ý nghĩa của cái câu ra ngô ra khoai Chứ không hề nhắc gì đến cái Hai cái Cái cái cái loại trái cây ở đây đó là Trái ngô và trái khoai Và Ngoài ra thì Tất cả những cái Yếu tố trên nó sẽ còn Đi chung với lại một cái khó khăn thách thức nữa đó là Mình phải đi kèm với cái ngữ cảnh thực tế Cái ngữ cảnh thực tế Thì Ví dụ như là mình đang bàn về"
+      },
+      "question": "Tại sao các thành ngữ như 'ra ngô ra khoai' gây khó khăn cho hệ thống xử lý ngôn ngữ tự nhiên?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì phải hiểu nghĩa đen của từng từ trong câu để dịch chính xác",
+        "B": "Vì thành ngữ không mang nghĩa theo mặt chữ và cần ngữ cảnh cùng kiến thức thực tế để giải nghĩa",
+        "C": "Vì các thành ngữ luôn vi phạm quy tắc chính tả và cú pháp chuẩn",
+        "D": "Vì thành ngữ chỉ xuất hiện trong tiếng viết cổ điển và hiếm gặp trong dữ liệu hiện đại"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_018",
+      "timestamp": "2025-11-17T11:17:10.561690",
+      "chunk": {
+        "chunk_id": 1981,
+        "video_id": "Chương 9_iMfkIHkU6NM",
+        "video_title": "[CS431 - Chương 10] Part 7： Một số ứng dụng của kiến trúc mạng Transformer",
+        "video_url": "https://youtu.be/iMfkIHkU6NM",
+        "chapter": "Chương 9",
+        "start_time": 697,
+        "end_time": 761,
+        "text": "Chương 9, Part: Ứng dụng của Transformer — Phương pháp Fine-tuning vs Prompting. So sánh Adapter/FileTool (train thêm ma trận A và B, Low-Rank cập nhật) với Prompting (few-shot/zero-shot). Minh họa prompting bằng ví dụ sentiment/classification: đưa cặp input-output trong ngữ cảnh, model học quan hệ và điền nhãn (positive/negative/neutral) cho câu mới; áp dụng tương tự cho phân loại chủ đề (finance/sports/tech). Nhắc tới thuật ngữ prompting như zero/zero-shot prompting.\n\nĐiển hình của FileTool với Adapter Và đối với cái phương pháp về Prompting Thì chúng ta sẽ cho Cái mô hình nó học từ ngữ cảnh Nghĩa là sao Ở đây chúng ta sẽ cho một số cái ví dụ về cái task Cái mô hình nó học từ ngữ cảnh Và mô hình nó sẽ đi tự tìm ra cái cách Để giải quyết Lấy ví dụ, ở đây chúng ta sẽ cho trước Một số cái cặp input và output Ví dụ như ở đây chúng ta sẽ có cái input là một cái câu Circulation revenue has increased by 5% in Finland Circulation revenue has increased by 5% in Finland Circulation revenue has increased by 5% in Finland Thì ở đây Chúng ta sẽ có cái output của mình là positive Chúng ta sẽ có cái output của mình là positive Đó Rồi paying off the national debt National debt will be extremely low Depend full thì ở đây chúng ta sẽ có Output của mình là negative Tương tự ở đây chúng ta sẽ có neutral Và ở đây chúng ta sẽ để thêm The company anticipated Is operating profit Is operating profit to improve Thì chúng ta sẽ để dấu xuyệt xuyệt Để chống Thì mô hình nó sẽ tự biết là"
+      },
+      "question": "Theo nội dung video, phương pháp prompting (few-shot) hoạt động như thế nào để giúp mô hình thực hiện nhiệm vụ phân loại sentiment?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Huấn luyện thêm các ma trận A và B (cập nhật low-rank) vào mô hình để điều chỉnh hiệu năng",
+        "B": "Cung cấp một vài cặp input-output trong ngữ cảnh để mô hình tự học quan hệ và điền nhãn cho câu mới mà không cần cập nhật trọng số",
+        "C": "Chỉ sử dụng một câu lệnh duy nhất (zero-shot) mà không cần ví dụ nào trong ngữ cảnh",
+        "D": "Thay thế hoàn toàn kiến trúc Transformer bằng một mạng nơ-ron khác chuyên cho phân loại"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_019",
+      "timestamp": "2025-11-17T11:17:26.499670",
+      "chunk": {
+        "chunk_id": 1636,
+        "video_id": "Chương 3_KeNRQw9j_ps",
+        "video_title": "[CS431 - Chương 3] Part 3_1： Cài đặt mạng CNN",
+        "video_url": "https://youtu.be/KeNRQw9j_ps",
+        "chapter": "Chương 3",
+        "start_time": 45,
+        "end_time": 113,
+        "text": "Chương 3, Phần: Cài đặt mạng CNN (45.8–113.2s) — Mô tả kiến trúc CNN kiểu LeNet cho ảnh 28x28: lớp conv1 dùng 6 filter 3x3; lớp conv2 có filter kích thước 3x3x6 (vì đầu vào có depth=6) và xuất ra 16 filter; pooling là max‑pooling; cuối mạng là các fully connected layers tạo vector kích thước 120, 84 và 10 (10 lớp đầu ra). Đồng thời nhắc rằng khi cài đặt framework sẽ tự xác định số kênh input, chỉ cần khai báo kích thước filter và số filter đầu ra.\n\nđối với lớp convolution thứ 2 thì sẽ có cái kích thước đó là 3 x 3 x 6 tại vì cái đầu vào của cái lớp convolution này chính là cái cái lớp convolution này  feature map này mà feature map này có cái depth là bằng 6 vậy đó đây sẽ là 6 tuy nhiên thì trong quá trình mà chúng ta cài đặt thì chúng ta cũng không cần phải chỉ ra tường minh là cái số input của mình là bao nhiêu tự cái chương trình nó sẽ tự cái deep learning framework nó sẽ tính cho mình cái con số này chúng ta chỉ cần cho biết cái kích thước bề ngang bề cao của cái filter là được và đồng thời chúng ta cũng cho cái deep learning framework biết số filter đầu ra mong muốn là trong cái phép convolution thứ 2 chính là 16 các cái phép biến đổi subsampling ở đây thực chất nó chính là cái phép biến đổi max pooling đó chính là cái phép biến đổi max pooling rồi và phần cuối của mạng cnn này đó chính là các cái lớp biến đổi fully connected để tạo ra các cái vector có kích thước là 120 84 và 10 trong đó 10 thì tương ứng với lại cái số lớp đầu ra của mình"
+      },
+      "question": "Tại sao kích thước filter của lớp convolution thứ hai được mô tả là 3 x 3 x 6 trong kiến trúc LeNet cho ảnh 28x28?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Bởi vì lớp này tạo ra 6 filter đầu ra",
+        "B": "Bởi vì filter cần có độ sâu bằng với số kênh (depth) của input từ lớp trước, ở đây là 6",
+        "C": "Bởi vì kích thước ảnh đầu vào là 6 x 6",
+        "D": "Bởi vì có 6 phép pooling được áp dụng trước lớp này"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_020",
+      "timestamp": "2025-11-17T11:17:38.218479",
+      "chunk": {
+        "chunk_id": 1779,
+        "video_id": "Chương 2_XBS1JuTrxVI",
+        "video_title": "[CS431 - Chương 2] Part 5b_2： Cài đặt mạng neural network",
+        "video_url": "https://youtu.be/XBS1JuTrxVI",
+        "chapter": "Chương 2",
+        "start_time": 98,
+        "end_time": 161,
+        "text": "Chương 2, Video: Cài đặt mạng neural network — Trực quan hóa trọng số neuron: Giải thích chọn các node có \"độ tin cậy\" cao (theo trị tuyệt đối của trọng số, ví dụ -17, 14, 11, -8) để vẽ các đường thẳng tương ứng với trọng số đó. Thầy hướng dẫn viết vòng for: đầu tiên vẽ các điểm dữ liệu, sau đó lọc các neuron có độ tin cậy lớn (ví dụ indices 0,1,2,3,5,6,7) và chuyển công thức sang dạng y = A x + b (A = -param0/param1) để visualize các đường phân quyết do từng neuron tạo ra. Liên quan đến phần trước về theta2 và ý nghĩa trọng số của 8 node.\n\nnhưng cũng có những node độ tin cậy rất là cao ví dụ như là trừ 17 lưu ý là cái độ tin cậy ở đây chúng ta sẽ thể hiện ở chỗ là cái trị việt đối chứ không phải là cái sự lớn bé về mặt đại số của nó như vậy là trừ 17, 14, 11, trừ 8 đó là những cái node có cái độ tin cậy rất là cao như vậy thì chúng ta sẽ có một cái ý tưởng đó là với những cái node mà có cái độ tin cậy cao thì chúng ta sẽ tìm cách chúng ta sẽ tìm cách trực quan hóa cái đường thẳng mà được tạo bởi các cái trọng số đường thẳng được tạo bởi các cái trọng số đến cái node mà có trọng số cao này thì cái cách mà chúng ta trực quan hóa đường thẳng thì chúng ta đã tìm hiểu ở trong cái bài về Logistic Direction rồi như vậy thì ở đây chúng ta sẽ viết một cái vòng for viết một cái vòng for cái đoạn đầu thì chủ yếu đó là chúng ta vẽ các cái điểm data lên thôi đoạn đầu thì chủ yếu là chúng ta vẽ các cái điểm data"
+      },
+      "question": "Khi trực quan hóa các đường quyết định do các neuron có “độ tin cậy” cao tạo ra (theo video), hệ số A trong biểu thức y = A x + b được tính bằng công thức nào?",
+      "question_type": "mcq",
+      "options": {
+        "A": "A = -param0/param1",
+        "B": "A = param1/param0",
+        "C": "A = -param1/param0",
+        "D": "A = param0/param1"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_021",
+      "timestamp": "2025-11-17T11:17:54.381706",
+      "chunk": {
+        "chunk_id": 1558,
+        "video_id": "Chương 2_MtJDVr5xHB4",
+        "video_title": "[CS431 - Chương 2] Part 2a_2： Mô hình hồi quy tuyến tính (Linear Regression)",
+        "video_url": "https://youtu.be/MtJDVr5xHB4",
+        "chapter": "Chương 2",
+        "start_time": 249,
+        "end_time": 309,
+        "text": "Chương 2, Mô hình hồi quy tuyến tính: Giải thích cách biểu diễn nhãn và dữ liệu dưới dạng ma trận/vector (y là vector hàng 1×n; X là ma trận (m+1)×n gồm bias). Trình bày công thức dự đoán gộp bằng cách rút θ chung: ŷ = θ^T X (vector hàng) và nhắc cách tính hàm lỗi bằng hiệu giữa dự đoán và nhãn thực.\n\nrồi đối với cái nhãn thì chúng ta nhãn của toàn bộ n mẫu thì nó sẽ kí hiệu bằng một cái ma trận y trong đó mẫu giá trị y1,y2,yn chính là cái nhãn của mình và chẳng khác miesz left magic stomach y an chúng ta sẽ có y sẽ thuộc một cái ma trận kích thước đó là 1 nhân cho n. Hay còn gọi đây là một cái vector mà vector dạng nằm ngang. Còn x trong trường hợp này nó chính là một cái ma trận. Số dòng của mình nó sẽ là m cộng 1. Và số cột của mình trong trường hợp này nó chính là n. Rồi và như vậy thì cái hàm dự đoán của mình đó chính là chúng ta sẽ lấy cái tham số theta nhân cho từng mẫu dữ liệu theta nhân với x1, theta x2, theta xn. Và khi này thì chúng ta sẽ giống như là rút thừa số chung vậy đó. Chúng ta sẽ rút cái thừa số chung theta ra."
+      },
+      "question": "Trong biểu diễn ma trận cho hồi quy tuyến tính (y là vector hàng 1×n, X là ma trận (m+1)×n gồm bias), công thức nào biểu diễn dự đoán gộp ŷ cho toàn bộ n mẫu?",
+      "question_type": "mcq",
+      "options": {
+        "A": "ŷ = X θ",
+        "B": "ŷ = θ^T X",
+        "C": "ŷ = X^T θ",
+        "D": "ŷ = θ X^T"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_022",
+      "timestamp": "2025-11-17T11:18:06.781180",
+      "chunk": {
+        "chunk_id": 2043,
+        "video_id": "Chương 4_KoBIBuqGb9A",
+        "video_title": "[CS431 - Chương 4] Part 1_2： Ôn tập kiến trúc mạng CNN và một số biến thể phổ biến hiện nay",
+        "video_url": "https://youtu.be/KoBIBuqGb9A",
+        "chapter": "Chương 4",
+        "start_time": 500,
+        "end_time": 566,
+        "text": "Chương 4, Part: Ôn tập CNN - Giải thích cải tiến của VGG so với AlexNet: thay thế các kernel lớn (5x5, 7x7) bằng nhiều lớp convolution liên tiếp với kernel 3x3. Trình bày cách hai (hoặc nhiều) 3x3 chồng lên nhau che phủ vùng nhận thức tương đương 5x5 trên ảnh đầu vào và ảnh hưởng tới các điểm đặc trưng trên feature map. Liên quan tới phần trước về so sánh filter kích thước.\n\nvà một cái điểm một cái điểm đặc trưng ở trên cái feature mask output này nó được tạo bởi nó được tạo bởi một cái vùng nó được tạo bởi một cái vùng có kích thước 5x5 ở trên cái ảnh input trên cái ảnh input thì nó cái điểm này nó sẽ bị phụ thuộc bởi một cái vùng có kích thước là 5x5 thì đây là cái cách bình thường còn cái cải tiến của  VGG đó là thay vì sử dụng cái kernel 5x5 thì nhóm tác giả không sử dụng kernel 5x5 nữa hoặc là 7x7 nữa mà thay hết bằng kernel 3x3, cái filter 3x3 và thực hiện liên tiếp nhau ví dụ đây chúng ta có một cái ảnh chúng ta thực hiện convolution với một cái kernel kích thước là 3x3 với một cái kernel kích thước là 3x3 rồi sau đó chúng ta sẽ tạo ra một cái tấm ảnh rồi sau đó chúng ta sẽ tạo ra một cái tấm ảnh để tạo ra một cái tấm ảnh khác"
+      },
+      "question": "Hai lớp convolution 3x3 chồng lên nhau có vùng nhận thức (receptive field) tương đương với kernel kích thước nào trên ảnh đầu vào?",
+      "question_type": "mcq",
+      "options": {
+        "A": "3x3",
+        "B": "5x5",
+        "C": "7x7",
+        "D": "1x1"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_023",
+      "timestamp": "2025-11-17T11:18:18.732261",
+      "chunk": {
+        "chunk_id": 2380,
+        "video_id": "Chương 4_MNHY9TA4fZs",
+        "video_title": "[CS431 - Chương 4] Part 1_4： Ôn tập kiến trúc mạng CNN và một số biến thể phổ biến hiện nay",
+        "video_url": "https://youtu.be/MNHY9TA4fZs",
+        "chapter": "Chương 4",
+        "start_time": 451,
+        "end_time": 511,
+        "text": "Chương 4, Part (451–511s): Ôn tập các biến thể CNN — nêu tiếp Inception (dùng nhiều kích thước filter như 1x1,3x3,5x5 để tận dụng đặc trưng và giảm tham số) và chuyển sang ResNet — giới thiệu skip connection (Hx = Conv(x)+x) giúp tăng gradient khi backprop, khắc phục vanishing gradient. (Tiếp theo là MobileNet: depthwise + pointwise conv để giảm tham số.)\n\nTừ nhiều cái loại Từ nhiều cái filter Có kích thước khác nhau Ví dụ filter 3x3 Filter 1x1 Filter 5x5 Tại vì với cái assumption của Google Linux là họ không biết Cái filter kích thước bao nhiêu là total thì họ sẽ sử dụng hết Thì đây chính là cái cải tiến của Google Linux hơn  Cái giảm tham số này thì nó sẽ giúp cho chúng ta giảm hiện tượng overfit Rồi ResNet Cải tiến lớn nhất của nó Đơn giản nhất của nó Đó chính là Sử dụng các cái skip Connection Sử dụng cái skip connection Và biểu diễn dưới dạng công thức thì chúng ta sẽ có Hx Sẽ là bằng Convolution Của x Cộng thêm với x Thì đây chính là cái Cải tiến lớn nhất của nó Thì cái việc này nó sẽ giúp cho chúng ta Tăng cái giá trị đạo hàm lên Khi mình tính H phẩy Thì Đạo hàm Convolution nó sẽ cộng thêm 1"
+      },
+      "question": "Chức năng chính của skip connection trong kiến trúc ResNet là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Giảm số lượng tham số mô hình bằng cách thay thế các lớp convolution",
+        "B": "Tăng lưu thông gradient khi backprop để khắc phục vấn đề vanishing gradient",
+        "C": "Mở rộng receptive field để xử lý các đặc trưng ở nhiều tỉ lệ",
+        "D": "Thay thế việc sử dụng các filter có kích thước khác nhau như trong Inception"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_024",
+      "timestamp": "2025-11-17T11:18:31.622410",
+      "chunk": {
+        "chunk_id": 2074,
+        "video_id": "Chương 2_aXB_C9IAyMg",
+        "video_title": "[CS431 - Chương 2] Part 5a： Mạng neural Network (Neural Network)",
+        "video_url": "https://youtu.be/aXB_C9IAyMg",
+        "chapter": "Chương 2",
+        "start_time": 398,
+        "end_time": 461,
+        "text": "Chương 2, Part: Mạng Neural Network — Giải thích cấu trúc mạng nhiều lớp và cách tính đầu ra phân lớp. Mô tả từng tầng: nhân input X với trọng số θ1, áp dụng sigmoid cho layer 1, tiếp tục nhân với θ2 và sigmoid cho layer 2, ... đến layer L−1. Ở lớp cuối (đa lớp phân loại) thay sigmoid bằng softmax để đưa kết quả về không gian xác suất (giá trị 0–1, tổng = 1) — cho biết xác suất thuộc mỗi lớp. Liên hệ với công thức tổng hợp các phép nhân và hàm kích hoạt.\n\ncái khả năng nó thuộc về lớp số 1 là bao nhiêu phần trăm, khả năng thuộc về lớp số 2 là bao nhiêu phần trăm thì đó chính là cái kiến trúc của mạng Neural Network và cái công thức cho cái việc thiết kế cái hàm dự đoán của mình nhìn ở đây thì chúng ta sẽ thấy khá là phức tạp nhưng mà thật ra nếu để ý kỹ thì nó cũng có cái logic để cho chúng ta có thể nhớ một cách rất là nhanh đầu tiên, cái lớp biến đổi đầu tiên đó là chúng ta sẽ từ cái X này X của mình chính là cái dự kiện đầu bào qua cái theta 1, nhân tích vô hướng theta 1 rồi sau đó chúng ta sẽ thực hiện cái phép sigmoid và phép sigmoid này sẽ được thực hiện lần lượt trên từng cái phần tử đầu ra do đó chúng ta sẽ gọi là 11y thì đây chính là cái layer số 1 cái tầng số 1 sau đó thì chúng ta lại qua tiếp nhân với lại cái sigmoid chúng ta sẽ nhân với lại cái sigmoid thứ 2"
+      },
+      "question": "Tại sao lớp cuối trong một mạng nhiều lớp dành cho bài toán phân loại đa lớp thường dùng softmax thay vì sigmoid?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Để chuyển đầu ra lớp cuối thành một phân phối xác suất (giá trị trong khoảng 0–1 và tổng bằng 1) cho các lớp",
+        "B": "Để tạo đầu ra độc lập cho từng lớp mà không cần tổng các xác suất bằng 1",
+        "C": "Để giảm số lượng tham số của mạng so với khi dùng sigmoid",
+        "D": "Để biến các giá trị đầu ra thành dạng nhị phân 0 hoặc 1"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_025",
+      "timestamp": "2025-11-17T11:18:47.217748",
+      "chunk": {
+        "chunk_id": 1547,
+        "video_id": "Chương 2_sPoJ8VS7nLc",
+        "video_title": "[CS431 - Chương 2] Part 2b_1： Cài đặt mô hình linear regression",
+        "video_url": "https://youtu.be/sPoJ8VS7nLc",
+        "chapter": "Chương 2",
+        "start_time": 801,
+        "end_time": 858,
+        "text": "Chương 2, Phần: Cài đặt linear regression - Chuyển x thành ma trận hàng (hàng 1 là 1s, hàng 2 là x vector), dùng mẹo để để kích thước cột tự tính (−1). Dùng minpy.convert để nối 2 hàng và hiện thực hóa công thức đạo hàm: (1/n) * (X^T · (X·theta^T − y)) với nhân ma trận (dot) và chuyển vị (T).\n\nchúng ta phải convert cái x này, về cái dạng là ma trận, có số hàng là 1, và số cột sẽ là số phần tử. Vậy đó, ở đây chúng ta phải là reset. Số hàng là 1, số dòng, nếu như chúng ta muốn khai báo thường minh, thì chúng ta để là len y cũng được, nhưng mà nó hơi dài, thì ở đây mình có thêm 1 cái mẹo, đó là chúng ta sẽ để là trừ 1, tức là chương trình nó sẽ tự tính, nó sẽ tự tính cái số cột của mình là bao nhiêu, dựa trên cái số phần tử x ban đầu. Rồi, thì chúng ta sẽ phải convert, sẽ phải nối 2 cái hàng này lại với nhau, nối 2 cái hàng này lại với nhau, và trong, chúng ta sẽ sử dụng thư viện đó là minpy.convert, minpy.convert, minpy.convert, minpy.convert, rồi, ở đây thì chúng ta sẽ hiện thực hóa cái công thức cho đạo hàm, đó là, 1 phần n thì chúng ta sẽ làm 1 chia cho len của y, chia cho len của y,"
+      },
+      "question": "Trong phần cài đặt linear regression, vì sao khi chuyển x thành ma trận người ta thêm một hàng gồm toàn số 1 và nối với hàng x?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Để thêm bias (intercept) vào mô hình, cho phép tham số tương ứng nhân với hàng 1",
+        "B": "Để chuẩn hóa dữ liệu đầu vào trước khi huấn luyện",
+        "C": "Để tăng số lượng mẫu trong bộ dữ liệu",
+        "D": "Để biểu diễn biến đổi phi tuyến của x"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_026",
+      "timestamp": "2025-11-17T11:19:04.532065",
+      "chunk": {
+        "chunk_id": 2077,
+        "video_id": "Chương 2_aXB_C9IAyMg",
+        "video_title": "[CS431 - Chương 2] Part 5a： Mạng neural Network (Neural Network)",
+        "video_url": "https://youtu.be/aXB_C9IAyMg",
+        "chapter": "Chương 2",
+        "start_time": 548,
+        "end_time": 610,
+        "text": "Chương 2, Part: Mạng Neural Network — Giải thích hàm loss cho phân lớp đa lớp: từ softmax cho nhiều mẫu tới cross-entropy, cách tính loss từng mẫu (y nhân với ŷ rồi cộng) và lấy trung bình trên n mẫu; lưu ý viết gọn vector hóa vì công thức softmax đầy đủ rất dài.\n\nrồi cái y ngã của mình đây chính là y ngã nè đây chính là y nè rồi và cũng sẽ có k phần tử và chúng ta sẽ duyệt qua chúng ta sẽ duyệt qua từng phần tử rồi lấy y thứ 1 nhân với y ngã 1 và y thứ 2 nhân với y ngã 2, y thứ 3 và khi nhân xong rồi cộng lại thì chúng ta sẽ ra được một cái loss cho một mẫu và cái loss cho một mẫu này chúng ta sẽ đi tính trung bình cộng cho tất cả n mẫu này thì chúng ta sẽ được cái công thức cho cái cross entropy, thì công thức này nó hoàn toàn tương tự với lại cái softmax. và viết dưới dạng là nhiều mẫu nhưng mà ở dạng vector hóa thì chúng ta có thể viết gọn lại như thế này hàm loss của mình nó sẽ là bằng trung bình cộng của cross entropy của softmax chúng ta lưu ý là ở đây cái công thức này là công thức của softmax nhưng mà công thức này đúng ra nó phải là cái công thức ở bên tay trái vì công thức này nó quá lớn"
+      },
+      "question": "Trong phân lớp đa lớp dùng softmax và cross-entropy, công thức tính loss cho một mẫu (với y là one-hot vector và ŷ là vector xác suất sau softmax) là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "-∑_k y_k * log(ŷ_k)",
+        "B": "∑_k y_k * ŷ_k",
+        "C": "-∑_k ŷ_k * log(y_k)",
+        "D": "∑_k (y_k - ŷ_k)^2"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_027",
+      "timestamp": "2025-11-17T11:19:34.534882",
+      "chunk": {
+        "chunk_id": 1796,
+        "video_id": "Chương 2_G4lcEPrfETo",
+        "video_title": "[CS431 - Chương 2] Part 4a： Mô hình hồi quy Softmax (SoftmaxRegression)",
+        "video_url": "https://youtu.be/G4lcEPrfETo",
+        "chapter": "Chương 2",
+        "start_time": 299,
+        "end_time": 362,
+        "text": "Chương 2, Video: Mô hình hồi quy Softmax (SoftmaxRegression) — Giải thích lý do chuyển từ hàm max sang Softmax để tránh hàm không khả vi (khó lấy đạo hàm) khi phân lớp nhiều nhãn. Giới thiệu ý tưởng thay các hàm sigma riêng lẻ bằng một hàm Softmax duy nhất: đầu vào là vector G = [G1...GK] (G = Θx), đầu ra là vector dự đoán Ŷ = [Y1...YK] theo công thức Ŷ = Softmax(G). Liên quan đến đoạn trước về vùng quyết định khó phân lớp giữa tam giác, vòng tròn và dấu X.\n\nVà để giải quyết vấn đề này thì như chúng ta đã nói chúng ta sẽ có 3 cái giá trị này. Thì chúng ta có thể sử dụng cái mô hình đó là... Chúng ta sẽ gọi cái hàm Max của các cái giá trị Y này. I woman Max. Ờ... Tuy nhiên... Nếu mà chúng ta dùng cái hàm Max này á. Thì nó sẽ nảy sinh ra một cái vấn đề đó là... Hàm Max này đó là một cái hàm không khó tính đạo hàm. Nó sẽ là một cái hàm khó tính đạo hàm. Và hàm khó tính đạo hàm thì cái bước số 3 của chúng ta khi mà... Chúng ta dùng cái giải thuật Radian Descent nó cũng sẽ khó tính. Như vậy thì giải pháp của mình trong trường hợp này đó chính là mô hình Softmax. Thay vì dùng hàm Max thì chúng ta sẽ sử dụng một cái hàm gọi là hàm Softmax. Ờ... Thì chúng ta ý tưởng đó là... Bỏ hết tất cả các cái nốt Sigma ở đây. Mà chúng ta sẽ thay nó bằng một cái hàm duy nhất đó là hàm Softmax."
+      },
+      "question": "Tại sao trong mô hình phân lớp nhiều nhãn người ta sử dụng hàm Softmax thay cho hàm max (hoặc các hàm sigmoid riêng lẻ)?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì hàm max không khả vi (khó lấy đạo hàm), gây khó khăn cho thuật toán gradient descent",
+        "B": "Vì Softmax giảm số lượng tham số so với việc dùng nhiều hàm sigmoid độc lập",
+        "C": "Vì Softmax luôn gán xác suất 1 cho lớp dự đoán, giúp phân lớp rõ ràng hơn",
+        "D": "Vì Softmax không cần chuẩn hóa đầu ra thành xác suất"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_028",
+      "timestamp": "2025-11-17T11:19:45.896166",
+      "chunk": {
+        "chunk_id": 2396,
+        "video_id": "Chương 5_Til9AdPO7JE",
+        "video_title": "[CS431 - Chương 5] Part 3： Ứng dụng mạng CNN cho bài toán Phát hiện đối tượng",
+        "video_url": "https://youtu.be/Til9AdPO7JE",
+        "chapter": "Chương 5",
+        "start_time": 499,
+        "end_time": 561,
+        "text": "Chương 5, Part: Ứng dụng CNN cho Phát hiện đối tượng — Giải thích hạn chế của Faster R-CNN: RPN sinh bounding box rồi detector tinh chỉnh vị trí và gán nhãn nhưng làm hai giai đoạn nên chậm. Nêu ý tưởng chuyển sang mô hình end-to-end một giai đoạn (one-stage) để trực tiếp từ ảnh đầu vào dự đoán bounding boxes và classes — giới thiệu khái quát về YOLO (phiên bản đầu, tiến tới nhiều phiên bản sau). Liên hệ với phần trước về RPN và feature map được chia sẻ.\n\nvới lại cái bounding box mà qua cái mạng region proposal network nó sẽ khoanh vùng cái feature map này nó sẽ trích cái feature map này ra và từ cái feature map này đến đến thực hiện cái công đoạn nó gọi là detector chỉ ra cái vị trí chính xác hơn chúng ta sẽ chỉ ra cái vị trí chính xác hơn cái bounding box chính xác đồng thời là chúng ta sẽ phải có thêm cái class cái class name tức là cái tên của cái đối tượng đó là gì thì đây chính là cái ý tưởng của faster acnn và cái hướng tiếp cận faster acnn thì nó sẽ có một cái điểm yếu là nó sẽ chậm và nó phải tách ra làm 2 giai đoạn thì bây giờ người ta có cái ý tưởng là làm sao trend từ đầu đến cuối tức là chúng ta sẽ thực thi từ đầu đến cuối chỉ cần fit vào một tấm ảnh đầu ra nó sẽ ra"
+      },
+      "question": "Điểm yếu chính của Faster R-CNN được nêu trong video khiến người ta phát triển các mô hình one-stage như YOLO là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Không dự đoán đồng thời cả bounding box và class",
+        "B": "Phải thực hiện hai giai đoạn (RPN rồi detector) nên làm chậm quá trình dự đoán",
+        "C": "Không sử dụng feature map được chia sẻ giữa các thành phần",
+        "D": "Không thể tinh chỉnh vị trí bounding box sau khi đề xuất"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_029",
+      "timestamp": "2025-11-17T11:19:58.227067",
+      "chunk": {
+        "chunk_id": 1492,
+        "video_id": "Chương 5_RVFApjx4KKI",
+        "video_title": "[CS431 - Chương 5] Part 1-2： Ứng dụng trong bài toán phân loại và bài toán truy vấn ảnh",
+        "video_url": "https://youtu.be/RVFApjx4KKI",
+        "chapter": "Chương 5",
+        "start_time": 198,
+        "end_time": 261,
+        "text": "Chương 5, Part: Ứng dụng phân loại hình ảnh — Nêu ví dụ các dataset cho bài toán phân loại/nhận diện: Stanford Cars cho phân loại dòng/ đời xe, Oxford/flower datasets cho phân loại loài hoa, và WebFace260M cho face recognition. Giải thích khác biệt giữa detect (phát hiện) và recognition (phân biệt định danh), đa dạng tư thế, chủng tộc và trạng thái ảnh (khẩu trang, ảnh cũ, cảm xúc) trong dataset.\n\nđó là Stanford Car Data Set để thu thập và phân loại các cái loại xe các cái dòng xe từ xưa đến nay rồi ngoài ra thì nó cũng có một cái bài toán dạng phân loại đối tượng và dạng five grand tức là mịn đó chính là face recognition trước đây thì chúng ta chỉ cần detect cái face tức là chúng ta sẽ đi so sánh cái gương mặt với lại các cái bộ phận khác trong cơ thể ví dụ như là tay ví dụ như là chân hoặc là với những cái đối tượng khác ví dụ như là xe ví dụ như là cây thì trong cái nội bộ cái face tức là cái gương mặt này nè thì chúng ta sẽ có rất nhiều những cái định danh rất nhiều những cái định danh rồi và mục tiêu của mình đó chính là làm sao để mà phân biệt được cái định danh số 1 với cái định danh số 2 thì đó chính là face recognition thì ở đây chúng ta sẽ có một cái bộ data set"
+      },
+      "question": "Khác biệt cơ bản giữa 'detect' (phát hiện) và 'recognition' (phân biệt định danh) trong bài toán nhận diện khuôn mặt là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Detect xác định vị trí khuôn mặt trong ảnh; Recognition phân biệt định danh, tức là nhận diện ai là ai.",
+        "B": "Detect phân loại cảm xúc trên khuôn mặt; Recognition phân loại tuổi và giới tính.",
+        "C": "Detect chỉ dùng để phát hiện các đối tượng như xe hay cây; Recognition chỉ dùng cho khuôn mặt.",
+        "D": "Detect làm giảm nhiễu trong ảnh; Recognition tăng độ phân giải ảnh để nhận dạng."
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_030",
+      "timestamp": "2025-11-17T11:20:12.677652",
+      "chunk": {
+        "chunk_id": 2174,
+        "video_id": "Chương 7__Km_A2iRUds",
+        "video_title": "[CS431 - Chương 8] Part 1_2： Một số biến thể của RNN： LSTM",
+        "video_url": "https://youtu.be/_Km_A2iRUds",
+        "chapter": "Chương 7",
+        "start_time": 501,
+        "end_time": 560,
+        "text": "Chương 7, Part: LSTM — Giải thích cách lấy thông tin từ cell state CT qua hàm tanh và output gate OT để tạo hidden state ST, rồi dùng ST nhân với vector V qua hàm kích hoạt giống ANN để dự đoán output. Nói rõ vai trò của output gate quyết định có lấy thông tin từ CT hay không, liên hệ so sánh ngắn với phiên bản ANN trước đó.\n\nÀ xin lỗi Đây là hàm tanh của CT đúng rồi Rồi Như vậy thì Ở đây là cái thông tin CT nè Nó truyền qua hàm tanh Truyền qua hàm tanh Và đến đây Thì CT ở đây là cái thông tin Contact cell Và cái việc mà quyết định xem có lấy cái thông tin Của CT này ra hay không Có lấy cái thông tin của CT không Thì nó sẽ phụ thuộc vào Cái giá trị OT là Đến từ cái cổng output Output gate này sẽ quyết định xem là Có lấy hay không Rồi Và sau khi chúng ta đã có được cái CT này rồi Thì chúng ta sẽ thực hiện cái việc dự đoán Và cái việc dự đoán này thì cũng tương tự Chúng ta sẽ thực hiện tương tự Như cái ANN Bình thường Tương tự như cái phiên bản ANN bình thường Đó là có cái trạng thái ẩn Chúng ta sẽ nhân với vector V"
+      },
+      "question": "Trong LSTM, làm thế nào để tạo hidden state S_t từ cell state C_t và vai trò của output gate O_t là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "S_t = O_t * tanh(C_t); output gate O_t quyết định phần thông tin từ C_t được lấy ra để tạo S_t; sau đó S_t nhân với vector V và activation để dự đoán.",
+        "B": "S_t = C_t; output gate O_t chỉ điều khiển việc cập nhật C_t trong bước tiếp theo chứ không ảnh hưởng tới S_t.",
+        "C": "S_t = sigmoid(C_t); output gate O_t áp dụng trực tiếp sigmoid lên dự đoán đầu ra thay vì điều khiển thông tin từ C_t.",
+        "D": "S_t = O_t + tanh(C_t); output gate O_t cộng trực tiếp với tanh(C_t) để tăng cường thông tin trước khi dự đoán."
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_031",
+      "timestamp": "2025-11-17T11:20:27.274402",
+      "chunk": {
+        "chunk_id": 1549,
+        "video_id": "Chương 2_sPoJ8VS7nLc",
+        "video_title": "[CS431 - Chương 2] Part 2b_1： Cài đặt mô hình linear regression",
+        "video_url": "https://youtu.be/sPoJ8VS7nLc",
+        "chapter": "Chương 2",
+        "start_time": 899,
+        "end_time": 960,
+        "text": "Chương 2, Part: Cài đặt linear regression — Giải thích cách hiện thực công thức đạo hàm cho gradient descent: tính theta^T x dot x trừ y (ký hiệu y thường trong code), lấy từng phần tử theta (theta[0], theta[1]) và cập nhật đạo hàm nhiều lần. Gặp lỗi kiểu (scalar/shape) khi concat các hàng; hướng xử lý bằng cách in giá trị kiểm tra và gói (wrap) hàng bias (1s) với X thành tuple trước khi dùng np.concatenate. Liên quan đến đoạn trước là biểu diễn phép nhân ma trận bằng dot và chuẩn hoá công thức đạo hàm.\n\nchuyển vị là chấm t, rồi, nhân với lại x, chấm dot x, rồi sau đó chúng ta sẽ trừ cho y, thì ở trong đây là y hoa, nhưng mà, trong cái đoạn code ở đây, thì y của mình, là viết y thường, rồi, rồi, và chúng ta sẽ tính ở đây, sau khi tính xong thì chúng ta sẽ phải cập nhật lại cái đạo hàm này thêm 1 lần nữa, sau khi tính xong thì chúng ta sẽ phải cập nhật lại cái đạo hàm này thêm 1 lần nữa, sẽ tính lại cái đạo hàm này thêm 1 lần nữa, và, để lấy cái phần tử đầu tiên, thì sẽ là, rath, 0, 0, là phần tử đầu tiên, của theta, thành phần thứ 2, sẽ là, 1, 0,  ở đây thì có cái lỗi,"
+      },
+      "question": "Khi gặp lỗi kiểu (scalar/shape) lúc cố gắng nối hàng bias (các giá trị 1) với ma trận X bằng np.concatenate trong cài đặt linear regression, bước kiểm tra/vẫn đề nào được giảng viên khuyến nghị thực hiện ngay?",
+      "question_type": "mcq",
+      "options": {
+        "A": "In giá trị/shape để kiểm tra và gói (wrap) hàng bias cùng X vào một tuple trước khi gọi np.concatenate",
+        "B": "Thực hiện chuyển vị (transpose) của theta để khớp kích thước trước khi nối",
+        "C": "Dùng np.append thay vì np.concatenate để tự động broadcast kích thước",
+        "D": "Chuẩn hóa (normalize) các đặc trưng trong X để tránh lỗi kích thước"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_032",
+      "timestamp": "2025-11-17T11:20:44.997568",
+      "chunk": {
+        "chunk_id": 1938,
+        "video_id": "Chương 3_SKcHedTJIL0",
+        "video_title": "[CS431 - Chương 3] Part 2_1： Một số thành phần của mạng CNN",
+        "video_url": "https://youtu.be/SKcHedTJIL0",
+        "chapter": "Chương 3",
+        "start_time": 347,
+        "end_time": 409,
+        "text": "Chương 3, Part: Một số thành phần của mạng CNN — Giải thích cách hoạt động của filter trên ảnh RGB: filter có cùng độ sâu với input (ví dụ 3 kênh), được trượt qua không gian như một “cục Rubik” để tính đầu ra tại từng vị trí, mỗi filter sinh ra một feature map. Kết nối với phần trước về convolution trên ảnh xám và chuẩn bị cho phần tiếp theo về nhiều filter tạo nhiều feature map và ghép lại thành tensor output.\n\nvà cái filter này nó sẽ có độ sâu đúng bằng với lại cái độ sâu của cái input và khi chúng ta tưởng tượng cái filter này nó giống như là một cái cục Rubik chúng ta cũng sẽ trượt chúng ta sẽ trượt lên trên toàn bộ cái dữ liệu đầu vào này cái feature app đầu vào này thì chúng ta sẽ tại một cái vị trí này chúng ta sẽ tính ra được một giá trị dịch chuyển tiếp thì chúng ta sẽ lại tính một giá trị tiếp theo dịch chuyển tiếp chúng ta sẽ dịch chuyển đến một cái vị trí mới chúng ta sẽ tính ra một cái giá trị cứ như vậy chúng ta sẽ tạo ra một cái feature như vậy đối với cái phép convolution nhưng mà trên cái dữ liệu đầu vào thay vì ảnh sám mà là ảnh red-blue thì cái độ sâu của philter của mình nó phải đúng bằng cái độ sâu của cái ảnh đầu vào và như vậy thì kết quả ở đây chúng ta sẽ có là cái kết quả cho một cái đặc trưng tức là một cái filter một cái filter thì chúng ta sẽ ra một cái đặc trưng giống như hồi nãy trong cái slide minh họa cho cái lọc sobel thì"
+      },
+      "question": "Tại sao một filter trong phép convolution trên ảnh RGB phải có độ sâu bằng độ sâu của ảnh đầu vào (ví dụ 3 kênh)?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Để filter xử lý độc lập từng kênh màu và tạo ra một feature map cho mỗi kênh",
+        "B": "Để filter có thể tính tích vô hướng qua tất cả các kênh tại mỗi vị trí, kết hợp thông tin màu sắc thành một giá trị duy nhất",
+        "C": "Để đảm bảo kích thước không gian (height x width) của filter khớp với kích thước ảnh đầu vào",
+        "D": "Để giảm số kênh đầu vào xuống còn một kênh ở ngay bước convolution"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_033",
+      "timestamp": "2025-11-17T11:21:04.130416",
+      "chunk": {
+        "chunk_id": 1594,
+        "video_id": "Chương 6_WAiLM7OFU9A",
+        "video_title": "[CS431 - Chương 6] Part 5_1： Hướng dẫn lập trình với Word2Vec",
+        "video_url": "https://youtu.be/WAiLM7OFU9A",
+        "chapter": "Chương 6",
+        "start_time": 749,
+        "end_time": 810,
+        "text": "Chương 6, Part: Phân tích embedding trong Word2Vec — So sánh độ tương đồng giữa từ \"love\", \"like\" và \"hate\". Giải thích kết quả bất ngờ: mô hình học tính tương đồng dựa trên vai trò ngữ pháp và khả năng thay thế trong câu hơn là ý nghĩa đối lập, nên \"love\" và \"hate\" có thể cho độ tương đồng cao hơn dự đoán. Tiếp theo so sánh thực nghiệm bằng lệnh tính cosine similarity.\n\nSo với lại. Love và hate. Yêu một cái yêu một cái hate. Thì hai cái từ này. Các bạn cảm nhận được là nó sẽ. Là đối nhật nhau về mặt ngữ nghĩa. Thế thì bây giờ chúng ta sẽ cùng xem. Cái điều đó nó có đúng hay không. Giữa love. Và like. Rồi. Thì ở đây sẽ là love. Rồi. Giữa love và hate. Thì ở đây sẽ là love.    Thì nếu như chúng ta. Sử dụng ngữ nghĩa. Thì chúng ta sẽ xem. Love và hate rõ ràng là độ tương đồng. Nó sẽ không cao bằng love và hate. Thì bây giờ chúng ta sẽ chạy ra thử nè. Love, hate. Mình chưa chạy cái lệnh này. Rồi. Thì giữa love và like. Chúng ta thấy là độ tương đồng."
+      },
+      "question": "Tại sao trong ví dụ Word2Vec, từ \"love\" có thể cho độ tương đồng cosine cao với \"hate\" hơn là với \"like\"?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Bởi vì \"love\" và \"hate\" là từ trái nghĩa nên mô hình đặt chúng gần nhau",
+        "B": "Bởi vì Word2Vec học dựa trên ngữ cảnh và khả năng thay thế; các từ xuất hiện trong vai trò ngữ pháp tương tự có vector gần nhau",
+        "C": "Bởi vì cosine similarity phụ thuộc vào độ dài ký tự của từ, nên các từ có độ dài tương tự sẽ gần nhau",
+        "D": "Bởi vì mô hình chỉ tối ưu hóa theo tần suất xuất hiện nên không thể phân biệt nghĩa trái ngược"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_034",
+      "timestamp": "2025-11-17T11:21:21.024515",
+      "chunk": {
+        "chunk_id": 1609,
+        "video_id": "Chương 9_JGxo_olUl2U",
+        "video_title": "[CS431 - Chương 10] Part 4_2： Kiến trúc Transformer： Bộ Encoder",
+        "video_url": "https://youtu.be/JGxo_olUl2U",
+        "chapter": "Chương 9",
+        "start_time": 547,
+        "end_time": 610,
+        "text": "Chương 9, Part: Transformer Encoder — Giải thích hai vấn đề chính của scaled dot-product attention: (1) chia cho căn dk để chuẩn hóa tích vô hướng và ổn định phân bố đầu ra; (2) thiếu thông tin về thứ tự từ do xử lý song song, dẫn đến mất vị trí trong câu. Nêu ví dụ “do you understand” vs “you do understand” để minh họa tầm quan trọng của vị trí và giới thiệu ý tưởng thêm vector vị trí (positional encoding) để khắc phục.\n\nnó cũng giúp cho chúng ta đưa về cái phân bố chuẩn đưa cái output của mình về cái phân bố chuẩn và đây chính là chia cho căn của dk như vậy đây là cái công thức của mình để chúng ta có thể  đưa về cái phân bố chuẩn của mình sau khi đã được chuẩn hóa thì nó gọi là scale.product attention và 1 trong những cái vấn đề lớn khác của cái mạng transformer đó là hình như chúng ta chưa xét đến yếu tố về mặt thứ tự chưa xét về yếu tố về mặt thứ tự ở đây chúng ta thấy nè các cái từ của mình được đưa vào xử lý đưa vào xử lý song song với nhau từ này biến đổi độc lập với từ này từ này biến đổi độc lập với từ này nó thực hiện một cách song song nó không có yếu tố thứ tự ở cái việc ở đây chúng ta nhìn trên cái sơ đồ này chúng ta thấy là từ này trước từ này sau nhưng nó không có cái gì đảm bảo được là khi chúng ta tổng hợp thông tin ở đây thì từ nào xuất hiện trước từ nào xuất hiện sau đó thì cái tính thứ tự này nó có quan trọng hay không"
+      },
+      "question": "Tại sao trong scaled dot-product attention cần chia cho sqrt(d_k) khi tính tích vô hướng giữa queries và keys?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Để tăng tốc độ huấn luyện bằng cách giảm số phép tính",
+        "B": "Để chuẩn hóa kích thước của các tích vô hướng, tránh giá trị quá lớn làm softmax bão hòa và làm ổn định phân bố đầu ra",
+        "C": "Để giảm số chiều của embeddings từ d_k xuống 1",
+        "D": "Để mã hóa thông tin về thứ tự từ trong câu"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_035",
+      "timestamp": "2025-11-17T11:21:32.908055",
+      "chunk": {
+        "chunk_id": 1421,
+        "video_id": "Chương 7_KjPEqyGCtUs",
+        "video_title": "[CS431 - Chương 8] Part 3： Một số biến thể của RNN： Deep Stacked RNN",
+        "video_url": "https://youtu.be/KjPEqyGCtUs",
+        "chapter": "Chương 7",
+        "start_time": 49,
+        "end_time": 111,
+        "text": "Chương 7, Part: Deep Stacked RNN — Giải thích việc RNN truyền thống chỉ sâu theo chiều thời gian (ngang) còn thiếu chiều sâu theo chiều dọc cho mỗi đặc trưng thời điểm. Đưa ra ý tưởng làm sâu theo chiều dọc bằng cách xếp nhiều tầng biến đổi (từ đặc trưng cấp thấp → trung → cao) tương tự như các layer trong CNN để biểu diễn đặc trưng ở nhiều cấp độ. Liên hệ với phần trước về thiếu hụt chiều dọc của RNN.\n\nVới mỗi một cái đặc trưng tại một cái thời điểm tính toán Thì nó đã thật sự sâu hay chưa Thì câu trả lời là chưa Và nó đang thiếu Nó đang thiếu một cái sự độ sâu theo cái chiều dọc Nó mới chỉ sâu theo chiều ngang thôi Còn sâu theo chiều dọc là chưa có Do đó thì ta có thể làm cho mô hình sâu hơn theo chiều dọc Và cái chiều này là được hiểu theo chiều của từng đặc trưng Với mỗi cái đặc trưng ST Thì đây là một đặc trưng cấp thấp Chúng ta sẽ làm cho nó nâng lên thành một cái đặc trưng cấp trung Mid level Sau đó chúng ta lại nâng lên thành một cái đặc trưng cấp cao hơn Thì đó là sâu theo chiều dọc Và nó sẽ cho phép mô hình của mình Nó biểu diễn được các cái đặc trưng ở nhiều cái cấp độ Nó sẽ biểu diễn được đặc trưng ở nhiều cấp độ Và giống như trong mạng CNN Chúng ta thấy Ở trong mạng CNN Thì ở những cái layer đầu tiên Những cái layer đầu tiên Thì cái feature map của mình"
+      },
+      "question": "Mục đích chính của việc xếp chồng nhiều tầng RNN (Deep Stacked RNN) là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Tăng chiều sâu theo thời gian để mô hình có thể xử lý các chuỗi dài hơn",
+        "B": "Tạo chiều sâu theo chiều dọc cho mỗi thời điểm, cho phép biểu diễn đặc trưng ở nhiều cấp độ",
+        "C": "Giảm số lượng tham số so với RNN một tầng",
+        "D": "Hoàn toàn loại bỏ vấn đề vanishing gradient"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_036",
+      "timestamp": "2025-11-17T11:21:43.731571",
+      "chunk": {
+        "chunk_id": 1718,
+        "video_id": "Chương 7_ptwSPTt2XnM",
+        "video_title": "[CS431 - Chương 7] Part 2_2： Kiến trúc mạng RNN",
+        "video_url": "https://youtu.be/ptwSPTt2XnM",
+        "chapter": "Chương 7",
+        "start_time": 47,
+        "end_time": 110,
+        "text": "Chương 7, Part: Kiến trúc RNN — Giải thích hàm loss cho bài toán dự đoán từ trong RNN. Nội dung trình bày công thức cross-entropy: với y là one-hot vector độ dài |V| (|V| là kích thước từ điển, không phải ma trận V), loss tính trên mỗi phần tử của từ điển tại thời điểm t (y_true nhân log y_pred). Sau đó tổng lỗi theo chuỗi X1..XT và loss tổng thể là trung bình các loss theo từng time-step. Liên quan đến bước thiết kế hàm lỗi đã nêu trước đó.\n\nthì nó sẽ là bằng cái công thức giống như công thức gross entropy mà chúng ta đã học trước đây và công thức của nó sẽ là tổng với chi chạy từ 1 và cho đến v trong đó v lưu ý là trong cái bài này trong cái ví dụ này thì v của mình là cái tập từ điển của mình nó bị trùng một chút xíu đây chính là cái tập từ điển của mình tại vì sao tại vì cái y này nó sẽ là một cái vector nó sẽ là một cái vector nó sẽ là một cái vector để cho biết là cái giá trị này  là cái giá trị output của mình đó là gì? nếu như đây là một cái bài toán đoán từ nếu như đây là một cái bài toán đoán từ thì đây sẽ là một cái vector có độ dài là số từ trong tập từ điển và chúng ta kí hiệu là trị tuyệt đối của V lưu ý cái V này là V từ điển nó không phải là cái ma trận V ở đây nó không phải là ma trận V ở đây"
+      },
+      "question": "Trong công thức cross-entropy cho bài toán dự đoán từ trong RNN, nếu y là one-hot vector độ dài |V| (|V| là kích thước từ điển), cross-entropy loss tại một thời điểm t sẽ được giản lược thành gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "-∑_{j=1}^{|V|} log p_j (tổng log xác suất của tất cả từ trong từ điển)",
+        "B": "-log p_{true} (giá trị âm của log xác suất dự đoán cho từ đúng)",
+        "C": "Trung bình xác suất dự đoán trên toàn bộ từ điển",
+        "D": "Sai số bình phương giữa vector one-hot và vector xác suất dự đoán"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_037",
+      "timestamp": "2025-11-17T11:22:00.086246",
+      "chunk": {
+        "chunk_id": 1763,
+        "video_id": "Chương 8_S8__bXkLSbM",
+        "video_title": "[CS431 - Chương 9] Part 2_2： Cơ chế Attention trong Sequence-to-Sequence",
+        "video_url": "https://youtu.be/S8__bXkLSbM",
+        "chapter": "Chương 8",
+        "start_time": 698,
+        "end_time": 715,
+        "text": "Chương 8, Part: Cơ chế Attention trong Seq2Seq — Giải thích minh họa ma trận attention (alpha): cách từ tiếng Anh \"size\" tạo liên kết (high attention) tới ba từ tiếng Pháp tương ứng do phân tích hình thái (ví dụ chia thể bị động/quá khứ). Nối tiếp phần trước về cách attention highlight các token nguồn khi dịch.\n\nnó cũng sẽ phải cần có một ba cái chữ này x size thì đây là cái lý giải tại sao cái từ tiếng anh này nó có cái sự liên đối đến cộng các cái từ tiếng pháp rồi cho dạ lệ  đây tên là"
+      },
+      "question": "Trong ma trận attention α của mô hình Seq2Seq, tại sao từ tiếng Anh \"size\" có thể có trọng số cao tới ba từ tiếng Pháp khác nhau?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì attention bị chuẩn hoá nên một từ nguồn luôn phải phân phối trọng số đều cho nhiều từ đích.",
+        "B": "Vì một từ nguồn có thể tương ứng với nhiều token đích do phân tích hình thái của tiếng Pháp (ví dụ các dạng chia như bị động/quá khứ).",
+        "C": "Vì mô hình hoạt động không chính xác nên phân tán attention ngẫu nhiên giữa nhiều từ đích.",
+        "D": "Vì encoder sử dụng biểu diễn one-hot nên cần ánh xạ tới nhiều token để khôi phục nghĩa."
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_038",
+      "timestamp": "2025-11-17T11:22:15.282045",
+      "chunk": {
+        "chunk_id": 1825,
+        "video_id": "Chương 9_NsWX_5oV8bY",
+        "video_title": "[CS431 - Chương 10] Part 3： Cơ chế Self-Attention",
+        "video_url": "https://youtu.be/NsWX_5oV8bY",
+        "chapter": "Chương 9",
+        "start_time": 1,
+        "end_time": 61,
+        "text": "Chương 9, Part (0:1–1:01): Cơ chế Self-Attention — Giải thích khái niệm self-attention trong Transformer: khác biệt giữa attention encoder→decoder (query từ decoder truy xuất value từ encoder) và self-attention nội bộ; nêu ưu điểm chính của self-attention là khả năng tính toán song song (không phụ thuộc chuỗi tính toán tuần tự như trước), cùng liên hệ tới việc tính giá trị ở layer trước để suy ra layer hiện tại.\n\ntrong transformer chúng ta sẽ bắt gặp một cái khái niệm dùng rất là thường xuyên đó chính là self-attention tức là cái kỹ thuật tự chú ý thì ở trong cái bài trước chúng ta đã nói về cái khái niệm là attention tức là một cái truy vấn một cái từ truy vấn query của mình ở cái bước decoder nó sẽ truy xuất và tổng hợp nó sẽ truy xuất và tổng hợp thông tin từ các cái tập giá trị value của cái encoder thì như chúng ta thấy là đây là cái giai đoạn là encode và đây là cái giai đoạn decode thì trong cái giai đoạn decode này thì chúng ta sẽ phải lookup chúng ta sẽ phải tra vào tất cả những cái từ ở trong cái giai đoạn encode còn đây là encoder còn đây là cái quá trình là decode thì khi đó là nó gọi là attention tức là cái sự truy vấn của một cái query"
+      },
+      "question": "Khác biệt chính giữa self-attention và attention trong cơ chế encoder→decoder (encoder→decoder attention) là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Self-attention thực hiện truy vấn và tổng hợp giá trị từ cùng một tập vị trí (cùng layer), trong khi encoder→decoder attention dùng query từ decoder để truy xuất giá trị từ encoder.",
+        "B": "Self-attention chỉ xuất hiện trong encoder, còn encoder→decoder attention chỉ xuất hiện trong decoder.",
+        "C": "Encoder→decoder attention cho phép tính toán song song trên các vị trí, còn self-attention phải tính tuần tự.",
+        "D": "Self-attention không sử dụng cơ chế query/key/value như encoder→decoder attention."
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_039",
+      "timestamp": "2025-11-17T11:22:28.717026",
+      "chunk": {
+        "chunk_id": 2356,
+        "video_id": "Chương 3_q3oZyk3l8EU",
+        "video_title": "[CS431 - Chương 3] Part 1： Giới thiệu mạng CNN",
+        "video_url": "https://youtu.be/q3oZyk3l8EU",
+        "chapter": "Chương 3",
+        "start_time": 99,
+        "end_time": 158,
+        "text": "Chương 3, Giới thiệu CNN (99.2–158.0s): Giải thích cách biểu diễn ảnh màu bằng ba kênh RGB (red, green, blue) — mỗi kênh là một ma trận; ghép 3 ma trận này thành tensor có chiều sâu. Nêu mục tiêu dùng mạng Neural Network để giải bài toán phân loại ảnh (ảnh vào → nhãn ra). Kết nối với phần trước về ảnh grayscale và chuẩn bị cho phần tiếp theo về kích thước ảnh đầu vào và thiết kế mạng.\n\nĐối với cái loại ảnh thứ hai đó là ảnh màu và ảnh màu thì thông thường sẽ được biểu diễn bởi ba kênh màu là red, green và blue tương ứng là đỏ, xanh lá và xanh dương màu ra cái tấm ảnh màu này chúng ta sẽ có ba cái kênh là red, green và blue và tương ứng từng cái kênh này chúng ta sẽ có các cái ma trận đây là ma trận biểu diễn cho kênh red, đây là ma trận biểu diễn cho kênh green, kênh màu xanh lá và đây sẽ là ma trận biểu diễn cho kênh blue tức là màu xanh dương và ba kênh màu này nó sẽ tương ứng với một cái thông số nó gọi là độ sâu và toàn bộ ba cái ma trận này khi chúng ta ghép lại với nhau thì nó sẽ được gọi là một cái tensor và bây giờ chúng ta sẽ tiến hành sử dụng cái mạng Neural Network để đi giải quyết các bài toán đó là bài tán phân loại ảnh"
+      },
+      "question": "Khi biểu diễn ảnh màu RGB dưới dạng tensor để đưa vào mạng neural, 'độ sâu' (depth) của tensor tương ứng với yếu tố nào sau đây?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Số kênh màu (ví dụ 3 cho RGB)",
+        "B": "Số hàng pixel của ảnh",
+        "C": "Số cột pixel của ảnh",
+        "D": "Số lớp (layers) trong mạng neural"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_040",
+      "timestamp": "2025-11-17T11:22:39.567170",
+      "chunk": {
+        "chunk_id": 1766,
+        "video_id": "Chương 4_0I8uw0ELYj4",
+        "video_title": "[CS431 - Chương 4] Part 2： Sử dụng mạng huấn luyện sẵn",
+        "video_url": "https://youtu.be/0I8uw0ELYj4",
+        "chapter": "Chương 4",
+        "start_time": 99,
+        "end_time": 159,
+        "text": "Chương 4, Video “Sử dụng mạng huấn luyện sẵn” (99.9–159.0s): Trình bày hai cách dùng model đã được huấn luyện sẵn: (1) dùng trực tiếp nếu lớp nhãn trùng — cách đơn giản nhưng có thể kém chính xác do khác biệt dữ liệu vùng/đời thực; (2) dùng CNN tiền huấn luyện (ví dụ ResNet-50) làm bộ rút trích đặc trưng — bỏ lớp phân lớp cuối, trích feature rồi kết hợp với bộ phân lớp khác (ví dụ K-NN) để cải thiện tái sử dụng đặc trưng tổng quát. Liên kết với phần trước về dùng model trực tiếp.\n\nNó có khả năng là nó đi theo những cái giống loài Mà ở cái khu vực mà mình đang sinh sống Còn cái tập dataset này thì đó là những cái tập dataset chung Do đó thì có khả năng khi chúng ta sử dụng những cái model Mà đã trend trên cái tập dữ liệu lớn này Các dữ liệu này sẽ có khả năng để sử dụng những cái model này nè Và đồng chí là chúng ta sẽ sử dụng trên chính cái dữ liệu của mình Có khả năng là độ chính xác nó không đạt như chúng ta kỳ vọng Nhưng mà đây là cái cách ngây thơ nhất, đơn giản nhất đầu tiên Khi chúng ta sử dụng với một cái mạng huấn luyện sẵn Rồi, cái cách thức thứ 2 Đó là chúng ta sẽ sử dụng cái mạng CNN Mà đã được huấn luyện sẵn như là một cái bộ rút trích đặc trưng Thì ở đây chúng ta sẽ lấy ra một cái hình ảnh ví dụ thôi ha Đó là một cái mạng ResNet 50 Và cái ResNet 50 này á Nó sẽ có cái phần đầu là cái phần rút trích đặc trưng Nó sẽ là rút trích đặc trưng Cái phần sau là cái phần liên quan đến cái việc là phân lớp"
+      },
+      "question": "Khi sử dụng một mạng CNN đã được tiền huấn luyện như ResNet-50 làm bộ rút trích đặc trưng (feature extractor), bước nào thường được thực hiện?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Sử dụng toàn bộ mô hình đã huấn luyện mà không thay đổi gì và dùng trực tiếp để phân loại",
+        "B": "Loại bỏ lớp phân loại cuối cùng, lấy phần rút trích đặc trưng và kết hợp với một bộ phân lớp khác (ví dụ K-NN)",
+        "C": "Thay toàn bộ kiến trúc CNN bằng một mạng hoàn toàn mới và huấn luyện lại từ đầu",
+        "D": "Chỉ điều chỉnh learning rate mà không can thiệp vào kiến trúc hoặc lớp cuối cùng"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_041",
+      "timestamp": "2025-11-17T11:22:52.160607",
+      "chunk": {
+        "chunk_id": 2323,
+        "video_id": "Chương 4_PyC3pl_r8jw",
+        "video_title": "[CS431 - Chương 4] Part 1_1_ Ôn tập kiến trúc mạng CNN và một số biến thể phổ biến hiện nay",
+        "video_url": "https://youtu.be/PyC3pl_r8jw",
+        "chapter": "Chương 4",
+        "start_time": 400,
+        "end_time": 462,
+        "text": "Chương 4, Part: Ôn tập CNN & mốc lịch sử - Giải thích ảnh hưởng của ImageNet (14 triệu ảnh, ~20k lớp) và vai trò cuộc thi Large Scale Visual Recognition Challenge trong thúc đẩy phân loại và phát hiện đối tượng. Nêu các mốc quan trọng của CNN: nguồn gốc từ những năm 1990, bùng nổ sau AlexNet (2012). Liên kết với phần trước về cấu trúc filter và độ sâu output của CNN; tiếp theo sẽ giới thiệu các kiến trúc cổ điển như LeNet.\n\nRồi, trên đây là sơ đồ về cái kết quả về độ lỗi khi mà nhận diện hình ảnh. Thì ở đây là càng thấp, càng thấp là càng tốt. Và ở đây sẽ là các cái cột mốc về mặc thời gian. Thì ở đây chúng ta sẽ nói đến đầu tiên đó là cái tập dữ liệu ImageNet. Đây là một trong những cái tập dữ liệu vô cùng lớn. ImageNet thì là viết tắt của chữ là Large Scale Visual Recognition Challenge, tức là ImageNet được sử dụng cho cái cuộc thi là Large Scale Visual Recognition Challenge. Và cái scale, cái kích thước của tập ImageNet này nó rất là rất là lớn. Nó bao gồm là 14 triệu ảnh và tổng số lớp mà nó phải nhận diện đó là 20.000 lớp. Và cái cuộc thi này thì được tổ chức hàng năm từ năm 2010 trở về sâu. Và hai cái bài toán chính mà nó thực hiện đó chính là bài toán phân lớp, phân loại và bài toán phát hiện đối tượng."
+      },
+      "question": "Điểm nào của ImageNet (Large Scale Visual Recognition Challenge) góp phần trực tiếp thúc đẩy sự bùng nổ của các kiến trúc CNN sau AlexNet?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Cung cấp một tập dữ liệu có quy mô lớn với nhiều ảnh và lớp được gán nhãn, cho phép huấn luyện các mạng sâu",
+        "B": "Giới thiệu các thuật toán tối ưu mới cho huấn luyện mạng neural",
+        "C": "Cung cấp phần cứng GPU miễn phí cho các nhóm nghiên cứu tham gia",
+        "D": "Đơn giản hóa bài toán nhận dạng thành bài toán phân lớp nhị phân"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_042",
+      "timestamp": "2025-11-17T11:23:06.411118",
+      "chunk": {
+        "chunk_id": 1468,
+        "video_id": "Chương 3_A3iFEk5jllM",
+        "video_title": "[CS431 - Chương 3] Part 2_2： Một số thành phần của mạng CNN",
+        "video_url": "https://youtu.be/A3iFEk5jllM",
+        "chapter": "Chương 3",
+        "start_time": 0,
+        "end_time": 60,
+        "text": "Chương 3, Part: Thành phần activation trong CNN - Giải thích hàm ReLU: ReLU(z)=max(0,z) lọc bỏ giá trị âm, giữ giá trị dương, tạo phi tuyến ngay sau lớp convolution (vì convolution là tuyến tính). So sánh ngắn với sigmoid, tanh, leaky ReLU... và nhấn mạnh ReLU giúp huấn luyện nhanh hơn; có bài tập thử nghiệm thay ReLU bằng sigmoid để thấy huấn luyện chậm hơn.\n\nthì đối với cái tầng activation thì chúng ta sử dụng hàm relu và cái công thức của cái hàm relu nó sẽ là bằng relu của hàm của z, z là đầu vào sẽ là bằng max của 0 và z thì hiểu một cách nôn đa đó là những cái dữ liệu z mà bé hơn 0 thì nó sẽ triệt tiêu đi, nó sẽ đưa về con số đó là 0 còn những cái dữ liệu z những cái giá trị đầu vào của mình là những cái giá trị lớn hơn 0 thì nó sẽ giữ nguyên nếu z mà lớn hơn 0 thì nó sẽ giữ nguyên hay hiểu một cách nôn đa relu này nó sẽ lọc những cái thông tin không cần thiết và chỉ trừa những cái thông tin quan trọng mà thôi rồi và cái tầng chúng ta có một cái lưu ý đó là trong cái mạng CNN thì cái tầng relu là thường phải ngay sau phải thường ngay theo sau tầng convolution tại vì cái thằng này là"
+      },
+      "question": "Tại sao hàm ReLU thường được đặt ngay sau tầng convolution trong mạng CNN?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì ReLU = max(0, z) loại bỏ các giá trị âm và tạo phi tuyến cần thiết sau phép convolution tuyến tính",
+        "B": "Vì ReLU chuẩn hóa các kích hoạt về phân phối có trung bình bằng 0",
+        "C": "Vì ReLU giảm số lượng tham số của mạng",
+        "D": "Vì ReLU giới hạn các giá trị đầu ra trong khoảng (-1, 1) giống như tanh"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_043",
+      "timestamp": "2025-11-17T11:23:20.430982",
+      "chunk": {
+        "chunk_id": 1816,
+        "video_id": "Chương 3_7YLMIKqygPU",
+        "video_title": "[CS431 - Chương 3] Part 4_1： Trực quan hóa mạng CNN",
+        "video_url": "https://youtu.be/7YLMIKqygPU",
+        "chapter": "Chương 3",
+        "start_time": 349,
+        "end_time": 410,
+        "text": "Chương 3, Video: Trực quan hóa mạng CNN — Phân tích Feature Map: Giải thích quan sát các Feature Mark (độ sáng/response) khi cho chuỗi frame: một số feature map nổi bật hiển thị rõ bóng dáng đối tượng, một số yếu hơn. Thực nghiệm phóng to từng Feature Mark cho thấy chúng chuyên trách phát hiện biên cạnh theo chiều dọc/chiều ngang. Dù cùng phát hiện biên ngang, hai feature map có hành vi khác nhau (một sáng lên với mẫu giấy, cái kia không) — gợi ý về hai vai trò/ý nghĩa khác nhau của feature maps trong mã hóa biên cạnh. Liên quan: trước đó đã quan sát shadow của đối tượng trên feature maps.\n\nCó một số cái Feature Mark Có cái độ Respond Hay là cái độ sát Nó rất là sáng So với lại những Feature Mark khác Ví dụ như chúng ta thấy ở trung tâm màn hình này Có hai cái Feature Mark này Nó rất là sáng Còn các cái Feature Mark này Thì chúng ta nhìn thấy có bóng dáng của Cái người đang thực hiện cái Demo ở đây Nhưng mà cái độ sáng nó yếu hơn Vậy thì hai cái Feature Mark này Nó có cái ý nghĩa là gì Các bạn có thể đoán được hay không Về cái biên cạnh của phía dưới stirring Mình sẽ xem các bạn có thể tham gia thử với chúng tôi Vì vậy chúng ta sẽ Thêm một cái cửa sổ nữa ở đây Đó là cái cửa sổ này đó là phóng to Của cái Feature Mark mà chúng ta đang highlight ở đây Chúng ta nhấp vô chọn cái Feature Mark ở đây Và bên đây sẽ là phóng to ra Thì các bạn có thể đoán ra được Là cái tính chất của cái Feature Mark này Đó chính là tạo ra các cái biên cạnh theo chiều dọc"
+      },
+      "question": "Từ việc phóng to các feature map và quan sát một số feature map sáng mạnh chuyên phát hiện biên dọc/biên ngang trong video, kết luận nào sau đây đúng nhất?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Các feature map chuyên hóa để phát hiện các hướng biên khác nhau (ví dụ: dọc hoặc ngang).",
+        "B": "Tất cả feature map đều có vai trò giống nhau và phản ứng như nhau với cùng một đặc trưng trên ảnh.",
+        "C": "Độ sáng của feature map luôn cho biết mô hình đang bị overfitting ở khu vực đó.",
+        "D": "Sự xuất hiện bóng (shadow) trên feature map chỉ ra mạng không thể học được biên cạnh."
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_044",
+      "timestamp": "2025-11-17T11:23:31.917392",
+      "chunk": {
+        "chunk_id": 1477,
+        "video_id": "Chương 3_A3iFEk5jllM",
+        "video_title": "[CS431 - Chương 3] Part 2_2： Một số thành phần của mạng CNN",
+        "video_url": "https://youtu.be/A3iFEk5jllM",
+        "chapter": "Chương 3",
+        "start_time": 448,
+        "end_time": 510,
+        "text": "Chương 3, Part: Một số thành phần của mạng CNN — Giải thích bước flatten trong CNN: từ tensor 3D (ví dụ 2x2x2) cắt và ghép thành vector 1D để đưa vào lớp fully connected; ví dụ phân loại 3 lớp (nhà, người, cây). Liên kết với các bước trước (convolution, ReLU, pooling) là quá trình trích đặc trưng rồi dùng fully connected như bộ phân lớp.\n\nkích thước là 2 x 2 x 2 và ở đây thì chúng ta sẽ cắt cái thằng này ra đúng không mỗi lá cắt chúng ta tạo ra ở đây thì 0 1 0 1 mỗi cái lá cắt này chúng ta sẽ có các cái giá trị đầu vào như thế này thì flatten bản chất nó là dũi nó dũi một cái tensor 3D để tạo thành một cái tensor 1D tức là một cái vector thì số 0 chép qua đây, số 1 chép qua đây, rồi số 0 chép qua đây, số 1 chép qua đây và số 0 đó thì nó sẽ tạo thành vector và với cái vector này thì nó sẽ thực hiện cái phép biến đổi fully connected để tạo ra từ một cái vector tạo ra thành một cái vector khác thì trong trường hợp ví dụ như bài này chúng ta nhận dạng 3 lớp đó là nhà cửa nè, người nè cây nè đúng không thì ở đây nó sẽ có"
+      },
+      "question": "Chức năng chính của lớp flatten trong một mạng CNN là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Chuyển tensor 3D (ví dụ kích thước 2x2x2) thành một vector 1D để đưa vào lớp fully connected",
+        "B": "Giảm kích thước không gian của feature map bằng cách lấy mẫu (pooling)",
+        "C": "Tạo các feature map mới bằng cách áp dụng các kernel (convolution)",
+        "D": "Thực hiện regularization bằng cách tắt ngẫu nhiên một phần neuron"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_045",
+      "timestamp": "2025-11-17T11:23:42.440654",
+      "chunk": {
+        "chunk_id": 1638,
+        "video_id": "Chương 3_KeNRQw9j_ps",
+        "video_title": "[CS431 - Chương 3] Part 3_1： Cài đặt mạng CNN",
+        "video_url": "https://youtu.be/KeNRQw9j_ps",
+        "chapter": "Chương 3",
+        "start_time": 149,
+        "end_time": 208,
+        "text": "Chương 3, Video \"Cài đặt mạng CNN\": Hướng dẫn load và xem dữ liệu MNIST bằng keras.datasets. Giải thích mnist.load_data() tự tải, trả về x_train, y_train, x_test, y_test với kích thước (60000,28,28) và nhãn tương ứng. Minh hoạ cách hiển thị ảnh mẫu bằng matplotlib.pyplot (plt.imshow) lấy một index ví dụ (123) và in nhãn để kiểm tra (dự đoán nhìn thấy số 7). Liên quan tới phần trước về cấu trúc fully-connected cuối mạng (120,84,10).\n\nload data set rất là dễ dàng đó là keras.dataset và chúng ta sẽ import tập dữ liệu là mnix sau đó chúng ta chỉ việc gọi là mnix.load data thì tự động nó sẽ lấy từ trên mạng internet về giải nén và đưa vào các cặp biến là xtreme, etreme và xtest, etest thì ở đây chúng ta sẽ quan sát thử kích thước của các biến này xtreme.set thì có kích thước là 60.000 x 28.000 x 28.000 thì 60.000 này tương ứng là tổng số mẫu còn 28.000 x 28.000 đó chính là cái kích thước bề ngang và bề cao của cái hạng triệu số big time etreme.set thì nó sẽ có kích thước là 60.000 thì ứng với từng cái xtreme nó sẽ có một cái giá trị label cái nhãn output của etreme thì ở đây chúng ta sẽ thử quan sát một số cái mẫu dữ liệu để quan sát thì chúng ta sẽ sử dụng thư viện đó là map.lib map.lib.pyplot"
+      },
+      "question": "Trong mảng x_train có kích thước (60000, 28, 28) khi dùng mnist.load_data(), giá trị 60000 biểu thị điều gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Số kênh màu của ảnh",
+        "B": "Chiều rộng (width) của ảnh",
+        "C": "Tổng số mẫu trong tập huấn luyện",
+        "D": "Số lớp (số nhãn khác nhau)"
+      },
+      "correct_answer": "C",
+      "predicted_answer": "c",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_046",
+      "timestamp": "2025-11-17T11:23:55.359544",
+      "chunk": {
+        "chunk_id": 2177,
+        "video_id": "Chương 7__Km_A2iRUds",
+        "video_title": "[CS431 - Chương 8] Part 1_2： Một số biến thể của RNN： LSTM",
+        "video_url": "https://youtu.be/_Km_A2iRUds",
+        "chapter": "Chương 7",
+        "start_time": 650,
+        "end_time": 657,
+        "text": "Chương 7, Part: LSTM - Giải thích vai trò 3 cổng (forget, input, output) và context cell trong LSTM, cách các cổng điều hướng thông tin để khắc phục hiện tượng vanishing gradient và giữ/loại bỏ thông tin quá khứ. Liên quan tới phần trước về trạng thái hiện tại và quá khứ trong RNN.\n\nPhần nào giải quyết được cái hiện tượng Là vanishing gradient Hiện tượng tiêu biến gradient Điều hướng được cái thông tin"
+      },
+      "question": "Thành phần nào trong LSTM đóng vai trò chính trong việc khắc phục hiện tượng vanishing gradient bằng cách duy trì và điều hướng thông tin qua thời gian?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Forget gate (cổng quên) một mình",
+        "B": "Context cell (cell state) kết hợp với các cổng (forget, input, output)",
+        "C": "Output gate (cổng xuất) một mình",
+        "D": "Hàm kích hoạt tanh trong các nút ẩn"
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_047",
+      "timestamp": "2025-11-17T11:24:09.273368",
+      "chunk": {
+        "chunk_id": 1982,
+        "video_id": "Chương 9_iMfkIHkU6NM",
+        "video_title": "[CS431 - Chương 10] Part 7： Một số ứng dụng của kiến trúc mạng Transformer",
+        "video_url": "https://youtu.be/iMfkIHkU6NM",
+        "chapter": "Chương 9",
+        "start_time": 750,
+        "end_time": 808,
+        "text": "Chương 9, Part: Prompting với Transformer — Trình bày phương pháp cho mô hình học từ ngữ cảnh bằng cách đưa cặp input–output (ví dụ câu báo chí → sentiment: positive/neutral/negative). Giải thích các kiểu prompting: zero-shot (không cho mẫu), one-shot (1 mẫu), few-shot (vài mẫu). Đề cập kết hợp FileTool/adapter và instruction tuning (tinh chỉnh mô hình bằng hướng dẫn) để cải thiện khả năng tổng quát hóa. Tiếp đoạn trước về ví dụ cặp mẫu sentiment.\n\nThe company anticipated Is operating profit Is operating profit to improve Thì chúng ta sẽ để dấu xuyệt xuyệt Để chống Thì mô hình nó sẽ tự biết là Ở trên đây là positive, ở trên đây là neutral Ở đây là negative Thì tự nó sẽ điền vô chỗ chống này là Positive hay negative hay neutral Nó sẽ tự biết mối quan hệ giữa Cái cặp input output này Mô hình nó sẽ tự học theo cái ngữ cảnh Đây là 3 cái context để giúp cho mình Đưa ra cái phán đoán tại cái vị trí Output cho cái sample mới này Tương tự như vậy cho cái bài toán Là phân loại văn mãn Chúng ta sẽ cho ở trước Đây là chủ đề về finance, chủ đề về sports Chủ đề về tech Thì bên đây nó sẽ từ cái Cái input này nó sẽ đưa ra Cái phán đoán output của mình Thì đây là phương pháp prompting Và chúng ta sẽ có một số Thuật ngữ trong cái phương pháp này Đó là zero Zero sort prompting"
+      },
+      "question": "Điểm khác biệt chính giữa zero-shot, one-shot và few-shot prompting là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Số lượng cặp input–output mẫu được đưa vào prompt",
+        "B": "Kích thước mô hình Transformer được sử dụng",
+        "C": "Việc có hay không sử dụng instruction tuning để tinh chỉnh mô hình",
+        "D": "Loại tokenizer được dùng để mã hóa văn bản"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_048",
+      "timestamp": "2025-11-17T11:24:19.201292",
+      "chunk": {
+        "chunk_id": 1794,
+        "video_id": "Chương 2_G4lcEPrfETo",
+        "video_title": "[CS431 - Chương 2] Part 4a： Mô hình hồi quy Softmax (SoftmaxRegression)",
+        "video_url": "https://youtu.be/G4lcEPrfETo",
+        "chapter": "Chương 2",
+        "start_time": 191,
+        "end_time": 256,
+        "text": "Chương 2, Video Mô hình hồi quy Softmax: Giải thích quyết định phân lớp đơn nhãn (mỗi điểm thuộc đúng một trong ba lớp: tam giác, tròn, X). Chỉ ra quy tắc chọn lớp theo xác suất đầu ra lớn nhất và nêu vấn đề vùng quyết định mơ hồ khi điểm nằm ở khu vực cạnh tranh (gây nhầm lẫn giữa các lớp). Dẫn tới ý tưởng dùng hàm max trên các giá trị đầu ra Y để quyết định.\n\nVà ở đây chúng ta sẽ đưa ra quyết định là rốt cuộc nó sẽ thuộc về lớp tam giác, lớp tròn hay là lớp X. Với một lưu ý đó là trong trường hợp này chúng ta sẽ sử dụng là đơn nhãn. Trong trường hợp này chúng ta là đơn nhãn tức là một điểm, một cái điểm thì nó chỉ được gán vào duy nhất một trong ba lớp tròn tam giác và X. Thì bây giờ làm sao chúng ta chọn ra được nó thuộc về lớp tròn tam giác hay X. Thì chúng ta sẽ chọn cái mô hình trong ca cái mô hình này thì chúng ta sẽ chọn cái mô hình nào mà có cái xác xuất đầu ra. Là cao nhất tức là y ngã 1, y ngã 2 cho đến y ngã K. Thì giá trị nào cao nhất thì chúng ta sẽ nói nó thuộc về phân lớp đó. Tuy nhiên nếu mà làm như thế này thì nó sẽ nảy sinh ra một số cái vấn đề. Và cái vấn đề đó là nếu như cái điểm của mình nó nằm ở trong cái khu vực mà nó sẽ nằm trong cái tam giác này."
+      },
+      "question": "Vấn đề chính được nêu trong video khi sử dụng quy tắc chọn lớp theo xác suất đầu ra cao nhất trong mô hình hồi quy Softmax (đơn nhãn) là gì?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Xuất hiện vùng quyết định mơ hồ khi một điểm nằm trong khu vực cạnh tranh giữa các lớp, gây nhầm lẫn phân lớp",
+        "B": "Hàm Softmax không cho các xác suất có thể so sánh được giữa các lớp",
+        "C": "Quy tắc này làm tăng số lượng lớp cần phải phân loại",
+        "D": "Việc chọn xác suất lớn nhất dẫn đến overfitting do tăng số tham số mô hình"
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_049",
+      "timestamp": "2025-11-17T11:24:31.721316",
+      "chunk": {
+        "chunk_id": 1698,
+        "video_id": "Chương 3_gmQTGRTHH2o",
+        "video_title": "[CS431 - Chương 3] Part 4_2： Trực quan hóa mạng CNN",
+        "video_url": "https://youtu.be/gmQTGRTHH2o",
+        "chapter": "Chương 3",
+        "start_time": 198,
+        "end_time": 262,
+        "text": "Chương 3, Video: Trực quan hóa mạng CNN — Phân tích feature map nhận diện “gương mặt”. Giải thích vì sao same feature map bật mạnh với mặt người nhưng chỉ sáng nhẹ với mặt mèo: mèo có mắt và mũi tương tự nên kích hoạt một phần, nhưng miệng mèo nhỏ/khác dạng nên đóng góp yếu, làm feature map tổng thể kém sáng. Nêu rằng feature map dựa trên hình học (dáng mắt, lỗ mũi) để tăng trọng số, còn các đặc trưng ít xuất hiện thì giảm ảnh hưởng. Tiếp theo sẽ xem các ví dụ khác minh họa activation tương ứng.\n\nnó không có sáng như cái mặt của con người như vậy thì cái ý nghĩa của cái concept này nó phải thêm 1 cái nữa đó là nó phải là gương mặt của con người nhưng mà câu hỏi đặt ra là tại sao gương mặt con mèo thì nó vẫn sáng nhưng mà nó hơi hơi sáng thì có thể giải thích đó là cái gương mặt của con mèo thì nó cũng sẽ có 1 số cái tính chất giống như con người ví dụ mặt con mèo nó cũng sẽ có mắt hoặc có lỗ mũi tuy nhiên cái phần mặt của con mèo, cái phần miệng của con mèo các bạn thấy là cái phần miệng của con mèo nó rất là bé nó chúm chím, nó rất là bé ở đây trong khi đó cái miệng của con người các bạn thấy rồi nó to hơn nhiều và nó dài hơn nhiều so với cái miệng của con mèo và chính vì chỉ có 2 trên 3 cái đặc điểm trên nên cái feature map ở đây nó chỉ hơi sáng tức là hàm ý nó chỉ có đâu đó nó có cái đặc trưng về về mắt và về mũi thôi còn cái phần về miệng nó hơi yếu nên đâm ra là cái feature map này nó sắc yếu thì cái ý nghĩa của cái feature map này đó là"
+      },
+      "question": "Tại sao một feature map chuyên nhận diện “gương mặt” lại bật mạnh với mặt người nhưng chỉ hơi sáng khi gặp mặt mèo?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì mặt mèo không có mắt và lỗ mũi giống như mặt người, nên hoàn toàn không kích hoạt feature map.",
+        "B": "Vì feature map dựa trên các đặc trưng hình học (mắt, lỗ mũi, miệng) và mặt mèo chỉ chia sẻ một số đặc trưng (mắt, mũi) trong khi miệng mèo nhỏ/khác dạng nên tổng activation yếu.",
+        "C": "Vì feature map chỉ phản ứng với màu da và tông màu của khuôn mặt người, nên mặt mèo không được nhận diện.",
+        "D": "Vì mạng đã overfit hoàn toàn vào khuôn mặt người nên không thể nhận bất kỳ đặc trưng nào từ mặt mèo."
+      },
+      "correct_answer": "B",
+      "predicted_answer": "b",
+      "score": 1
+    },
+    {
+      "case_id": "quiz_eval_050",
+      "timestamp": "2025-11-17T11:24:47.014207",
+      "chunk": {
+        "chunk_id": 1689,
+        "video_id": "Chương 6_UJNyIptbcNM",
+        "video_title": "[CS431 - Chương 6] Part 4_1： Mô hình Word2Vec",
+        "video_url": "https://youtu.be/UJNyIptbcNM",
+        "chapter": "Chương 6",
+        "start_time": 599,
+        "end_time": 661,
+        "text": "Chương 6, Part: Mô hình Word2Vec (skip-gram) — Giải thích kiến trúc mạng: input là one-hot vector (kích thước V lớn ~ up to hàng triệu), nhân với ma trận W để ra embedding H (kích thước N), rồi nhân với ma trận W' (N x V) và áp dụng softmax để nhận xác suất dự đoán từ context. Mục tiêu là tối ưu hàm loss (cross-entropy) để mô hình dự đoán từ t+z từ WT. Liên quan đến phần trước về cách tính H = W x X (one-hot).\n\nTrong từ điển. Vị trí của cái từ WT trong từ điển.   Là như vậy thì. Cái vector này. Nó sẽ là vector One-Hop. Và có số chiều rất là lớn. Thông thường W. Cái V này. V này thì có khả năng là lên đến 1 triệu. Rồi. Cái lớp tiếp theo. Đó là lớp Output. Thì nó sẽ có cái công thức đó là giá trị dự đoán. Đây là giá trị dự đoán. Tại một cái này nó sẽ là giá trị dự đoán. Rồi. Sẽ là bằng Soap Max. Của W. W thì sẽ là ngược lại của. W. Thì nó sẽ có kích thước là N. Nhân với lại V. Và. Chúng ta cũng lần nữa chúng ta sẽ nhân. Tích vô hướng với lại H. Và đưa vào cái hàm Soap Max. Thì mục tiêu của cái việc đưa về. Hàm Soap Max. Đó chính là nó sẽ đưa về cái không gian sát xuất. Nó sẽ đưa về cái không gian sát xuất."
+      },
+      "question": "Trong mô hình Word2Vec (skip-gram) được mô tả, vì sao đầu vào thường là vector one-hot và H được tính bằng H = W x X?",
+      "question_type": "mcq",
+      "options": {
+        "A": "Vì nhân vector one-hot với ma trận W sẽ trực tiếp chọn embedding tương ứng của từ, cho ra H kích thước N.",
+        "B": "Vì vector one-hot có kích thước nhỏ hơn nên giảm chi phí tính toán so với embedding dày đặc.",
+        "C": "Vì sử dụng one-hot giúp loại bỏ nhu cầu áp dụng hàm softmax ở lớp output.",
+        "D": "Vì vector one-hot chứa thông tin ngữ nghĩa sâu về từ nên mô hình cần ít dữ liệu huấn luyện hơn."
+      },
+      "correct_answer": "A",
+      "predicted_answer": "a",
+      "score": 1
+    }
+  ]
+}
