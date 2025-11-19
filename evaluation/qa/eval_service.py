@@ -154,6 +154,11 @@ class QAEvaluationService:
         metrics["citation_accuracy"] = self._calculate_citation_accuracy_simple(
             generated_sources, ground_truth_videos, ground_truth_timestamps
         )
+
+        # Metric 4: MRR (Mean Reciprocal Rank) - rank of first relevant chunk from source video
+        metrics["mrr"] = self._calculate_mrr(
+            generated_sources, ground_truth_videos
+        )
         
         # Step 4: Return evaluation result
         return {
@@ -284,8 +289,8 @@ Chỉ trả về JSON, không giải thích thêm.
             llm_score = 0.0
             explanation = "Failed to parse LLM evaluation"
         
-        # Combined score (weighted average)
-        combined_score = 0.4 * embedding_sim + 0.6 * llm_score
+        # Combined score (weighted average: 30% embedding, 70% LLM)
+        combined_score = 0.3 * embedding_sim + 0.7 * llm_score
         
         return {
             "cosine_similarity": round(embedding_sim, 4),
@@ -327,22 +332,15 @@ Chỉ trả về JSON, không giải thích thêm.
         # Extract video ID từ ground truth
         gt_video_id = self._extract_video_id(gt_video_url)
         
-        # Kiểm tra xem có chunk nào match không
+        # Kiểm tra xem có chunk nào từ ground truth video không (chỉ check video, không check timestamp)
         found = False
         for source in generated_sources:
             source_video_id = self._extract_video_id(source.get("video_url", ""))
-            
+
             if source_video_id == gt_video_id:
-                # Nếu có timestamp, kiểm tra overlap
-                if gt_timestamp:
-                    source_timestamp = source.get("timestamp", "")
-                    if self._check_timestamp_overlap(gt_timestamp, source_timestamp):
-                        found = True
-                        break
-                else:
-                    # Không có timestamp thì chỉ cần video ID khớp
-                    found = True
-                    break
+                # Chỉ cần video ID khớp, không cần check timestamp
+                found = True
+                break
         
         return {
             "ground_truth_in_retrieved": found,
@@ -352,6 +350,54 @@ Chỉ trả về JSON, không giải thích thêm.
             "ground_truth_timestamp": gt_timestamp
         }
     
+    def _calculate_mrr(
+        self,
+        generated_sources: List[Dict[str, Any]],
+        ground_truth_videos: List[str]
+    ) -> Dict[str, Any]:
+        """
+        Metric: MRR (Mean Reciprocal Rank)
+
+        Calculate the rank of the first chunk from the ground truth source video
+        in the reranked results (before passing to LLM).
+
+        MRR = 1 / rank (where rank is 1-indexed position of first relevant chunk)
+
+        Returns:
+            Dict with:
+            - rank: int (position of first relevant chunk, or None if not found)
+            - mrr_score: float (1/rank if found, 0.0 if not found)
+            - ground_truth_video: str
+        """
+        if not ground_truth_videos or not generated_sources:
+            return {
+                "rank": None,
+                "mrr_score": 0.0,
+                "ground_truth_video": ground_truth_videos[0] if ground_truth_videos else None,
+                "details": "No ground truth or no retrieved sources"
+            }
+
+        # Get ground truth video URL (only 1 per question)
+        gt_video_url = ground_truth_videos[0]
+        gt_video_id = self._extract_video_id(gt_video_url)
+
+        # Find the rank of the first chunk from the ground truth video
+        rank = None
+        for i, source in enumerate(generated_sources, 1):
+            source_video_id = self._extract_video_id(source.get("video_url", ""))
+            if source_video_id == gt_video_id:
+                rank = i
+                break
+
+        # Calculate MRR score
+        mrr_score = (1.0 / rank) if rank else 0.0
+
+        return {
+            "rank": rank,
+            "mrr_score": round(mrr_score, 4),
+            "ground_truth_video": gt_video_url
+        }
+
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video ID from URL."""
         if "youtu.be/" in url:

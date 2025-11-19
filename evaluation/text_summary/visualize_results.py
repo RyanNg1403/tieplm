@@ -176,6 +176,56 @@ def create_compression_ratio_chart(evaluations: Dict, output_path: Path):
     print(f"✓ Created compression ratio chart: {output_path}")
 
 
+def create_cosine_similarity_chart(evaluations: Dict, output_path: Path):
+    """Create chart showing cosine similarity scores for all questions."""
+    scores = evaluations['scores']
+    question_ids = [s['question_id'] for s in scores]
+
+    # Get cosine similarities (skip if not present)
+    cosine_scores = []
+    for s in scores:
+        if 'cosine_similarity' in s:
+            cosine_scores.append(s['cosine_similarity'])
+        else:
+            print("Warning: cosine_similarity not found in scores. Run add_cosine_similarity.py first.")
+            return
+
+    avg_cosine = np.mean(cosine_scores)
+
+    # Create figure
+    fig, ax = plt.subplots(figsize=(16, 6))
+    x = np.arange(len(question_ids))
+
+    # Create bars
+    bars = ax.bar(x, cosine_scores, alpha=0.8, color='#9b59b6', edgecolor='#8e44ad', linewidth=0.5)
+
+    # Add average line
+    ax.axhline(y=avg_cosine, color='#8e44ad', linestyle='--', linewidth=2,
+               label=f'Average Cosine Similarity: {avg_cosine:.3f}')
+
+    # Customize chart
+    ax.set_xlabel('Question ID', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Cosine Similarity', fontsize=12, fontweight='bold')
+    ax.set_title('Cosine Similarity Scores for All Questions', fontsize=14, fontweight='bold', pad=20)
+    ax.set_xticks(x)
+    ax.set_xticklabels(question_ids, rotation=45, ha='right', fontsize=8)
+    ax.legend(loc='upper right', fontsize=10)
+    ax.grid(axis='y', alpha=0.3, linestyle=':')
+    ax.set_ylim(0, 1.05)
+
+    # Add value labels on bars (only for scores below 0.2)
+    for i, (bar, score) in enumerate(zip(bars, cosine_scores)):
+        if score < 0.2:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height + 0.02,
+                   f'{score:.2f}', ha='center', va='bottom', fontsize=7)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"✓ Created cosine similarity chart: {output_path}")
+
+
 
 
 def generate_visualizations(run_folder: Path):
@@ -206,11 +256,19 @@ def generate_visualizations(run_folder: Path):
         vis_folder / "2_alignment_coverage_scores.png"
     )
 
-    # 3. Compression Ratio Chart
+    # 3. Cosine Similarity Chart (if available)
+    if 'cosine_similarity' in evaluations['statistics']:
+        print("Creating cosine similarity chart...")
+        create_cosine_similarity_chart(
+            evaluations,
+            vis_folder / "3_cosine_similarity.png"
+        )
+
+    # 4. Compression Ratio Chart
     print("Creating compression ratio chart...")
     create_compression_ratio_chart(
         evaluations,
-        vis_folder / "3_compression_ratios.png"
+        vis_folder / "4_compression_ratios.png"
     )
 
     # Create summary statistics file
@@ -246,6 +304,10 @@ def generate_visualizations(run_folder: Path):
         }
     }
 
+    # Add cosine similarity stats if available
+    if 'cosine_similarity' in evaluations['statistics']:
+        summary_stats['cosine_similarity'] = evaluations['statistics']['cosine_similarity']
+
     with open(vis_folder / "summary_statistics.json", 'w', encoding='utf-8') as f:
         json.dump(summary_stats, f, indent=2, ensure_ascii=False)
 
@@ -264,6 +326,10 @@ def generate_visualizations(run_folder: Path):
           f"(min: {summary_stats['alignment']['min']:.3f}, max: {summary_stats['alignment']['max']:.3f})")
     print(f"  Coverage Score     : {summary_stats['coverage']['mean']:.3f} "
           f"(min: {summary_stats['coverage']['min']:.3f}, max: {summary_stats['coverage']['max']:.3f})")
+    if 'cosine_similarity' in summary_stats:
+        print(f"  Cosine Similarity  : {summary_stats['cosine_similarity']['mean']:.3f} "
+              f"(min: {summary_stats['cosine_similarity']['min']:.3f}, max: {summary_stats['cosine_similarity']['max']:.3f}, "
+              f"median: {summary_stats['cosine_similarity']['median']:.3f}, std: {summary_stats['cosine_similarity']['std']:.3f})")
     print(f"  Compression Ratio  : {summary_stats['compression_ratio']['mean']:.3f} "
           f"(min: {summary_stats['compression_ratio']['min']:.3f}, max: {summary_stats['compression_ratio']['max']:.3f})")
     print()

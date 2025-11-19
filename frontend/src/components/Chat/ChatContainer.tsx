@@ -19,7 +19,7 @@ import { ChatMessage, ChatSession, Quiz, TaskType } from '../../types';
 import { getTaskColor } from '../../utils/taskColors';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
-interface ChatContainerProps {}
+interface ChatContainerProps { }
 
 export const ChatContainer: React.FC<ChatContainerProps> = () => {
   const navigate = useNavigate();
@@ -754,7 +754,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = () => {
           onDeleteSession={handleDeleteSession}
         />
       )}
-      
+
       {/* Video Summary Layout with Resizable Panels */}
       {currentMode === 'video_summary' && (
         <VStack flex={1} spacing={0} align="stretch" h="100vh" overflow="hidden">

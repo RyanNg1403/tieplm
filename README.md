@@ -122,12 +122,8 @@ See [`ingestion/README.md`](./ingestion/README.md) for details.
 cd backend
 
 # Load .env and start backend (port from BACKEND_PORT in .env)
-uvicorn app.main:app --reload --port ${BACKEND_PORT:-8000}
+uvicorn app.main:app --reload --port 8000
 
-# Or explicitly:
-# uvicorn app.main:app --reload --port 8000
-# $env:BACKEND_PORT = 8000
-# uvicorn app.main:app --reload --port $env:BACKEND_PORT
 # Backend API: http://localhost:8000
 # API Docs: http://localhost:8000/docs
 ```
@@ -136,8 +132,6 @@ uvicorn app.main:app --reload --port ${BACKEND_PORT:-8000}
 ```bash
 cd frontend
 npm install  # First time only
-
-# Start frontend (port from FRONTEND_PORT in .env, defaults to 3000)
 npm start
 # Frontend: http://localhost:3000
 ```
@@ -218,7 +212,3 @@ Framework for measuring performance across all four AI tasks.
 - [`backend/README.md`](./backend/README.md) - Backend module guide
 - [`frontend/README.md`](./frontend/README.md) - Frontend module guide
 - API Docs (when running): http://localhost:8000/docs
-
-## Progress Log
-
-- **2025-11-17**: Regenerated PostgreSQL dump (`tieplm_db_dump.sql`) and Qdrant snapshot (`qdrant_snapshot.snapshot`) for sharing with the team.
