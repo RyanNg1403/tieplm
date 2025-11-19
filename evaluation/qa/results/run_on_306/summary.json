@@ -1,0 +1,82 @@
+{
+  "total_questions": 306,
+  "successful_evaluations": 306,
+  "failed_evaluations": 0,
+  "average_metrics": {
+    "exact_match": 0.9368,
+    "answer_correctness": 0.7262,
+    "answer_correctness_llm": 0.7645,
+    "answer_correctness_cosine": 0.6368,
+    "citation_accuracy": 0.951,
+    "mrr": 0.8252
+  },
+  "by_chapter": {
+    "2": {
+      "count": 66,
+      "citation_accuracy": 0.8636,
+      "mrr": 0.6772,
+      "exact_match": 0.9118,
+      "answer_correctness": 0.6909,
+      "answer_correctness_llm": 0.7181,
+      "answer_correctness_cosine": 0.6274
+    },
+    "3": {
+      "count": 32,
+      "citation_accuracy": 0.9688,
+      "mrr": 0.8672,
+      "exact_match": 0.9375,
+      "answer_correctness": 0.6726,
+      "answer_correctness_llm": 0.6844,
+      "answer_correctness_cosine": 0.6452
+    },
+    "4": {
+      "count": 22,
+      "citation_accuracy": 1.0,
+      "mrr": 0.8902,
+      "exact_match": 0.9091
+    },
+    "5": {
+      "count": 18,
+      "citation_accuracy": 0.9444,
+      "mrr": 0.9028,
+      "exact_match": 0.9444
+    },
+    "6": {
+      "count": 45,
+      "citation_accuracy": 1.0,
+      "mrr": 0.96,
+      "exact_match": 1.0,
+      "answer_correctness": 0.7675,
+      "answer_correctness_llm": 0.7925,
+      "answer_correctness_cosine": 0.7091
+    },
+    "7": {
+      "count": 45,
+      "citation_accuracy": 0.9556,
+      "mrr": 0.8207,
+      "exact_match": 1.0,
+      "answer_correctness": 0.8666,
+      "answer_correctness_llm": 0.9425,
+      "answer_correctness_cosine": 0.6894
+    },
+    "8": {
+      "count": 38,
+      "citation_accuracy": 1.0,
+      "mrr": 0.799,
+      "exact_match": 0.92,
+      "answer_correctness": 0.5988,
+      "answer_correctness_llm": 0.6231,
+      "answer_correctness_cosine": 0.5423
+    },
+    "9": {
+      "count": 40,
+      "citation_accuracy": 0.95,
+      "mrr": 0.8437,
+      "exact_match": 0.88,
+      "answer_correctness": 0.7266,
+      "answer_correctness_llm": 0.7967,
+      "answer_correctness_cosine": 0.5632
+    }
+  },
+  "timestamp": "2025-11-18T01:49:32.852441"
+}

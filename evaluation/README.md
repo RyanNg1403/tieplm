@@ -1,101 +1,141 @@
 # Evaluation Module
 
-Evaluate performance of 4 AI tasks: Q&A, Text Summary, Video Summary, Quiz Generation.
+Performance evaluation framework for all four AI tasks: Text Summary, Q&A, Video Summary, and Quiz Generation.
 
-## 📁 Structure
+## Status: ✅ Complete
+
+All four tasks have been evaluated with comprehensive metrics and datasets.
+
+## Directory Structure
 
 ```
 evaluation/
 ├── text_summary/
-│   ├── eval_service.py        # Evaluation service
-│   ├── run_eval.py            # Evaluation runner script
-│   ├── test_questions.json    # Test dataset (50 questions)
-│   └── results/               # Evaluation results (gitignored)
+│   ├── eval_service.py
+│   ├── run_eval.py
+│   ├── add_cosine_similarity.py
+│   ├── visualize_results.py
+│   ├── test_questions.json          # 50 test questions
+│   └── results/
+│       ├── ms-marco-MiniLM-L-6-v2/  # Baseline reranker
+│       ├── bge-reranker-v2-m3/      # BGE reranker
+│       └── Vietnamese_Reranker/     # Vietnamese reranker
+│           ├── evaluations.json
+│           ├── generations.json
+│           └── visualizations/
+│               └── summary_statistics.json
 ├── qa/
-│   ├── eval_service.py        # TODO
-│   ├── run_eval.py            # TODO
+│   ├── eval_service.py
+│   ├── run_eval.py
+│   ├── test_questions.json          # 306 test questions
 │   └── results/
+│       ├── run_on_100/              # 100 questions
+│       └── run_on_306/              # Full dataset
+│           ├── evaluations.json
+│           └── summary.json
 ├── video_summary/
-│   ├── eval_service.py        # TODO
-│   ├── run_eval.py            # TODO
+│   ├── eval_service.py
+│   ├── run_eval.py
+│   ├── visualize_results.py
 │   └── results/
+│       └── final_results_on_62_videos/
+│           ├── evaluations.json
+│           └── visualizations/
+│               └── summary_statistics.json
 └── quiz/
-    ├── eval_service.py        # TODO
-    ├── run_eval.py            # TODO
+    ├── eval_service.py
+    ├── prompts.py
+    ├── run_eval.py
     └── results/
+        ├── mcq/
+        │   ├── evaluations.json
+        │   └── generations.json
+        └── open_ended/
+            ├── evaluations.json
+            └── generations.json
 ```
 
-**Task-Specific Structure:**
-Each task folder contains:
-- **Evaluation service**: Core evaluation logic
-- **Runner script**: Script to execute evaluation
-- **Test dataset**: Questions/test cases (JSON)
-- **Results folder**: Evaluation results (stored locally, gitignored)
+## Task Evaluations
 
-## ✅ Implemented
+### 1. Text Summary
+**Metrics**: QAG (Question-Answer Generation), Cosine Similarity
+- **Dataset**: 50 questions across 8 chapters
+- **Reranker Comparison**: 3 models tested (ms-marco, BGE, Vietnamese)
+- **Scores**: Coverage, Alignment, Compression Ratio
+- **Results**: `text_summary/results/*/evaluations.json`
 
-- ✅ Task-specific folder structure
-- ✅ **Text Summary Evaluation**:
-  - DeepEval with QAG (Question-Answer Generation) metrics
-  - 50 test questions covering all 8 chapters
-  - Evaluation service with comprehensiveness-focused prompts
-  - Runner script with batch evaluation and statistics
-- ✅ **Quiz QAG Evaluation**:
-  - Random chunk sampling → quiz question generation via quiz service
-  - QA service answers using provided context only (short-answer & MCQ modes)
-  - Short-answer metric: embedding cosine similarity
-  - MCQ metric: accuracy of selected option (A/B/C/D/IDK)
-  - Results saved under `evaluation/quiz/results/`
+### 2. Q&A
+**Metrics**: Exact Match, Answer Correctness, Citation Accuracy, MRR
+- **Dataset**: 306 questions (190 MCQ, 116 open-ended) from chapters 2-9
+- **Question Types**: Multiple choice and open-ended
+- **Citation Tracking**: Video source accuracy
+- **Results**: `qa/results/run_on_306/evaluations.json`
 
-## ❌ TODO
+### 3. Video Summary
+**Metrics**: QAG, Cosine Similarity
+- **Dataset**: 62 videos
+- **QAG Questions**: 15 per video
+- **Comparison**: Transcript vs generated summary
+- **Results**: `video_summary/results/final_results_on_62_videos/evaluations.json`
 
-- ❌ Q&A evaluation
-- ❌ Video summary evaluation
+### 4. Quiz Generation
+**Metrics**: Cosine Similarity (short-answer), Accuracy (MCQ)
+- **Types**: Multiple choice and short-answer
+- **Answer Validation**: Embedding similarity and exact match
+- **Results**: `quiz/results/{mcq,open_ended}/evaluations.json`
 
-## 🚀 Usage
+## Usage
 
-### Text Summarization Evaluation
-
+### Text Summary Evaluation
 ```bash
-# Activate virtual environment
-source .venv/bin/activate
-
-# Navigate to text_summary folder
 cd evaluation/text_summary
-
-# Run all 50 questions
 python run_eval.py --all
-
-# Run specific range
-python run_eval.py --start 0 --end 10
-
-# Run specific questions
-python run_eval.py --question-id sum_001 sum_002
-
-# Results saved to: evaluation/text_summary/results/
+python visualize_results.py
 ```
 
-### Other Tasks (TODO)
+### Q&A Evaluation
+```bash
+cd evaluation/qa
+python run_eval.py                    # All 306 questions
+python run_eval.py --n-questions 100  # Sample 100
+python run_eval.py --chapters 2 3     # Filter by chapters
+```
 
-Similar structure for qa/, video_summary/, quiz/ when implemented.
+### Video Summary Evaluation
+```bash
+cd evaluation/video_summary
+python run_eval.py
+python visualize_results.py
+```
 
-## 📊 Evaluation Metrics
+### Quiz Evaluation
+```bash
+cd evaluation/quiz
+python run_eval.py
+```
 
-- **Text Summary**: 
-  - **QAG-based** (DeepEval SummarizationMetric)
-  - Coverage Score: Detail inclusion from original text
-  - Alignment Score: Factual accuracy
-  - Overall Score: min(coverage, alignment)
-  
-- **Q&A**: TBD (accuracy, source relevance)
-- **Video Summary**: TBD (coverage, coherence)
-- **Quiz**: TBD (question quality, difficulty)
+## Results Files
 
-## 🔧 Configuration
+Each evaluation produces:
+- **evaluations.json**: Detailed per-item results
+- **summary.json**: Aggregate statistics
+- **generations.json**: Generated outputs (when applicable)
+- **visualizations/**: Charts and summary statistics
+
+## Evaluation Metrics
+
+- **QAG**: Question-Answer Generation for summarization quality
+- **Cosine Similarity**: Semantic similarity between texts
+- **Exact Match**: Perfect answer matching (MCQ)
+- **Answer Correctness**: LLM-judged answer quality (open-ended)
+- **Citation Accuracy**: Source attribution correctness
+- **MRR**: Mean Reciprocal Rank for retrieval quality
+- **Compression Ratio**: Summary length vs source length
+
+## Configuration
 
 Add to `.env`:
 ```bash
-# Evaluation Configuration
-EVAL_MODEL=gpt-5-mini                    # Model for evaluation
-EVAL_SUMMARIZATION_THRESHOLD=0.5         # Pass/fail threshold
+EVAL_MODEL=gpt-5-mini
+EVAL_SUMMARIZATION_THRESHOLD=0.5
 ```

@@ -1,0 +1,1241 @@
+{
+  "run_id": "run_20251117_082859",
+  "config": {
+    "n_questions": 15,
+    "limit": null
+  },
+  "stats": {
+    "total": 61,
+    "success": 61,
+    "qag_sum": 50.537098327234006,
+    "cosine_sum": 42.38590000000001,
+    "alignment_sum": 50.89096595083847,
+    "coverage_sum": 57.99999999999997
+  },
+  "results": [
+    {
+      "video_id": "Chương 7_KjPEqyGCtUs",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích biến thể **Deep Stacked ...",
+      "evaluation": {
+        "video_id": "Chương 7_KjPEqyGCtUs",
+        "qag_score": 0.8,
+        "qag_success": true,
+        "qag_reason": "The score is 0.80 because the summary is largely faithful — it preserves the main practical tips (use residual/skip connections, the residual formula y = F(x)+x, prefer Bidirectional except for language modeling, DeepStack can help depending on data/cost, and decoders often use ~4 layers) — but it introduces extra, unsupported numeric detail (claiming one can reach “~8 layers” with skip connections) that the original did not state and thus slightly oversteps the source. Additionally, the summary fails to address specific points the original could answer (questions about a DeepStack ANEN variant and whether traditional ANEN lacks vertical/depth), which reduces completeness.",
+        "coverage_score": 0.8,
+        "alignment_score": 0.9393939393939394,
+        "cosine_similarity": 0.7538,
+        "source_chars": 12863,
+        "summary_chars": 7724,
+        "compression_ratio": 0.6005,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:30:51.490946"
+      }
+    },
+    {
+      "video_id": "Chương 9_1tCmeHf1Xk0",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu về Transformer và một số...",
+      "evaluation": {
+        "video_id": "Chương 9_1tCmeHf1Xk0",
+        "qag_score": 1.0,
+        "qag_success": true,
+        "qag_reason": "The score is 1.00 because the summary is perfectly faithful and concise, accurately capturing the original text's meaning and intent.",
+        "coverage_score": 1.0,
+        "alignment_score": 1.0,
+        "cosine_similarity": 0.7624,
+        "source_chars": 5140,
+        "summary_chars": 5040,
+        "compression_ratio": 0.9805,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:32:09.461977"
+      }
+    },
+    {
+      "video_id": "Chương 7_TqKBlC-zyKY",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: Giới thiệu kiến trúc Recurrent Neura...",
+      "evaluation": {
+        "video_id": "Chương 7_TqKBlC-zyKY",
+        "qag_score": 0.875,
+        "qag_success": true,
+        "qag_reason": "The score is 0.88 because the summary is largely faithful to the original with no direct contradictions, but it adds three unsupported specifics: it frames the feedforward networks’ inability to model word order as applying to one-hot representations (the original did not specify one-hot), it infers that sharing U, V, and W ‘allows processing variable-length sequences’ (an implication not explicitly stated), and it labels x_t as a one-hot 8000-dimensional vector (the original only gave the dimensionality). These plausible but unmentioned details warrant a small penalty from a perfect score.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.875,
+        "cosine_similarity": 0.6242,
+        "source_chars": 10214,
+        "summary_chars": 5752,
+        "compression_ratio": 0.5631,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:33:13.651306"
+      }
+    },
+    {
+      "video_id": "Chương 6_WAiLM7OFU9A",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: hiểu và thực hành biểu diễn từ dùng...",
+      "evaluation": {
+        "video_id": "Chương 6_WAiLM7OFU9A",
+        "qag_score": 0.7307692307692307,
+        "qag_success": true,
+        "qag_reason": "The score is 0.73 because the summary preserves the main points and contains no direct contradictions, but it adds several unsupported specifics (a concrete conda install command, a ~600MB compressed file size, conflated ‘download + load’ timing, explicit dot‑product/cosine formulas, numeric similarity scores like 1.51/3.2, an asserted queen vector example, and extra downstream tasks such as semantic search/clustering) that are not in the original. It also omits answers the original did provide (whether the tutorial has two parts and whether Colab already has Gensim). These unnecessary details and omissions reduce fidelity, yielding a moderately high but imperfect score.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.7307692307692307,
+        "cosine_similarity": 0.6646,
+        "source_chars": 11404,
+        "summary_chars": 7236,
+        "compression_ratio": 0.6345,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:34:51.920523"
+      }
+    },
+    {
+      "video_id": "Chương 8_my3qRjVJ7VM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Trình bày và so sánh **một số biến ...",
+      "evaluation": {
+        "video_id": "Chương 8_my3qRjVJ7VM",
+        "qag_score": 0.84375,
+        "qag_success": true,
+        "qag_reason": "The score is 0.84 because the summary mostly matches the original—correctly distinguishing bilinear vs low-rank variants, noting that smaller k reduces parameters/overfitting, and mentioning low-rank use in Transformers—but it adds several unsupported claims and emphases (calling bilinear “two-sided attention”; asserting explicit reductions in memory/computation and training performance; saying low-rank is “emphasized as important”; invoking “long-range dependencies”; and stating the choice depends on “desired performance”), and it failed to answer a factual question the original could: whether the example’s two vectors of dimension 2 could generally have different dimensions. These omissions and added claims are modest, so the summary remains fairly good overall.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.84375,
+        "cosine_similarity": 0.605,
+        "source_chars": 11483,
+        "summary_chars": 6815,
+        "compression_ratio": 0.5935,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:36:18.485216"
+      }
+    },
+    {
+      "video_id": "Chương 6_UJNyIptbcNM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- **Mục tiêu chính của bài giảng**: Giới thiệu và phân tích mô hình...",
+      "evaluation": {
+        "video_id": "Chương 6_UJNyIptbcNM",
+        "qag_score": 0.8333333333333334,
+        "qag_success": true,
+        "qag_reason": "The score is 0.83 because the summary is largely faithful (no direct contradictions) but contains several unsupported additions and omissions that reduce fidelity: it supplies an explicit normalized loss formula (1/(T * 2M)) not given in the original, asserts the learned weight vectors are used for downstream NLP tasks though the original only describes learning parameters, and adds specific video-chunk and chapter/series details absent from the source. The summary also fails to answer a verifiable question the original could address (whether Word2Vec was introduced by Thomas Piccolo et al. in 2013). These extra/unverified details and the missed question explain a high but not perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8333333333333334,
+        "cosine_similarity": 0.6179,
+        "source_chars": 10086,
+        "summary_chars": 5920,
+        "compression_ratio": 0.587,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:37:31.283963"
+      }
+    },
+    {
+      "video_id": "Chương 7_ptwSPTt2XnM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: Giải thích cách thiết kế hàm loss ch...",
+      "evaluation": {
+        "video_id": "Chương 7_ptwSPTt2XnM",
+        "qag_score": 0.8,
+        "qag_success": true,
+        "qag_reason": "The score is 0.80 because the summary is mostly faithful but contains a key contradiction and several unsupported additions: it wrongly states y is a probability distribution instead of the original’s one-hot indicator (which changes the interpretation of the loss), and it adds extra claims not in the text (that aggregating per-step losses enables BPTT, that the averaged loss is explicitly ‘used for training’, and that the content comes from referenced video segments). It also omits an answer the original did provide (whether designing the loss function is the second step of building an ML model). These issues make the summary somewhat misleading, though the rest of the content appears accurate.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8,
+        "cosine_similarity": 0.6815,
+        "source_chars": 5405,
+        "summary_chars": 6558,
+        "compression_ratio": 1.2133,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:38:44.436901"
+      }
+    },
+    {
+      "video_id": "Chương 8_S8__bXkLSbM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích chi tiết cơ chế Attentio...",
+      "evaluation": {
+        "video_id": "Chương 8_S8__bXkLSbM",
+        "qag_score": 0.7727272727272727,
+        "qag_success": true,
+        "qag_reason": "The score is 0.77 because the summary mostly reflects the original but introduces several unsupported extras (claims that attention directly yields more accurate outputs, that it broadly and empirically improves performance or is superior to prior methods, and offers LaTeX/flow-diagram/step-by-step example rewrites) that are not in the original, and it fails to include an answer the original did provide (the question “Có phải thời điểm đầu tiên T được đặt bằng 1?”). There are no direct contradictions.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.7727272727272727,
+        "cosine_similarity": 0.6174,
+        "source_chars": 8125,
+        "summary_chars": 5597,
+        "compression_ratio": 0.6889,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:40:09.144294"
+      }
+    },
+    {
+      "video_id": "Chương 9_NsWX_5oV8bY",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích **cơ chế self-attention*...",
+      "evaluation": {
+        "video_id": "Chương 9_NsWX_5oV8bY",
+        "qag_score": 0.6666666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.67 because the summary keeps the main point that self-attention enables parallel computation within a layer but introduces multiple unsupported additions (claims about layer-to-layer dependencies, a numbered-layer video illustration, explicit “training and inference” wording, comparisons/labels versus RNNs, and citation/time markers) that reduce fidelity to the original. It also omits an answerable detail: whether decoding must attend to all encoder tokens. No outright contradictions were present, but the extra, unfounded details and the missed decode clarification justify a partial (not high) score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.6666666666666666,
+        "cosine_similarity": 0.7425,
+        "source_chars": 2703,
+        "summary_chars": 4273,
+        "compression_ratio": 1.5808,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:41:35.379391"
+      }
+    },
+    {
+      "video_id": "Chương 7__KvZN8-SyvQ",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- **Mục tiêu chính của bài giảng:** Giới thiệu mạng Recurrent Neura...",
+      "evaluation": {
+        "video_id": "Chương 7__KvZN8-SyvQ",
+        "qag_score": 0.9166666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.92 because the summary is largely faithful with no direct contradictions and remains accurate overall; the only issues are minor unsupported additions — an extra Vietnamese sentence not present in the original and a slight overstatement that RNNs were a dominant architecture specifically for audio and stock-price modeling — which do not substantially alter the original meaning, hence a high but not perfect score.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9166666666666666,
+        "cosine_similarity": 0.6876,
+        "source_chars": 11896,
+        "summary_chars": 6359,
+        "compression_ratio": 0.5345,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:42:59.724533"
+      }
+    },
+    {
+      "video_id": "Chương 9_iMfkIHkU6NM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu các **ứng dụng** và **th...",
+      "evaluation": {
+        "video_id": "Chương 9_iMfkIHkU6NM",
+        "qag_score": 0.8181818181818182,
+        "qag_success": true,
+        "qag_reason": "The score is 0.82 because the summary is largely faithful—there are no direct contradictions and it correctly captures the main distinctions (full-model fine-tuning vs. adapter/LoRA, prefix tuning, instruction tuning, and prompting), so it retains high fidelity. It loses some fidelity by adding specific procedural details and prescriptive recommendations that the original did not state (e.g., fine-tuning only a readout head as an option, explicit Q/K/V fixation and prefix attachment details, a concrete prompting example, an explicit deploy-vs-train recommendation, and numbered bibliographic references). Those extra assertions reduce strict faithfulness but do not create contradictions, just hopeful extrapolations, which justifies a high but not perfect score.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8181818181818182,
+        "cosine_similarity": 0.7685,
+        "source_chars": 14605,
+        "summary_chars": 9099,
+        "compression_ratio": 0.623,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:44:45.336372"
+      }
+    },
+    {
+      "video_id": "Chương 9_jKnjyvvXzXI",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng  \n  - Giải thích chi tiết kiến trúc ...",
+      "evaluation": {
+        "video_id": "Chương 9_jKnjyvvXzXI",
+        "qag_score": 0.6538461538461539,
+        "qag_success": true,
+        "qag_reason": "The score is 0.65 because the summary captures the core mechanisms (masked self-attention, cross-attention, autoregressivity and that masking enables parallel GPU computation) but adds several unstated details and generalizations (explicit QK^T→mask→softmax→V sequence and the dot‑product formula, per‑head masking and multi‑head motivation, an illustrative image description, broader application domains, and evaluative/generalized claims about all Transformer systems and implementation ‘cruciality’) that are not in the original. It also fails to answer two questions the original could: “Có phải về lý thuyết decoder tương tự như encoder?” and “Có phải quá trình decode là tuần tự và không thể thực hiện song song?” — omissions that reduce fidelity, hence a moderate score.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.6538461538461539,
+        "cosine_similarity": 0.714,
+        "source_chars": 10165,
+        "summary_chars": 7482,
+        "compression_ratio": 0.7361,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:46:21.770956"
+      }
+    },
+    {
+      "video_id": "Chương 4_KoBIBuqGb9A",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Ôn tập kiến trúc mạng CNN tiêu biểu...",
+      "evaluation": {
+        "video_id": "Chương 4_KoBIBuqGb9A",
+        "qag_score": 0.7142857142857143,
+        "qag_success": true,
+        "qag_reason": "The score is 0.71 because the summary includes many correct points (AlexNet/VGG, ReLU, vanishing gradients, stacking 3x3, parameter considerations) but weakens fidelity by adding several unsupported claims and omitting answerable details. Extra unsupported information includes assertions about the lecture’s main goal, coverage of optimization/gradient descent, an explicit purpose statement for increased depth, the gradient‑descent update rule, chapter placement, that all design choices directly cause strong empirical performance, and that content came from time‑stamped video excerpts. The summary also fails to state facts the original text can answer (e.g., whether AlexNet made a big impact in 2012 and whether it achieved top accuracy/lowest error in the MNS competition). Positively, there are no direct contradictions to the source.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.7142857142857143,
+        "cosine_similarity": 0.6804,
+        "source_chars": 10772,
+        "summary_chars": 6120,
+        "compression_ratio": 0.5681,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:47:51.394142"
+      }
+    },
+    {
+      "video_id": "Chương 7_8-3xv_NElG0",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: phân tích *một số vấn đề* gặp phải ...",
+      "evaluation": {
+        "video_id": "Chương 7_8-3xv_NElG0",
+        "qag_score": 0.8,
+        "qag_success": true,
+        "qag_reason": "The score is 0.80 because the summary is mostly faithful but contains notable inaccuracies and additions: it attributes a specific 0.25 upper bound to the sigmoid derivative that the original did not assert (contradiction), and it adds extra claims about sequence-length ranges and examples (e.g., ‘tens to thousands of words’, ‘summarizing an entire novel’) and an AI ‘cheatsheet’ offer that are not in the source. It also omits answers the original did provide (whether softmax is mentioned and whether parameters are updated after computing gradients). These moderate errors and omissions justify a high but imperfect score.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.8,
+        "cosine_similarity": 0.6389,
+        "source_chars": 6720,
+        "summary_chars": 5099,
+        "compression_ratio": 0.7588,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:49:36.727291"
+      }
+    },
+    {
+      "video_id": "Chương 8_4EdX3Ga9YoM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu bài toán dịch máy (machi...",
+      "evaluation": {
+        "video_id": "Chương 8_4EdX3Ga9YoM",
+        "qag_score": 0.8620689655172413,
+        "qag_success": true,
+        "qag_reason": "The score is 0.86 because the summary is largely faithful and conveys the main ideas, but it includes several unsupported specifics that reduce fidelity: claiming the encoder can alternatively produce a set of vectors, citing the concrete example sentence “I’m not sure,” giving a specific token transcript (GER → NE → SUI → PA → ... → N), and stating parse trees are represented as sequences — none of which are specified in the original text. These additions slightly lower accuracy even though they do not directly contradict the source.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8620689655172413,
+        "cosine_similarity": 0.7872,
+        "source_chars": 10312,
+        "summary_chars": 6044,
+        "compression_ratio": 0.5861,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:51:12.897406"
+      }
+    },
+    {
+      "video_id": "Chương 5_4p0L74qD7Lg",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- **Mục tiêu chính của bài giảng**  \n  Trình bày *phân đoạn ngữ ngh...",
+      "evaluation": {
+        "video_id": "Chương 5_4p0L74qD7Lg",
+        "qag_score": 0.9333333333333333,
+        "qag_success": true,
+        "qag_reason": "The score is 0.93 because the summary is largely faithful and consistent with the original (no contradictions), but includes minor unsupported additions and one omission: it invents specific dilation rates (e.g., 1, 2, 6, 12, 18) and claims the text is from a video—neither stated in the original—while failing to clarify whether the original says U-Net appeared around 2015–2016. Overall accurate and clear, with only slight unsupported details and a small unanswered question.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.9333333333333333,
+        "cosine_similarity": 0.6707,
+        "source_chars": 12984,
+        "summary_chars": 8137,
+        "compression_ratio": 0.6267,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:53:00.700288"
+      }
+    },
+    {
+      "video_id": "Chương 9_5DE5HXG8FWk",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Trình bày **động lực** dẫn tới việc...",
+      "evaluation": {
+        "video_id": "Chương 9_5DE5HXG8FWk",
+        "qag_score": 0.8947368421052632,
+        "qag_success": true,
+        "qag_reason": "The score is 0.89 because the summary is mostly accurate and faithful but has minor issues: it contradicts the original by saying the example used the word 'language' when the original used 'In France...' leading to 'French' (and mentions propagation cost as T steps), it adds unsupported extra detail about chapter/part location not present in the source, and it omits that the original can answer whether the second part examines Transformer weaknesses — overall small factual/information omissions, hence a high but not perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8947368421052632,
+        "cosine_similarity": 0.7174,
+        "source_chars": 5935,
+        "summary_chars": 5435,
+        "compression_ratio": 0.9158,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:55:27.488049"
+      }
+    },
+    {
+      "video_id": "Chương 8_wKMBVF_bJdw",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Hướng dẫn lập trình một mô hình mạn...",
+      "evaluation": {
+        "video_id": "Chương 8_wKMBVF_bJdw",
+        "qag_score": 0.9166666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.92 because the summary correctly reflects the original’s main points (dictionary length, embedding length, pretrained/trainable flags, and that loss tended to decrease and was recorded) with no contradictions, but it adds two unsupported details: an embedding_initializer/regularizer for the embedding layer that the original never mentions, and an asserted later slight rise in loss/small overfitting effect that the original does not report. Overall the summary is clear and largely faithful, with only these minor extraneous claims.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9166666666666666,
+        "cosine_similarity": 0.6895,
+        "source_chars": 9483,
+        "summary_chars": 6975,
+        "compression_ratio": 0.7355,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:57:12.712088"
+      }
+    },
+    {
+      "video_id": "Chương 4_PyC3pl_r8jw",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng:\n  - Ôn tập kiến trúc mạng CNN cơ bả...",
+      "evaluation": {
+        "video_id": "Chương 4_PyC3pl_r8jw",
+        "qag_score": 0.9259259259259259,
+        "qag_success": true,
+        "qag_reason": "The score is 0.93 because the summary is largely accurate and faithful to the original with no direct contradictions, but it introduces two unsupported additions (claiming LeNet specifically used \"average pooling\" and that the information was extracted from video segments) and it omits an answer present in the original text (whether LeNet initially used sigmoid and tanh activations). These minor unsupported details and the single omission explain the slight deduction from a perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.9259259259259259,
+        "cosine_similarity": 0.7825,
+        "source_chars": 9392,
+        "summary_chars": 6438,
+        "compression_ratio": 0.6855,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T08:59:24.734997"
+      }
+    },
+    {
+      "video_id": "Chương 5_Til9AdPO7JE",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Trình bày cách **ứng dụng mạng CNN ...",
+      "evaluation": {
+        "video_id": "Chương 5_Til9AdPO7JE",
+        "qag_score": 0.8275862068965517,
+        "qag_success": true,
+        "qag_reason": "The score is 0.83 because the summary is largely faithful—core ideas such as grid-based encoding and trade-offs between YOLO/SSD (real-time) and Faster R-CNN (accuracy) are preserved and there are no direct contradictions—but it adds several unsupported specifics that lower fidelity: an unsubstantiated claim that activation intensity necessarily changes with object scale, concrete numeric details (per-cell depth D ≈ 30 and Tensor_output ∈ R^{S×S×D}) not present in the original, and concrete application examples and meta-level instructions about the Deep Visualization Toolbox that the original text did not state.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8275862068965517,
+        "cosine_similarity": 0.704,
+        "source_chars": 12645,
+        "summary_chars": 8077,
+        "compression_ratio": 0.6388,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:01:34.427297"
+      }
+    },
+    {
+      "video_id": "Chương 2_MtJDVr5xHB4",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng  \n  - Giải thích cách tổng quát hóa ...",
+      "evaluation": {
+        "video_id": "Chương 2_MtJDVr5xHB4",
+        "qag_score": 0.8387096774193549,
+        "qag_success": true,
+        "qag_reason": "The score is 0.84 because the summary correctly captures the main ideas (a sample vector including a bias term, X having m+1 rows, and a visualization of inputs, weights, and a sum node computing the weighted sum) but adds several unsupported specifics: it asserts the bias is the first component and \"usually set to 1,\" introduces boldface notation for the sample vector, interprets edge length in the illustration as representing weights, provides a house-price example with named features, and claims provenance from video segments [1]...[16]. These extra, unsubstantiated details reduce fidelity without creating direct contradictions, hence a high but not perfect score.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8387096774193549,
+        "cosine_similarity": 0.7653,
+        "source_chars": 10152,
+        "summary_chars": 6214,
+        "compression_ratio": 0.6121,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:03:51.446464"
+      }
+    },
+    {
+      "video_id": "Chương 3_gmQTGRTHH2o",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng:\n  - Giải thích và trực quan hóa ý ng...",
+      "evaluation": {
+        "video_id": "Chương 3_gmQTGRTHH2o",
+        "qag_score": 0.9259259259259259,
+        "qag_success": true,
+        "qag_reason": "The score is 0.93 because the summary is faithful and accurate with no contradictions to the original text, correctly conveying that visualization helps interpret feature maps and that larger training sets yield richer features. Deductions are minor: it adds two unsupported specifics (that the Deep Visualization Toolbox is used to find maximally activating images, and that visualization is used to identify maps so training data or network architecture can be adjusted). These extra but small assertions slightly reduce fidelity, so the summary remains high-quality overall.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9259259259259259,
+        "cosine_similarity": 0.7822,
+        "source_chars": 8502,
+        "summary_chars": 7578,
+        "compression_ratio": 0.8913,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:05:53.252160"
+      }
+    },
+    {
+      "video_id": "Chương 2_XBS1JuTrxVI",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- **Mục tiêu chính của bài giảng**: Hướng dẫn cách *trực quan hóa cá...",
+      "evaluation": {
+        "video_id": "Chương 2_XBS1JuTrxVI",
+        "qag_score": 0.7916666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.79 because the summary mostly captures the original's intent but contains notable fidelity issues: it incorrectly flips the signs of examples (reports -14 and -11 instead of 14 and 11, repeating the error), adds unsupported details (explicit indexing syntax like param[idx][0], bias[idx]; explicit filtering for indices 0–7; and AI/time-stamp markers) and fails to confirm several specific points the original could answer (small-weight examples, the listed high-reliability node examples, and the theta1 retrieval call). These factual errors and unjustified additions reduce accuracy, though the overall explanation and structure remain largely correct.",
+        "coverage_score": 0.8,
+        "alignment_score": 0.7916666666666666,
+        "cosine_similarity": 0.7111,
+        "source_chars": 4197,
+        "summary_chars": 5853,
+        "compression_ratio": 1.3946,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:07:32.320534"
+      }
+    },
+    {
+      "video_id": "Chương 3_7YLMIKqygPU",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích và hướng dẫn cách **trực...",
+      "evaluation": {
+        "video_id": "Chương 3_7YLMIKqygPU",
+        "qag_score": 0.7692307692307693,
+        "qag_success": true,
+        "qag_reason": "The score is 0.77 because the summary correctly captures that visualization links filters/feature maps to image behavior and can suggest concepts (e.g., a face) from high-activation images, but it introduces multiple unsupported extrapolations — claiming explicit use-cases like debugging/general model explanation, ‘weak localization’ or semantic extraction as named applications, using temporal video to ‘evaluate robustness’, asserting visualization is ‘essential’, and adding numbered citation markers — none of which appear in the original text. These added, stronger claims reduce fidelity even though there are no direct contradictions.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.7692307692307693,
+        "cosine_similarity": 0.6507,
+        "source_chars": 11088,
+        "summary_chars": 7098,
+        "compression_ratio": 0.6402,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:09:32.910923"
+      }
+    },
+    {
+      "video_id": "Chương 2_G71D3dacAds",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Hướng dẫn cài đặt mô hình **softmax...",
+      "evaluation": {
+        "video_id": "Chương 2_G71D3dacAds",
+        "qag_score": 0.8333333333333334,
+        "qag_success": true,
+        "qag_reason": "The score is 0.83 because the summary is mostly faithful (retains correct items like 50 samples per class and that Gaussian noise with mean 0 and std ≈1.5 is used) but contains notable problems: it fabricates specific coordinate values (\"10-2\", \"28\", \"128\", \"20\") that do not appear in the original and misreports 'min = 0' instead of mean = 0. It also adds unsupported evaluative claims that the visualization \"separates into 4 regions\" or exactly matches clusters. Additionally, the summary omits answers the original provides about implementation details (e.g., whether SoftPath Regression is implemented) and the explicit noise parameters, which reduces fidelity despite overall reasonable coverage.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.8333333333333334,
+        "cosine_similarity": 0.6682,
+        "source_chars": 10393,
+        "summary_chars": 5906,
+        "compression_ratio": 0.5683,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:11:28.090071"
+      }
+    },
+    {
+      "video_id": "Chương 2_DGNdZGdwihs",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: cài đặt một mạng Neural Network đơn...",
+      "evaluation": {
+        "video_id": "Chương 2_DGNdZGdwihs",
+        "qag_score": 0.8666666666666667,
+        "qag_success": true,
+        "qag_reason": "The score is 0.87 because the summary is largely faithful—correctly conveying the implementation-framework similarity and gateway-method adaptation—yet it adds an extraneous phrase (“softback direction”) not present in the original and omits specific details: whether the text states a circular decision boundary is needed to separate two point sets and whether scikit-learn’s make_circles was used to generate inner/outer circle points. Overall accurate with minor extra wording and two omitted specifics.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.9583333333333334,
+        "cosine_similarity": 0.673,
+        "source_chars": 7631,
+        "summary_chars": 5386,
+        "compression_ratio": 0.7058,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:14:41.679623"
+      }
+    },
+    {
+      "video_id": "Chương 3_TNrJYPuDADM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: Hướng dẫn **cài đặt và thử nghiệm mộ...",
+      "evaluation": {
+        "video_id": "Chương 3_TNrJYPuDADM",
+        "qag_score": 0.8928571428571429,
+        "qag_success": true,
+        "qag_reason": "The score is 0.89 because the summary correctly captures the core of the original—building and testing a CNN, defining its architecture, visualizing filters, and comparing variants—with no direct contradictions, so fidelity is high. The small deduction stems from three unsupported additions: the summary frames \"installation\" guidance as a main goal (not in the original), it attributes the 28→14→7 spatial size reduction to pooling/stride (the original states the sizes but does not specify the cause), and it implies timestamped or labeled extracts [1]–[16] feed the content (these references are not in the original). These extra, unwarranted specifics slightly reduce accuracy, hence 0.89.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8928571428571429,
+        "cosine_similarity": 0.6525,
+        "source_chars": 7973,
+        "summary_chars": 7056,
+        "compression_ratio": 0.885,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:16:34.824367"
+      }
+    },
+    {
+      "video_id": "Chương 6_30kCjQ0BdUc",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu lĩnh vực xử lý ngôn ngữ ...",
+      "evaluation": {
+        "video_id": "Chương 6_30kCjQ0BdUc",
+        "qag_score": 0.7894736842105263,
+        "qag_success": true,
+        "qag_reason": "The score is 0.79 because the summary is broadly aligned but contains a clear contradiction (it lists units as 'tốc độ' and 'truyền thông tin' while the original says 'tốc độ' and 'thông tin'), and it adds multiple unsupported details: asserting 'synonym finding', giving concrete three-way interpretations (e.g., \"chết, di chuyển nhanh, biệt danh\"), specific example names/sentences, claiming a regional sense of 'ông già'='bố', and naming 'constituency/dependency parsing'—none of which appear in the source (and 'synonym finding' is even repeated). The summary also fails to state a point the original answers about whether sentiment analysis is a recent application. These inaccuracies and omissions explain the less-than-perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.7894736842105263,
+        "cosine_similarity": 0.6645,
+        "source_chars": 12994,
+        "summary_chars": 8036,
+        "compression_ratio": 0.6184,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:19:12.380737"
+      }
+    },
+    {
+      "video_id": "Chương 5_RVFApjx4KKI",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: khảo sát các ứng dụng phổ biến của m...",
+      "evaluation": {
+        "video_id": "Chương 5_RVFApjx4KKI",
+        "qag_score": 0.7407407407407407,
+        "qag_success": true,
+        "qag_reason": "The score is 0.74 because the summary preserves the main themes (fine‑grained examples, face‑recognition angular‑margin losses, and the need for explainability and domain differences in medical imaging) but introduces several inaccuracies and additions that lower fidelity — e.g., it invents a “passport flower data set,” attributes a ring/hypersphere visualization and CAM/Grad‑CAM usage to the original, cites specific datasets or accuracy figures (ImageNet/MNIST, 99%) and lecture links that were not present. These incorrect specifics and extra details weaken the summary’s faithfulness despite covering core points.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.7407407407407407,
+        "cosine_similarity": 0.7072,
+        "source_chars": 15993,
+        "summary_chars": 7423,
+        "compression_ratio": 0.4641,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:21:02.995188"
+      }
+    },
+    {
+      "video_id": "Chương 9_fEGw6eEre2I",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Tổng kết và phân tích một số **vấn ...",
+      "evaluation": {
+        "video_id": "Chương 9_fEGw6eEre2I",
+        "qag_score": 0.9117647058823529,
+        "qag_success": true,
+        "qag_reason": "The score is 0.91 because the summary closely reflects the original content with no contradictions and preserves the main points, but it introduces minor unsupported additions: it frames the lecture as 'asserting' a necessity not stated, ties the content to CS431, and inserts citation markers/timestamps that aren’t in the original; these unwarranted extras slightly reduce fidelity.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9117647058823529,
+        "cosine_similarity": 0.7042,
+        "source_chars": 6530,
+        "summary_chars": 7155,
+        "compression_ratio": 1.0957,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:23:57.917777"
+      }
+    },
+    {
+      "video_id": "Chương 9_JGxo_olUl2U",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích chi tiết kiến trúc Encod...",
+      "evaluation": {
+        "video_id": "Chương 9_JGxo_olUl2U",
+        "qag_score": 0.825,
+        "qag_success": true,
+        "qag_reason": "The score is 0.82 because the summary is mostly faithful (no contradictory claims) but adds several unsupported specifics that reduce fidelity: it frames an explicit “main goal” not stated in the original, overstates PReLU’s widespread application and claims it was covered earlier, inserts concrete task examples for deeper stacks (e.g., machine translation, long‑context understanding), calls positional embeddings strictly “mandatory,” and cites external references not present in the source. It also fails to address the question about whether the passage says “extension is not all we need,” which the original could answer. These extra assertions and omissions explain a high but imperfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.825,
+        "cosine_similarity": 0.5957,
+        "source_chars": 11952,
+        "summary_chars": 7202,
+        "compression_ratio": 0.6026,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:27:33.422517"
+      }
+    },
+    {
+      "video_id": "Chương 4_tMKUb4k5nZw",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: Ôn tập các kiến trúc CNN tiêu biểu (...",
+      "evaluation": {
+        "video_id": "Chương 4_tMKUb4k5nZw",
+        "qag_score": 0.8214285714285714,
+        "qag_success": true,
+        "qag_reason": "The score is 0.82 because the summary preserves the main ideas (Inception’s parallel branches and concatenation, and ResNet/depth comparisons) but contains a clear factual contradiction (dates ResNet to 2015 while the source says 2016) and several unsupported additions: it claims the max-pool branch is usually paired with a 1×1 projection, states an explicit ‘‘unknown a priori’’ rationale for running multiple kernel sizes, lists extra layer counts (110, 44, 32) not present in the source, and asserts bracketed citation numbers map to time segments—none of which the original text supports. These errors and extras lower fidelity but the summary remains largely accurate, justifying a relatively high yet imperfect score.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8214285714285714,
+        "cosine_similarity": 0.735,
+        "source_chars": 13788,
+        "summary_chars": 8342,
+        "compression_ratio": 0.605,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:29:52.445486"
+      }
+    },
+    {
+      "video_id": "Chương 7_qJj_LY1r91U",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu và phân tích một số biến...",
+      "evaluation": {
+        "video_id": "Chương 7_qJj_LY1r91U",
+        "qag_score": 0.9090909090909091,
+        "qag_success": true,
+        "qag_reason": "The score is 0.91 because the summary faithfully captures the lesson’s three-part structure and content with no contradictions and is generally well-summarized; its fidelity is slightly reduced by two small unsupported additions — labeling the video as the ‘first installment/first part’ and referencing specific video chunk indices — which are not stated in the original text.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9090909090909091,
+        "cosine_similarity": 0.715,
+        "source_chars": 6373,
+        "summary_chars": 6053,
+        "compression_ratio": 0.9498,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:31:49.819847"
+      }
+    },
+    {
+      "video_id": "Chương 6_utOha-d0prc",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Trình bày **hướng tiếp cận của học ...",
+      "evaluation": {
+        "video_id": "Chương 6_utOha-d0prc",
+        "qag_score": 0.8214285714285714,
+        "qag_success": true,
+        "qag_reason": "The score is 0.82 because the summary is generally faithful and contains no direct contradictions, but it introduces several unsupported details that reduce fidelity: it adds a claim about ‘statistics based on bias’ for next-word estimation, uses the notation P(w_{t+1}|w_t) and asserts the video provides high-level next-word formulas, presents an explicit concluding phrasing for data/compute/model, states the video omits references to other lectures, and mentions AI snippet references [1]..[10]—none of which appear in the original. The summary also omits an answer the original can provide (whether the text states the Internet existed before the 1990s). These extra, unsupported additions explain the less-than-perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8214285714285714,
+        "cosine_similarity": 0.7517,
+        "source_chars": 6550,
+        "summary_chars": 5786,
+        "compression_ratio": 0.8834,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:33:59.795849"
+      }
+    },
+    {
+      "video_id": "Chương 4_0I8uw0ELYj4",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu **các cách sử dụng một m...",
+      "evaluation": {
+        "video_id": "Chương 4_0I8uw0ELYj4",
+        "qag_score": 0.7916666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.79 because the summary captures the main idea that pre-trained models and three adaptation approaches exist and are useful, but it contains a factual contradiction (it implies direct use applies when label sets differ, while the original requires identical labels) and adds several unsupported claims (rules tying freezing vs full fine‑tuning to dataset similarity, broad statements about practitioner/deployment habits, industry speedups, and offering checklists/code) that reduce fidelity.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.7916666666666666,
+        "cosine_similarity": 0.7316,
+        "source_chars": 8546,
+        "summary_chars": 5815,
+        "compression_ratio": 0.6804,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:35:49.181682"
+      }
+    },
+    {
+      "video_id": "Chương 6_AkHEcgasvkw",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Trình bày chi tiết các mô hình Word...",
+      "evaluation": {
+        "video_id": "Chương 6_AkHEcgasvkw",
+        "qag_score": 0.8636363636363636,
+        "qag_success": true,
+        "qag_reason": "The score is 0.86 because the summary is largely faithful and contains no direct contradictions, accurately conveying that embeddings serve as inputs for downstream NLP models; however it adds unsupported specifics (explicitly listing downstream tasks like classification, machine translation, semantic search, and word clustering, and enumerating use cases such as semantic analysis, question answering, semantically-aware search, and suggestion systems) and incorrectly asserts that the summary/citations come from video segments—these extra, unverified details slightly reduce but do not severely undermine the summary’s quality.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8636363636363636,
+        "cosine_similarity": 0.7129,
+        "source_chars": 9376,
+        "summary_chars": 7124,
+        "compression_ratio": 0.7598,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:37:13.474705"
+      }
+    },
+    {
+      "video_id": "Chương 8_ROIgZ5tyDFo",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích **cơ chế Attention** tro...",
+      "evaluation": {
+        "video_id": "Chương 8_ROIgZ5tyDFo",
+        "qag_score": 0.8333333333333334,
+        "qag_success": true,
+        "qag_reason": "The score is 0.83 because the summary retains the original’s core ideas (attention reduces irrelevant influence, yields more targeted contextual information, and is illustrated with an English→French example), so it’s largely faithful and clear. Praise: it accurately conveys the main mechanisms and intent. Deductions: the summary adds unsupported or overstated claims (saying attention definitively \"improves translation accuracy\" and that it is \"used widely\"), introduces numbered citations that aren’t in the original, and notes a minor French typo claim—these extras reduce fidelity but not drastically, hence a high but not perfect score.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8333333333333334,
+        "cosine_similarity": 0.6431,
+        "source_chars": 8356,
+        "summary_chars": 6421,
+        "compression_ratio": 0.7684,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:39:23.147805"
+      }
+    },
+    {
+      "video_id": "Chương 7__Cu7kGoRaE0",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- **Mục tiêu chính của bài giảng**: Giới thiệu và giải thích biến t...",
+      "evaluation": {
+        "video_id": "Chương 7__Cu7kGoRaE0",
+        "qag_score": 0.9090909090909091,
+        "qag_success": true,
+        "qag_reason": "The score is 0.91 because the summary preserves the main idea (forward and backward hidden states concatenated) and is largely faithful, but has three minor flaws: it contradicts a factual detail by calling the combined vector blue when the original labels it green; it adds extra technical detail (explicit recurrence formulas) that the original did not provide; and it fails to address whether the passage discusses the \"Bidirectional Anand\" variant. These are small inaccuracies/omissions, so the summary remains high-quality overall.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.9090909090909091,
+        "cosine_similarity": 0.6939,
+        "source_chars": 8643,
+        "summary_chars": 6127,
+        "compression_ratio": 0.7089,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:41:11.149185"
+      }
+    },
+    {
+      "video_id": "Chương 6_UfLLBOPvgOU",
+      "error": "RetryError[<Future at 0x111bb60d0 state=finished raised TimeoutError>]"
+    },
+    {
+      "video_id": "Chương 8_0DGe4fjr1aw",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Hướng dẫn cài đặt mạng Recurrent Ne...",
+      "evaluation": {
+        "video_id": "Chương 8_0DGe4fjr1aw",
+        "qag_score": 0.8387096774193549,
+        "qag_success": true,
+        "qag_reason": "The score is 0.84 because the summary is largely faithful with no contradictions, but it adds several details not present in the original: it implies which numeric label maps to positive/negative, names specific embedding sources (word2vec/FastText) instead of just ‘pre‑trained embeddings,’ shows a full sentence→index mapping example, states benefits of pre‑trained embeddings (reduced training time/improved representations), and asserts that the example preprocessing applies to other sequence tasks. Those extras slightly reduce fidelity, so the summary is good but not perfect.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8387096774193549,
+        "cosine_similarity": 0.6864,
+        "source_chars": 9678,
+        "summary_chars": 7042,
+        "compression_ratio": 0.7276,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:48:28.600156"
+      }
+    },
+    {
+      "video_id": "Chương 9_UXxELgk5Vws",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng  \n  Giải thích **kiến trúc Transform...",
+      "evaluation": {
+        "video_id": "Chương 9_UXxELgk5Vws",
+        "qag_score": 0.8571428571428571,
+        "qag_success": true,
+        "qag_reason": "The score is 0.86 because the summary largely aligns with the original (no direct contradictions) but introduces several unsupported claims and overstatements: it implies the lecture overall focuses on the Encoder, uses the term 'cell attention' instead of 'self-attention', overgeneralizes that all NLP/sequence tasks will benefit, and adds evaluative assertions (e.g., mastering these computations is foundational; the video is a deep analysis and promises future decoder coverage) that the original did not state. Additionally, the summary failed to address a specific question the original can answer (whether the transformer diagram initially looks confusing due to too many modules). These extras and the omitted answer justify a high but not perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8571428571428571,
+        "cosine_similarity": 0.6571,
+        "source_chars": 10954,
+        "summary_chars": 6572,
+        "compression_ratio": 0.6,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:50:16.938028"
+      }
+    },
+    {
+      "video_id": "Chương 7__Km_A2iRUds",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích chi tiết kiến trúc LSTM ...",
+      "evaluation": {
+        "video_id": "Chương 7__Km_A2iRUds",
+        "qag_score": 0.8518518518518519,
+        "qag_success": true,
+        "qag_reason": "The score is 0.85 because the summary is mostly faithful but contains a clear contradiction about the forget gate (it incorrectly attributes the decision to the previous hidden state rather than the previous cell state and current input) and adds unsupported details not in the original (claims about a simple ANN using a single tanh, an explicit statement that LSTMs are used for sequences like characters/sentences, and mention of clickable citation/timestamp metadata), so while most content is correct the errors and extraneous assertions justify a modest penalty.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8518518518518519,
+        "cosine_similarity": 0.7206,
+        "source_chars": 8252,
+        "summary_chars": 6281,
+        "compression_ratio": 0.7611,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:52:02.012273"
+      }
+    },
+    {
+      "video_id": "Chương 6_O57P9YHZOE0",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích cách **biểu diễn từ bằng...",
+      "evaluation": {
+        "video_id": "Chương 6_O57P9YHZOE0",
+        "qag_score": 0.7692307692307693,
+        "qag_success": true,
+        "qag_reason": "The score is 0.77 because the summary preserves the core ideas (use of vector embeddings, dot-product similarity, clustering examples like color and hotel/motel) but includes notable issues: it wrongly asserts a “backward model” for producing sentence/paragraph vectors (contradiction), adds unsupported details such as the explicit dot-product formula and claims that verbs form a distinct cluster, and overgeneralizes embeddings’ applicability to many NLP tasks. It also omits answering a question the original did address (whether the meaning of “ông già” depends on surrounding context). These specific inaccuracies and additions justify a below-perfect but still fairly high score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.7692307692307693,
+        "cosine_similarity": 0.6133,
+        "source_chars": 8188,
+        "summary_chars": 5750,
+        "compression_ratio": 0.7022,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:53:48.046821"
+      }
+    },
+    {
+      "video_id": "Chương 8_--JpgsDEL40",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu bài toán Neural Machine ...",
+      "evaluation": {
+        "video_id": "Chương 8_--JpgsDEL40",
+        "qag_score": 0.6818181818181818,
+        "qag_success": true,
+        "qag_reason": "The score is 0.68 because the summary preserves many core technical points (mentions Gross Entropy Loss, BLEU, the “6-to-6” term and the post‑2014 NMT adoption/timeline) but introduces factual errors and fabrications that reduce fidelity: it incorrectly attributes the 2014 “6‑to‑6” proposal to a ‘Schick Cover’ instead of Sutskever et al., and adds nonexistent terms like “Cytosix” and “syscochecker.” It also inserts unsupported specifics (a French word example and explicit end‑of‑sentence token claim, translator age, and quoted n‑grams) that are not in the original. Because the summary mixes accurate technical content with several misleading or invented details, a moderate score is warranted.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.6818181818181818,
+        "cosine_similarity": 0.7023,
+        "source_chars": 9585,
+        "summary_chars": 7852,
+        "compression_ratio": 0.8192,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:57:26.295819"
+      }
+    },
+    {
+      "video_id": "Chương 7_IKD0O35NOUI",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Phân tích một số vấn đề cơ bản của ...",
+      "evaluation": {
+        "video_id": "Chương 7_IKD0O35NOUI",
+        "qag_score": 0.92,
+        "qag_success": true,
+        "qag_reason": "The score is 0.92 because the summary faithfully captures the original’s analysis of loss and derivatives and the recommendation to use gated cells (high fidelity and concise), but has minor issues: it introduces extra details not in the source (attributing the analysis to “slides” and adding specific application examples like language modeling and machine translation) and omits whether tanh is proposed as an alternative to sigmoid. Overall accurate and well-summarized.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.92,
+        "cosine_similarity": 0.687,
+        "source_chars": 8762,
+        "summary_chars": 7194,
+        "compression_ratio": 0.821,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T09:59:02.981044"
+      }
+    },
+    {
+      "video_id": "Chương 4_MNHY9TA4fZs",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: ôn tập các kiến trúc mạng CNN tiêu b...",
+      "evaluation": {
+        "video_id": "Chương 4_MNHY9TA4fZs",
+        "qag_score": 0.9259259259259259,
+        "qag_success": true,
+        "qag_reason": "The score is 0.93 because the summary is largely faithful and captures the main points (inception modules exploit multiple filter sizes and reduce parameter count; ResNet skip connections increase gradients and preserve input), but it includes two minor unsupported inferences: (1) an explicit design assumption that the optimal filter size is unknown so multiple sizes are used simultaneously, and (2) a specific derivative-level claim that the Conv term is “added 1” when computing the derivative. These extras are plausible but not stated in the original, slightly lowering fidelity, while overall accuracy and clarity remain high.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9259259259259259,
+        "cosine_similarity": 0.7578,
+        "source_chars": 9838,
+        "summary_chars": 6417,
+        "compression_ratio": 0.6523,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:00:50.575473"
+      }
+    },
+    {
+      "video_id": "Chương 2_sPoJ8VS7nLc",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Cài đặt mô hình Linear Regression b...",
+      "evaluation": {
+        "video_id": "Chương 2_sPoJ8VS7nLc",
+        "qag_score": 0.7878787878787878,
+        "qag_success": true,
+        "qag_reason": "The score is 0.79 because the summary is largely faithful (no direct contradictions) and conveys the main points, but it introduces several unsupported specifics that reduce fidelity — e.g., exact numpy API calls, an explicit rad = (1/n)*X*(X^T*theta - y^T) formula and the explicit theta update line, a specific concatenate API/troubleshooting detail, an explicit Keras-prerequisite recommendation, and a note about video attribution — which are extra, unverifiable details not present in the original text.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.7878787878787878,
+        "cosine_similarity": 0.6604,
+        "source_chars": 11885,
+        "summary_chars": 6893,
+        "compression_ratio": 0.58,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:02:54.728594"
+      }
+    },
+    {
+      "video_id": "Chương 3_KeNRQw9j_ps",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: cài đặt một mạng CNN (LeNet-like) v...",
+      "evaluation": {
+        "video_id": "Chương 3_KeNRQw9j_ps",
+        "qag_score": 0.875,
+        "qag_success": true,
+        "qag_reason": "The score is 0.88 because the summary is mostly faithful but contains a clear contradiction and several unsupported additions: it misstates how to access layer weights (summary implies model.layer[i].get_weights() whereas the original uses cell.model.layers[index].get_weights()/model.layers[index].get_weights()), and it introduces extra claims not in the original (that normalization was done to speed training, that MaxPooling2D used padding='same', and that the content is from a video with citations). These inaccuracies and additions are relatively minor, so quality is high but not perfect.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.875,
+        "cosine_similarity": 0.697,
+        "source_chars": 11804,
+        "summary_chars": 5617,
+        "compression_ratio": 0.4759,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:04:38.242857"
+      }
+    },
+    {
+      "video_id": "Chương 9_7AZr_li6ZtA",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích chi tiết cách biểu diễn ...",
+      "evaluation": {
+        "video_id": "Chương 9_7AZr_li6ZtA",
+        "qag_score": 0.8275862068965517,
+        "qag_success": true,
+        "qag_reason": "The score is 0.83 because the summary is largely faithful (no direct contradictions) but includes several additions not present in the source—the illustrative Vietnamese sentence about “tôi có hẹn... anh ấy nhắn đến muộn,” an explicit list of downstream applications (machine translation, language modeling), a prescriptive justification for using sinusoidal encodings, and a provenance claim about chunks [1]…[13]—and it omits stating that Q, K, V correspond to query, key, and value, which the original text does mention. These extra details and the omission lower but do not severely undermine fidelity.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8275862068965517,
+        "cosine_similarity": 0.6761,
+        "source_chars": 8579,
+        "summary_chars": 7043,
+        "compression_ratio": 0.821,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:06:29.611427"
+      }
+    },
+    {
+      "video_id": "Chương 2_G4lcEPrfETo",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính: Giải thích mô hình Softmax Regression (hay Multino...",
+      "evaluation": {
+        "video_id": "Chương 2_G4lcEPrfETo",
+        "qag_score": 0.9583333333333334,
+        "qag_success": true,
+        "qag_reason": "The score is 0.96 because the summary faithfully captures the original’s distinction between one-hot (single-label) and binary-coded (multi-label) representations with no contradictions. The only extra content is the claim that multi-label models use sigmoid activations with per-label binary cross-entropy — a plausible implementation detail that wasn’t stated in the original but does not change the original meaning, so the overall summary quality is very high.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9583333333333334,
+        "cosine_similarity": 0.6657,
+        "source_chars": 12577,
+        "summary_chars": 6056,
+        "compression_ratio": 0.4815,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:08:18.433684"
+      }
+    },
+    {
+      "video_id": "Chương 3_rVpEwMijtvQ",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: thực hiện và so sánh nhiều biến thể ...",
+      "evaluation": {
+        "video_id": "Chương 3_rVpEwMijtvQ",
+        "qag_score": 0.6666666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.67 because the summary roughly captures the experimental comparisons and plotted loss/accuracy but injects unsupported specifics (e.g., that the tutorial explicitly “saved the training history (history 1..4)”, a label “input S2”, ‘‘only reducing input size twice’’, and a “restoring sigmoid” workflow) that are not in the original, while also failing to answer several factual questions the original could (convergence of ReLU vs sigmoid with many epochs; whether Enix is described as linear/simple; ReLU’s advantage on the large E-mainnet set; whether accuracy rises over time; and whether variant 1 replaces sigmoid with ReLU). There are no direct contradictions, but the extraneous details and omitted answerable points make the summary only moderately faithful.",
+        "coverage_score": 0.6666666666666666,
+        "alignment_score": 0.7894736842105263,
+        "cosine_similarity": 0.7767,
+        "source_chars": 4584,
+        "summary_chars": 5285,
+        "compression_ratio": 1.1529,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:10:09.177229"
+      }
+    },
+    {
+      "video_id": "Chương 2_sPqwytzfxqM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính: Hướng dẫn cài đặt mô hình *linear regression* sử ...",
+      "evaluation": {
+        "video_id": "Chương 2_sPqwytzfxqM",
+        "qag_score": 0.8823529411764706,
+        "qag_success": true,
+        "qag_reason": "The score is 0.88 because the summary is largely accurate and faithful to the original but omits a few useful implementation specifics: it doesn't recommend parameterizing the Input as Input(shape=(input_dim,)) instead of only showing input_dim = 1, it fails to show the Functional-API call pattern (e.g., output = Dense(...)(input) or explicitly passing the Input tensor to Dense), and it also omits that the model was trained for 500 epochs with a decreasing loss. These missing technical details make the summary slightly incomplete despite being correct overall.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.8823529411764706,
+        "cosine_similarity": 0.6389,
+        "source_chars": 9441,
+        "summary_chars": 2904,
+        "compression_ratio": 0.3076,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:11:43.700175"
+      }
+    },
+    {
+      "video_id": "Chương 3_SKcHedTJIL0",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: Trình bày các **thành phần chính của...",
+      "evaluation": {
+        "video_id": "Chương 3_SKcHedTJIL0",
+        "qag_score": 0.6764705882352942,
+        "qag_success": true,
+        "qag_reason": "The score is 0.68 because the summary largely captures the original’s coverage of CNN components (no direct contradictions), but it adds numerous unsupported specifics and claims not present in the source—e.g., that the convolution was introduced in “part 1,” that the FC layer outputs class probabilities (and a ‘car’ example), exact numeric arithmetic results and phrasing, that examples were animated, labeling filters as “Sobel‑like” vertical/horizontal detectors, claims that pooling explicitly saves computation/avoids overparameterization, framing the material as design guidance, and attributing content to slides/video or leaving vanishing gradients to future study. Those extraneous and unverifiable details reduce fidelity and trustworthiness, producing a partially faithful summary rather than a fully accurate one.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.6764705882352942,
+        "cosine_similarity": 0.7131,
+        "source_chars": 15491,
+        "summary_chars": 8421,
+        "compression_ratio": 0.5436,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:14:12.288000"
+      }
+    },
+    {
+      "video_id": "Chương 2_m8uqtMEg8-E",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích và triển khai **mô hình ...",
+      "evaluation": {
+        "video_id": "Chương 2_m8uqtMEg8-E",
+        "qag_score": 0.6666666666666666,
+        "qag_success": true,
+        "qag_reason": "The score is 0.67 because the summary correctly captures the main points (motivation for the loss, final gradients, and mention of modern frameworks/ADAM) and contains no contradictions, but it adds many specifics and recommendations not present in the original — e.g., numeric examples (3, -2, 5, -6), a house-price example, explicit appeals to the sum/chain rules and the derivative identity dθ0/dθ0=1, and an explicit recommendation/emphasis to use ADAM and present linear regression as a \"simple, interpretable\" foundation. Those added details reduce fidelity while the overall coverage remains useful.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.6666666666666666,
+        "cosine_similarity": 0.67,
+        "source_chars": 10674,
+        "summary_chars": 5354,
+        "compression_ratio": 0.5016,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:16:22.010258"
+      }
+    },
+    {
+      "video_id": "Chương 3_A3iFEk5jllM",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng:\n  - Giải thích các **thành phần chín...",
+      "evaluation": {
+        "video_id": "Chương 3_A3iFEk5jllM",
+        "qag_score": 0.9230769230769231,
+        "qag_success": true,
+        "qag_reason": "The score is 0.92 because the summary is largely faithful with no direct contradictions and preserves the main points about activation choices and pooling, but it includes minor unsupported additions (e.g., mentioning GELU and extra max/avg pooling results/windows that do not appear in the original). These extra, unverified details slightly reduce but do not seriously undermine fidelity.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.9230769230769231,
+        "cosine_similarity": 0.754,
+        "source_chars": 12153,
+        "summary_chars": 6530,
+        "compression_ratio": 0.5373,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:19:59.052225"
+      }
+    },
+    {
+      "video_id": "Chương 2_aXB_C9IAyMg",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giải thích khái niệm cơ bản về **Ne...",
+      "evaluation": {
+        "video_id": "Chương 2_aXB_C9IAyMg",
+        "qag_score": 0.896551724137931,
+        "qag_success": true,
+        "qag_reason": "The score is 0.90 because the summary is largely faithful (no contradictions) and captures the main ideas, but it introduces specific claims not supported by the original text: it gives the explicit cross-entropy formula −Σ_k y_k log(ŷ_k) whereas the original showed an elementwise form, recommends reducing layers/nodes to avoid overfitting (not stated), and asserts omission/deferral of backpropagation/optimization (not confirmed). It also omits answering a course-detail question the original could address (whether neural networks are the first deep model taught). These minor unsupported additions and one omission explain the high but not perfect score.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.896551724137931,
+        "cosine_similarity": 0.7083,
+        "source_chars": 11601,
+        "summary_chars": 6501,
+        "compression_ratio": 0.5604,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:22:14.622285"
+      }
+    },
+    {
+      "video_id": "Chương 2_jl9v7IDMTsk",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: hướng dẫn **cài đặt mô hình Logisti...",
+      "evaluation": {
+        "video_id": "Chương 2_jl9v7IDMTsk",
+        "qag_score": 0.8,
+        "qag_success": true,
+        "qag_reason": "The score is 0.80 because the summary retains the main points from the original (training used model.fit with validation_data, y denotes color labels, and the prior linear-regression framework plus build/train were reused) but introduces multiple unsupported specifics that lower faithfulness: it asserts how the validation set was created (using the same formula with a 'val' suffix), claims a numeric encoding mapping (red=1, blue=0), names specific reused methods (plot, summary, predict, gateway), reports variable/parameter name errors (is_train, is_val, num_epoch, misspelling of epochs), and states the content was based on a video and includes verbatim typos — none of which appear in the original. Overall the summary is mostly accurate but weakened by these extraneous, unsupported details.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8,
+        "cosine_similarity": 0.6682,
+        "source_chars": 9479,
+        "summary_chars": 5539,
+        "compression_ratio": 0.5843,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:23:53.275331"
+      }
+    },
+    {
+      "video_id": "Chương 2_GdKIVY6CsTw",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng: Giới thiệu **mô hình máy học tổng q...",
+      "evaluation": {
+        "video_id": "Chương 2_GdKIVY6CsTw",
+        "qag_score": 0.7878787878787878,
+        "qag_success": true,
+        "qag_reason": "The score is 0.79 because the summary is largely faithful and clear about the lesson’s main points (foundational ML concepts, hyperparameters and optimizer guidance) but introduces several specifics not in the original—an explicit ε=1e-5 example, a technical claim that Adam combines momentum with approximate second-order scaling, naming PyTorch, explicitly naming cross-entropy loss, concrete stock/house-price prediction examples, and a claim about being the foundation “throughout the whole course.” It also omits an answerable factual detail the original contained (whether this is lecture 2). These added particulars reduce fidelity even though the core content is well captured.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.7878787878787878,
+        "cosine_similarity": 0.6635,
+        "source_chars": 15398,
+        "summary_chars": 6154,
+        "compression_ratio": 0.3997,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:25:51.229907"
+      }
+    },
+    {
+      "video_id": "Chương 2_CqnM7BT7oSU",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- Mục tiêu chính của bài giảng:\n  - Minh họa cách cài đặt và kiểm t...",
+      "evaluation": {
+        "video_id": "Chương 2_CqnM7BT7oSU",
+        "qag_score": 0.8636363636363636,
+        "qag_success": true,
+        "qag_reason": "The score is 0.86 because the summary is largely faithful (no contradictions) but adds unsupported extras—specific ‘true’ values like 3.8 and noise attribution, asserts the saved model was reloaded, and invents video/citation provenance—and it fails to preserve answers the original provided (whether layer 1 is the hidden layer and whether the program runs quickly), reducing completeness though not severely.",
+        "coverage_score": 0.8666666666666667,
+        "alignment_score": 0.8636363636363636,
+        "cosine_similarity": 0.758,
+        "source_chars": 5641,
+        "summary_chars": 6316,
+        "compression_ratio": 1.1197,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:27:31.228229"
+      }
+    },
+    {
+      "video_id": "Chương 2_istYhrhklqs",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng: hướng dẫn cách trực quan hóa kết quả...",
+      "evaluation": {
+        "video_id": "Chương 2_istYhrhklqs",
+        "qag_score": 0.72,
+        "qag_success": true,
+        "qag_reason": "The score is 0.72 because the summary retains the original's core points (weights/bias define a linear decision boundary, how to compute/plot the line, and using loss/visuals to inspect the model) but adds multiple unsupported specifics that reduce fidelity: it implies calling model.get_weights() and exact indexing to extract Theta0/Theta1/Theta2, names a 'call' method not mentioned, asserts the other class yields expression < 0, describes a video example for chosen x1 values, and states a file-path convention for model.load and a specific misclassification-detection claim for loss curves. These extras are not direct contradictions but are ungrounded in the source, so the summary is mostly accurate yet imperfect.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.72,
+        "cosine_similarity": 0.6351,
+        "source_chars": 6718,
+        "summary_chars": 5952,
+        "compression_ratio": 0.886,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:29:14.289188"
+      }
+    },
+    {
+      "video_id": "Chương 2_T2xJmTiRM5o",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n\n- **Mục tiêu chính của bài giảng**: Giới thiệu mô hình **Logistic R...",
+      "evaluation": {
+        "video_id": "Chương 2_T2xJmTiRM5o",
+        "qag_score": 0.8518518518518519,
+        "qag_success": true,
+        "qag_reason": "The score is 0.85 because the summary is largely accurate, faithful and clear with no contradictions, but it includes several plausible yet unsupported additions (claims about the sigmoid’s S-shape and differentiability, concrete real-world examples like spam/disease classification, framing logistic regression as a foundation for extensions, and mention of video/source citations) that go beyond the original text; these extra, unreferenced details slightly reduce fidelity.",
+        "coverage_score": 1.0,
+        "alignment_score": 0.8518518518518519,
+        "cosine_similarity": 0.6662,
+        "source_chars": 14363,
+        "summary_chars": 6828,
+        "compression_ratio": 0.4754,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:31:03.380595"
+      }
+    },
+    {
+      "video_id": "Chương 3_q3oZyk3l8EU",
+      "summary_preview": "## 1. Giới thiệu (Introduction)\n- Mục tiêu chính của bài giảng  \n  - Giới thiệu kiến trúc mạng Convo...",
+      "evaluation": {
+        "video_id": "Chương 3_q3oZyk3l8EU",
+        "qag_score": 0.7878787878787878,
+        "qag_success": true,
+        "qag_reason": "The score is 0.79 because the summary correctly conveys many core points about convolution and learned kernels but contains a clear factual contradiction (misnaming gradient descent as “radiant descent”), adds multiple unsupported details (interpretations about 4M requiring more data, learned kernels’ task specialization, Full HD input-size claims, an expanded applications list, and a causal claim about CNN dominance), and omits an answer to an explicit question the original could address (whether exercise 3 introduces CNN). These errors and additions reduce fidelity but do not completely undermine the main content, so the quality is moderately high.",
+        "coverage_score": 0.9333333333333333,
+        "alignment_score": 0.7878787878787878,
+        "cosine_similarity": 0.7424,
+        "source_chars": 11317,
+        "summary_chars": 6301,
+        "compression_ratio": 0.5568,
+        "threshold": 0.5,
+        "n_questions": 15,
+        "evaluation_model": "gpt-5-mini",
+        "timestamp": "2025-11-17T10:32:48.291796"
+      }
+    }
+  ]
+}

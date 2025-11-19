@@ -1,15 +1,15 @@
 # Notebook-LM AI Assistant - Architecture Document
 
-## Project Overview
+## Project Status: ✅ Complete
 
-A video course AI assistant that helps students interact with course content through 4 main capabilities:
-1. **Q&A**: Ask questions and get answers with exact video timestamps
-2. **Text Summarization**: Get concise summaries on specific topics
-3. **Video Summarization**: Summarize content of specific course videos
-4. **Quiz Generation**: Generate Yes/No and MCQ quizzes from video content
+All four AI tasks implemented and evaluated:
+1. **Text Summarization**: Hierarchical summaries with inline citations
+2. **Q&A**: Question answering with source attribution
+3. **Video Summarization**: Timestamp-based video summaries
+4. **Quiz Generation**: MCQ and short-answer quiz generation
 
-**Source Material**: YouTube course videos  
-**Architecture**: Modular Monolith (Python backend, React frontend)
+**Source**: YouTube course videos (62 videos, 1059 chunks)
+**Architecture**: Modular Monolith (FastAPI backend, React frontend)
 
 ---
 
@@ -125,11 +125,11 @@ tieplm/
 │   ├── transcripts/            # Generated transcripts
 │   └── ...
 │
-├── evaluation/                  # Evaluation module (task-specific folders)
-│   ├── text_summary/           # Text summary eval (DONE)
-│   ├── qa/                     # Q&A eval (TODO)
-│   ├── video_summary/          # Video summary eval (TODO)
-│   └── quiz/                   # Quiz eval (TODO)
+├── evaluation/                  # Evaluation module (all tasks complete)
+│   ├── text_summary/           # Text summary eval (3 reranker comparisons)
+│   ├── qa/                     # Q&A eval (306 questions)
+│   ├── video_summary/          # Video summary eval (62 videos)
+│   └── quiz/                   # Quiz eval (MCQ + short-answer)
 │
 ├── scripts/                     # Utility scripts (DB verification, etc.)
 ├── docker-compose.yml           # PostgreSQL + Qdrant
@@ -331,33 +331,20 @@ services:
 
 ---
 
-## Evaluation Strategy
+## Evaluation (Complete)
 
-### End-to-End Task Evaluation
+All four tasks evaluated. See [`evaluation/README.md`](./evaluation/README.md).
 
-Each task has its own folder in `evaluation/` with task-specific evaluation service, runner script, and test dataset.
-
-**Evaluation Metrics by Task:**
-1. **Q&A**: Answer accuracy, source relevance, timestamp precision (TODO)
-2. **Text Summarization**: ✅ **DeepEval QAG-based metrics**
-   - Coverage Score: Detail inclusion from original text
-   - Alignment Score: Factual accuracy (no hallucinations)
-   - Overall Score: min(coverage, alignment)
-   - 50 test questions covering all 8 chapters
-3. **Video Summarization**: Coverage, coherence, key point extraction (TODO)
-4. **Quiz Generation**: Question quality, difficulty distribution, answer correctness (TODO)
-
-**Evaluation Workflow** (Text Summarization - Implemented):
-1. Test questions stored in `evaluation/text_summary/test_questions.json`
-2. Runner script (`run_eval.py`) generates summaries via RAG pipeline
-3. DeepEval's QAG framework evaluates using closed-ended questions
-4. Results saved as JSON with statistics (mean, min, max, chapter distribution)
-5. Iterate on prompts/RAG strategies based on results
+**Completed Metrics:**
+1. **Text Summarization**: QAG (Coverage, Alignment), Cosine Similarity (50 questions, 3 rerankers)
+2. **Q&A**: Exact Match, Answer Correctness, Citation Accuracy, MRR (306 questions)
+3. **Video Summarization**: QAG, Cosine Similarity (62 videos)
+4. **Quiz Generation**: Cosine Similarity (short-answer), Accuracy (MCQ)
 
 **Configuration**:
 ```bash
-EVAL_MODEL=gpt-5-mini                    # Model for evaluation
-EVAL_SUMMARIZATION_THRESHOLD=0.5         # Pass/fail threshold
+EVAL_MODEL=gpt-5-mini
+EVAL_SUMMARIZATION_THRESHOLD=0.5
 ```
 
 ---

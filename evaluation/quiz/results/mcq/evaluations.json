@@ -1,0 +1,369 @@
+{
+  "run_info": {
+    "run_id": "run_20251117_111300",
+    "timestamp": "20251117_111300",
+    "total_cases": 50,
+    "successful_cases": 50,
+    "failed_cases": 0,
+    "question_type": "mcq"
+  },
+  "statistics": {
+    "mean": 1.0,
+    "median": 1.0,
+    "min": 1,
+    "max": 1,
+    "std": 0.0
+  },
+  "scores": [
+    {
+      "case_id": "quiz_eval_001",
+      "question": "Tại sao RNN chuẩn sử dụng hàm tanh dễ dẫn đến mất thông tin dọc chuỗi (vanishing gradient)?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_002",
+      "question": "Tại sao các từ như \"pink\", \"white\", \"blue\" thường nằm gần nhau trong không gian embedding?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_003",
+      "question": "Mục tiêu chính của việc sử dụng Word2Vec/Word2Pack trong bài hướng dẫn này là gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_004",
+      "question": "Theo video, ba công việc chính khi thiết kế mô hình hồi quy tuyến tính là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_005",
+      "question": "Tại sao chuyển sang hàm kích hoạt ReLU giúp giảm hiện tượng vanishing gradients trong mạng RNN/Deep NN?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_006",
+      "question": "Theo phân tích receptive field trong video, hai lớp convolution liên tiếp với kernel 3×3 sẽ có receptive field tương đương với kernel kích thước nào trên input?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_007",
+      "question": "Tại sao trong tiền xử lý dữ liệu thường đưa giá trị pixel từ [0,255] về [0,1] trước khi huấn luyện mạng CNN?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_008",
+      "question": "Trong phương pháp prompting với Transformer, khác biệt chính giữa zero-shot và few-shot prompting là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_009",
+      "question": "Tại sao ReLU thường được chọn làm hàm kích hoạt trong CNN thay vì sigmoid?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_010",
+      "question": "Nếu trong quá trình huấn luyện training loss giảm liên tục nhưng validation loss vẫn cao hơn và không giảm tương ứng, nguyên nhân hợp lý nhất là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_011",
+      "question": "Điểm khác biệt chính của Deep Learning/Representation Learning so với các approach cổ điển trong NLP là gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_012",
+      "question": "Điều nào sau đây mô tả chính xác tính chất của chỉ số BLEU trong đánh giá dịch máy?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_013",
+      "question": "Đặc điểm chính của bài toán 'fine-grained classification' (phân loại phân lớp tinh) là gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_014",
+      "question": "Một hạn chế chính của biểu diễn one-hot cho từ được nêu trong video là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_015",
+      "question": "Trong mô hình với đầu ra ŷ = softmax(θ·x) và hàm lỗi là trung bình cross-entropy giữa ŷ và y, vai trò chính của softmax là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_016",
+      "question": "Vì sao trong ví dụ này mạng chỉ cần một node output và sử dụng hàm sigmoid thay vì softmax?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_017",
+      "question": "Tại sao các thành ngữ như 'ra ngô ra khoai' gây khó khăn cho hệ thống xử lý ngôn ngữ tự nhiên?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_018",
+      "question": "Theo nội dung video, phương pháp prompting (few-shot) hoạt động như thế nào để giúp mô hình thực hiện nhiệm vụ phân loại sentiment?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_019",
+      "question": "Tại sao kích thước filter của lớp convolution thứ hai được mô tả là 3 x 3 x 6 trong kiến trúc LeNet cho ảnh 28x28?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_020",
+      "question": "Khi trực quan hóa các đường quyết định do các neuron có “độ tin cậy” cao tạo ra (theo video), hệ số A trong biểu thức y = A x + b được tính bằng công thức nào?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_021",
+      "question": "Trong biểu diễn ma trận cho hồi quy tuyến tính (y là vector hàng 1×n, X là ma trận (m+1)×n gồm bias), công thức nào biểu diễn dự đoán gộp ŷ cho toàn bộ n mẫu?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_022",
+      "question": "Hai lớp convolution 3x3 chồng lên nhau có vùng nhận thức (receptive field) tương đương với kernel kích thước nào trên ảnh đầu vào?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_023",
+      "question": "Chức năng chính của skip connection trong kiến trúc ResNet là gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_024",
+      "question": "Tại sao lớp cuối trong một mạng nhiều lớp dành cho bài toán phân loại đa lớp thường dùng softmax thay vì sigmoid?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_025",
+      "question": "Trong phần cài đặt linear regression, vì sao khi chuyển x thành ma trận người ta thêm một hàng gồm toàn số 1 và nối với hàng x?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_026",
+      "question": "Trong phân lớp đa lớp dùng softmax và cross-entropy, công thức tính loss cho một mẫu (với y là one-hot vector và ŷ là vector xác suất sau softmax) là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_027",
+      "question": "Tại sao trong mô hình phân lớp nhiều nhãn người ta sử dụng hàm Softmax thay cho hàm max (hoặc các hàm sigmoid riêng lẻ)?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_028",
+      "question": "Điểm yếu chính của Faster R-CNN được nêu trong video khiến người ta phát triển các mô hình one-stage như YOLO là gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_029",
+      "question": "Khác biệt cơ bản giữa 'detect' (phát hiện) và 'recognition' (phân biệt định danh) trong bài toán nhận diện khuôn mặt là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_030",
+      "question": "Trong LSTM, làm thế nào để tạo hidden state S_t từ cell state C_t và vai trò của output gate O_t là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_031",
+      "question": "Khi gặp lỗi kiểu (scalar/shape) lúc cố gắng nối hàng bias (các giá trị 1) với ma trận X bằng np.concatenate trong cài đặt linear regression, bước kiểm tra/vẫn đề nào được giảng viên khuyến nghị thực hiện ngay?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_032",
+      "question": "Tại sao một filter trong phép convolution trên ảnh RGB phải có độ sâu bằng độ sâu của ảnh đầu vào (ví dụ 3 kênh)?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_033",
+      "question": "Tại sao trong ví dụ Word2Vec, từ \"love\" có thể cho độ tương đồng cosine cao với \"hate\" hơn là với \"like\"?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_034",
+      "question": "Tại sao trong scaled dot-product attention cần chia cho sqrt(d_k) khi tính tích vô hướng giữa queries và keys?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_035",
+      "question": "Mục đích chính của việc xếp chồng nhiều tầng RNN (Deep Stacked RNN) là gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_036",
+      "question": "Trong công thức cross-entropy cho bài toán dự đoán từ trong RNN, nếu y là one-hot vector độ dài |V| (|V| là kích thước từ điển), cross-entropy loss tại một thời điểm t sẽ được giản lược thành gì?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_037",
+      "question": "Trong ma trận attention α của mô hình Seq2Seq, tại sao từ tiếng Anh \"size\" có thể có trọng số cao tới ba từ tiếng Pháp khác nhau?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_038",
+      "question": "Khác biệt chính giữa self-attention và attention trong cơ chế encoder→decoder (encoder→decoder attention) là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_039",
+      "question": "Khi biểu diễn ảnh màu RGB dưới dạng tensor để đưa vào mạng neural, 'độ sâu' (depth) của tensor tương ứng với yếu tố nào sau đây?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_040",
+      "question": "Khi sử dụng một mạng CNN đã được tiền huấn luyện như ResNet-50 làm bộ rút trích đặc trưng (feature extractor), bước nào thường được thực hiện?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_041",
+      "question": "Điểm nào của ImageNet (Large Scale Visual Recognition Challenge) góp phần trực tiếp thúc đẩy sự bùng nổ của các kiến trúc CNN sau AlexNet?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_042",
+      "question": "Tại sao hàm ReLU thường được đặt ngay sau tầng convolution trong mạng CNN?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_043",
+      "question": "Từ việc phóng to các feature map và quan sát một số feature map sáng mạnh chuyên phát hiện biên dọc/biên ngang trong video, kết luận nào sau đây đúng nhất?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_044",
+      "question": "Chức năng chính của lớp flatten trong một mạng CNN là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_045",
+      "question": "Trong mảng x_train có kích thước (60000, 28, 28) khi dùng mnist.load_data(), giá trị 60000 biểu thị điều gì?",
+      "score": 1,
+      "predicted_answer": "c",
+      "correct_answer": "C"
+    },
+    {
+      "case_id": "quiz_eval_046",
+      "question": "Thành phần nào trong LSTM đóng vai trò chính trong việc khắc phục hiện tượng vanishing gradient bằng cách duy trì và điều hướng thông tin qua thời gian?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_047",
+      "question": "Điểm khác biệt chính giữa zero-shot, one-shot và few-shot prompting là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_048",
+      "question": "Vấn đề chính được nêu trong video khi sử dụng quy tắc chọn lớp theo xác suất đầu ra cao nhất trong mô hình hồi quy Softmax (đơn nhãn) là gì?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    },
+    {
+      "case_id": "quiz_eval_049",
+      "question": "Tại sao một feature map chuyên nhận diện “gương mặt” lại bật mạnh với mặt người nhưng chỉ hơi sáng khi gặp mặt mèo?",
+      "score": 1,
+      "predicted_answer": "b",
+      "correct_answer": "B"
+    },
+    {
+      "case_id": "quiz_eval_050",
+      "question": "Trong mô hình Word2Vec (skip-gram) được mô tả, vì sao đầu vào thường là vector one-hot và H được tính bằng H = W x X?",
+      "score": 1,
+      "predicted_answer": "a",
+      "correct_answer": "A"
+    }
+  ]
+}

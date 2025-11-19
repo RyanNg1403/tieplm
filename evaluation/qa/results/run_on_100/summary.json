@@ -1,0 +1,82 @@
+{
+  "total_questions": 100,
+  "successful_evaluations": 100,
+  "failed_evaluations": 0,
+  "average_metrics": {
+    "exact_match": 0.9538,
+    "answer_correctness": 0.8322,
+    "answer_correctness_llm": 0.8929,
+    "answer_correctness_cosine": 0.6906,
+    "citation_accuracy": 0.97,
+    "mrr": 0.8171
+  },
+  "by_chapter": {
+    "3": {
+      "count": 14,
+      "citation_accuracy": 1.0,
+      "mrr": 0.9048,
+      "exact_match": 0.875,
+      "answer_correctness": 0.6928,
+      "answer_correctness_llm": 0.7083,
+      "answer_correctness_cosine": 0.6566
+    },
+    "6": {
+      "count": 8,
+      "citation_accuracy": 1.0,
+      "mrr": 0.9,
+      "exact_match": 1.0,
+      "answer_correctness": 0.8942,
+      "answer_correctness_llm": 0.95,
+      "answer_correctness_cosine": 0.764
+    },
+    "8": {
+      "count": 17,
+      "citation_accuracy": 1.0,
+      "mrr": 0.732,
+      "exact_match": 1.0,
+      "answer_correctness": 0.7911,
+      "answer_correctness_llm": 0.8714,
+      "answer_correctness_cosine": 0.6035
+    },
+    "4": {
+      "count": 7,
+      "citation_accuracy": 1.0,
+      "mrr": 1.0,
+      "exact_match": 1.0
+    },
+    "2": {
+      "count": 23,
+      "citation_accuracy": 0.913,
+      "mrr": 0.6594,
+      "exact_match": 0.9091,
+      "answer_correctness": 0.8649,
+      "answer_correctness_llm": 0.9167,
+      "answer_correctness_cosine": 0.7441
+    },
+    "9": {
+      "count": 12,
+      "citation_accuracy": 1.0,
+      "mrr": 0.9028,
+      "exact_match": 0.9,
+      "answer_correctness": 0.8426,
+      "answer_correctness_llm": 1.0,
+      "answer_correctness_cosine": 0.4755
+    },
+    "7": {
+      "count": 15,
+      "citation_accuracy": 0.9333,
+      "mrr": 0.8267,
+      "exact_match": 1.0,
+      "answer_correctness": 0.9299,
+      "answer_correctness_llm": 1.0,
+      "answer_correctness_cosine": 0.7665
+    },
+    "5": {
+      "count": 4,
+      "citation_accuracy": 1.0,
+      "mrr": 1.0,
+      "exact_match": 1.0
+    }
+  },
+  "timestamp": "2025-11-17T23:43:27.645243"
+}

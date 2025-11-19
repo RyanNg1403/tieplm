@@ -2,15 +2,15 @@
 
 NotebookLM-like AI assistant for CS431 Deep Learning video course content.
 
-## Introduction
+## Project Status: ✅ Complete
 
-This project provides an intelligent assistant for CS431 video course content with four main features:
-- **Text Summarization**: Generate hierarchical summaries from video transcripts with inline citations
-- **Q&A**: Answer questions based on course content
+All four AI tasks have been implemented and evaluated:
+- **Text Summarization**: Hierarchical summaries with inline citations
+- **Q&A**: Question answering with source attribution
 - **Video Summarization**: Timestamp-based video summaries
-- **Quiz Generation**: Auto-generate quizzes from course material
+- **Quiz Generation**: MCQ and short-answer quiz generation
 
-The system uses **Retrieval-Augmented Generation (RAG)** with hybrid search (Vector + BM25), cross-encoder reranking, and contextual retrieval to provide accurate, source-cited responses.
+The system uses **Retrieval-Augmented Generation (RAG)** with hybrid search (Vector + BM25), cross-encoder reranking, and contextual retrieval.
 
 ## Architecture
 
@@ -188,10 +188,11 @@ React TypeScript web application with ChatGPT-like interface.
   - Clickable citations linking to video timestamps
 
 ### Evaluation
-Framework for measuring performance across all four AI tasks.
-- **Datasets**: Ground truth data for each task
-- **Metrics**: Task-specific evaluation metrics (ROUGE, accuracy, relevance)
-- **Scripts**: Automated evaluation runners
+Completed evaluation framework for all four AI tasks. See [`evaluation/README.md`](./evaluation/README.md) for details.
+- **Text Summary**: QAG metrics + cosine similarity (3 reranker comparisons)
+- **Q&A**: Exact Match, Answer Correctness, Citation Accuracy, MRR (306 questions)
+- **Video Summary**: QAG metrics + cosine similarity (62 videos)
+- **Quiz**: Cosine similarity for short-answer, accuracy for MCQ
 
 ## Tech Stack
 
@@ -207,8 +208,9 @@ Framework for measuring performance across all four AI tasks.
 
 ## Documentation
 
-- [`ARCHITECTURE.md`](./ARCHITECTURE.md) - Detailed architecture design
-- [`ingestion/README.md`](./ingestion/README.md) - Ingestion pipeline guide
-- [`backend/README.md`](./backend/README.md) - Backend module guide
-- [`frontend/README.md`](./frontend/README.md) - Frontend module guide
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) - Architecture design and configuration
+- [`evaluation/README.md`](./evaluation/README.md) - Evaluation framework and results
+- [`ingestion/README.md`](./ingestion/README.md) - Ingestion pipeline
+- [`backend/README.md`](./backend/README.md) - Backend modules
+- [`frontend/README.md`](./frontend/README.md) - Frontend UI
 - API Docs (when running): http://localhost:8000/docs
