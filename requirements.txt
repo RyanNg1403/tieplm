@@ -49,4 +49,4 @@ httpx
 tqdm
 pandas
 matplotlib
-
+seaborn
