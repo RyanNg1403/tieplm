@@ -89,7 +89,11 @@ Tài liệu khác:
     - Nguyễn Phong Huy (23520637@gm.uit.edu.vn)
     - Đào Mạnh Dũng (23520325@gm.uit.edu.vn)
 
- ## Demo
 ## Demo
 
-[![Demo Video](https://drive.google.com/thumbnail?id=1GldmcmE8LBmEC79EtdvKssLF7zh9herr)](https://drive.google.com/file/d/1GldmcmE8LBmEC79EtdvKssLF7zh9herr/view)
+## Demo
+
+<a href="https://drive.google.com/file/d/1GldmcmE8LBmEC79EtdvKssLF7zh9herr/view">
+  <img src="https://drive.google.com/thumbnail?id=1GldmcmE8LBmEC79EtdvKssLF7zh9herr" width="800" />
+</a>
+
